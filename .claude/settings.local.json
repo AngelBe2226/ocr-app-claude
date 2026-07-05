@@ -25,7 +25,12 @@
       "Bash(gh pr create --title 'Add password reset script' --body ' *)",
       "Bash(command -v gh)",
       "Read(//usr/local/bin/**)",
-      "Bash(env)"
+      "Bash(env)",
+      "Bash(git credential *)",
+      "Bash(brew --version)",
+      "Bash(brew install *)",
+      "Bash(curl -sv https://github.com -o /dev/null)",
+      "Bash(GIT_CURL_VERBOSE=1 git ls-remote origin HEAD)"
     ]
   }
 }
