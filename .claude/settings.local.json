@@ -19,7 +19,13 @@
       "Bash(python3 reset_password.py)",
       "Bash(curl -s -X POST http://127.0.0.1:8000/login -d \"email=test@example.com&password=newpass123\" -o /dev/null -w \"login status: %{http_code}\\\\n\")",
       "Bash(git check-ignore *)",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(gh pr create --title 'Add password reset script' --body ' *)",
+      "Bash(command -v gh)",
+      "Read(//usr/local/bin/**)",
+      "Bash(env)"
     ]
   }
 }
