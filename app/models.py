@@ -39,8 +39,22 @@ class Transaction(Base):
     note: Mapped[str] = mapped_column(String, default="")
     account_id: Mapped[int] = mapped_column(ForeignKey("accounts.id"))
     attachment_name: Mapped[str] = mapped_column(String, default="")
+    latitude: Mapped[float | None] = mapped_column(Float, nullable=True)
+    longitude: Mapped[float | None] = mapped_column(Float, nullable=True)
+    place_name: Mapped[str] = mapped_column(String, default="")
 
     account: Mapped["Account"] = relationship()
+
+
+class Transfer(Base):
+    __tablename__ = "transfers"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    from_account_id: Mapped[int] = mapped_column(ForeignKey("accounts.id"))
+    to_account_id: Mapped[int] = mapped_column(ForeignKey("accounts.id"))
+    amount: Mapped[float] = mapped_column(Float)
+    date: Mapped[date] = mapped_column(Date)
+    note: Mapped[str] = mapped_column(String, default="")
 
 
 class Loan(Base):
@@ -83,6 +97,32 @@ class Budget(Base):
     category: Mapped[str] = mapped_column(String)
     allocated: Mapped[float] = mapped_column(Float, default=0)
     rollover: Mapped[bool] = mapped_column(Boolean, default=False)
+
+
+class Category(Base):
+    __tablename__ = "categories"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    profile: Mapped[str] = mapped_column(String)          # melia / realestate / freelance / personal
+    kind: Mapped[str] = mapped_column(String)             # income / expense
+    name: Mapped[str] = mapped_column(String)
+    icon: Mapped[str] = mapped_column(String, default="")  # emoji opcional; si vacío se usa la inicial
+    color: Mapped[str] = mapped_column(String, default="#12898F")
+    is_system: Mapped[bool] = mapped_column(Boolean, default=False)  # "Sin categoría": no editable/borrable
+
+    subcategories: Mapped[list["Subcategory"]] = relationship(
+        back_populates="category", cascade="all, delete-orphan"
+    )
+
+
+class Subcategory(Base):
+    __tablename__ = "subcategories"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"))
+    name: Mapped[str] = mapped_column(String)
+    icon: Mapped[str] = mapped_column(String, default="")
+
+    category: Mapped["Category"] = relationship(back_populates="subcategories")
 
 
 class Settings(Base):

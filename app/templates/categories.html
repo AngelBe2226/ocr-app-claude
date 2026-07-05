@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="margin-bottom:18px;"><div class="page-title">Categorías</div><div class="page-subtitle">Organiza tus ingresos y gastos, con subcategorías</div></div>
+
+<div style="display:inline-flex;background:var(--trackBg);border-radius:11px;padding:3px;margin-bottom:20px;">
+  <a href="/categories?kind=income" class="tab-pill {{ 'active' if kind == 'income' else '' }}">Ingresos</a>
+  <a href="/categories?kind=expense" class="tab-pill {{ 'active' if kind == 'expense' else '' }}">Gastos</a>
+</div>
+
+{% for group in groups %}
+<div class="group-header"><span style="color:{{ group.color }};">{{ group.name }}</span></div>
+<div class="grid-auto" style="margin-bottom:6px;">
+  {% for c in group.categories %}
+  <div class="card card-pad-18">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span style="width:34px;height:34px;border-radius:50%;background:{{ c.raw_color }}22;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:{{ c.color }};flex-shrink:0;">{{ c.icon }}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13.5px;font-weight:700;">{{ c.name }}</div>
+        <div style="font-size:11px;color:var(--secondary);">
+          {{ c.subcategories|length }} subcategoría{{ '' if c.subcategories|length == 1 else 's' }}
+          {% if c.tx_count %} · {{ c.tx_count }} movimiento{{ '' if c.tx_count == 1 else 's' }}{% endif %}
+          {% if c.is_system %} · sistema{% endif %}
+        </div>
+      </div>
+    </div>
+
+    {% if c.subcategories %}
+    <div style="margin-top:10px;display:flex;flex-direction:column;gap:4px;">
+      {% for s in c.subcategories %}
+      <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;padding:4px 0;border-top:1px solid var(--border);">
+        <span style="color:var(--secondaryAlt);">{{ s.icon }} {{ s.name }}</span>
+        <span style="display:flex;gap:8px;align-items:center;">
+          <details class="edit" style="margin:0;border:none;padding:0;">
+            <summary style="font-size:11px;">Editar</summary>
+            <form method="post" action="/subcategories/{{ s.id }}/rename" style="display:flex;gap:6px;margin-top:6px;">
+              <input type="text" name="icon" value="{{ s.icon }}" placeholder="🙂" class="input-sm" style="width:48px;">
+              <input type="text" name="name" value="{{ s.name }}" class="input-sm" style="flex:1;" required>
+              <button type="submit" class="btn-sm btn-track">OK</button>
+            </form>
+          </details>
+          <form method="post" action="/subcategories/{{ s.id }}/delete"><button type="submit" style="border:none;background:none;padding:0;cursor:pointer;font-size:11px;color:var(--muted);">✕</button></form>
+        </span>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if not c.is_system %}
+    <details class="edit">
+      <summary>Editar / subcategoría</summary>
+      <form method="post" action="/categories/{{ c.id }}/rename" class="form-col" style="margin-bottom:10px;">
+        <div class="grid-2">
+          <input type="text" name="icon" value="{{ c.icon if c.icon != c.name[0]|upper else '' }}" placeholder="Emoji (opcional)" class="input">
+          <input type="color" name="color" value="{{ c.raw_color }}" class="color-swatch" title="Color">
+        </div>
+        <input type="text" name="name" value="{{ c.name }}" placeholder="Nombre" class="input" required>
+        <button type="submit" class="btn">Renombrar</button>
+      </form>
+      <form method="post" action="/categories/{{ c.id }}/subcategories" style="display:flex;gap:6px;margin-bottom:10px;">
+        <input type="text" name="icon" placeholder="🙂" class="input-sm" style="width:48px;">
+        <input type="text" name="name" placeholder="Nueva subcategoría" class="input-sm" style="flex:1;" required>
+        <button type="submit" class="btn-sm" style="background:{{ group.color }};color:#fff;">Añadir</button>
+      </form>
+      <form method="post" action="/categories/{{ c.id }}/delete"
+            onsubmit="return confirm({% if c.tx_count %}'Esta categoría tiene {{ c.tx_count }} movimiento(s). Se reasignarán a «Sin categoría». ¿Continuar?'{% else %}'¿Eliminar la categoría «{{ c.name }}»?'{% endif %});">
+        <button type="submit" class="btn-sm btn-danger" style="width:100%;">Eliminar categoría</button>
+      </form>
+    </details>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% endfor %}
+
+<div class="card" style="max-width:460px;margin-top:18px;">
+  <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Añadir categoría de {{ 'ingresos' if kind == 'income' else 'gastos' }}</div>
+  <form method="post" action="/categories" class="form-col">
+    <input type="hidden" name="kind" value="{{ kind }}">
+    <div class="grid-2">
+      <select name="profile" class="input">
+        {% for p in profiles %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}
+      </select>
+      <input type="text" name="icon" placeholder="Emoji (opcional)" class="input">
+    </div>
+    <input type="text" name="name" placeholder="Nombre de la categoría" class="input" required>
+    <button type="submit" class="btn">Añadir categoría</button>
+  </form>
+</div>
+{% endblock %}

@@ -5,6 +5,7 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
+from app.categories import category_names
 from app.constants import PROFILE_IDS, PROFILES
 from app.database import get_db
 from app.finance import (
@@ -41,7 +42,8 @@ def profile_page(
     accounts = db.query(Account).filter(Account.user_id == user.id).order_by(Account.id).all()
 
     form_type = request.query_params.get("form_type", "income")
-    categories = conf["income_categories"] if form_type == "income" else conf["expense_categories"]
+    categories = category_names(db, user.id, profile=profile_id, kind=form_type)
+    bulk_categories = category_names(db, user.id, profile=profile_id)
 
     expense_by_cat: dict[str, float] = {}
     for t in list_tx:
@@ -77,12 +79,13 @@ def profile_page(
         "id": t.id, "category": t.category, "note": t.note, "date_label": t.date,
         "amount_label": ("+ " if t.type == "income" else "- ") + fmt_eur(t.amount),
         "color": A("#3FA65C" if t.type == "income" else "#E2574C"),
+        "has_receipt": bool(t.attachment_name), "place_name": t.place_name or "",
     } for t in filtered]
 
     profile_ctx = {
         "id": profile_id, "name": conf["name"], "color": A(conf["color"]),
         "income": fmt_eur(totals["income"]), "expense": fmt_eur(totals["expense"]), "net": fmt_eur(totals["net"]),
-        "categories": categories, "form_type": form_type,
+        "categories": categories, "bulk_categories": bulk_categories, "form_type": form_type,
         "donut_segs": donut_segs, "has_expenses": len(donut_segs) > 0,
         "line_points": line_points, "line_dots": line_dots,
         "budgets": b_rows,
