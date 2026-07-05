@@ -1,0 +1,100 @@
+from datetime import date, datetime
+
+from sqlalchemy import Boolean, Date, DateTime, Float, ForeignKey, Integer, String
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.database import Base
+
+
+class User(Base):
+    __tablename__ = "users"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    email: Mapped[str] = mapped_column(String, unique=True)
+    password_hash: Mapped[str] = mapped_column(String)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class Account(Base):
+    __tablename__ = "accounts"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    name: Mapped[str] = mapped_column(String)
+    type: Mapped[str] = mapped_column(String)
+    currency: Mapped[str] = mapped_column(String, default="EUR")
+    balance: Mapped[float] = mapped_column(Float, default=0)
+    color: Mapped[str] = mapped_column(String, default="#7A756C")
+    cycle_end: Mapped[date | None] = mapped_column(Date, nullable=True)
+    due_date: Mapped[date | None] = mapped_column(Date, nullable=True)
+
+
+class Transaction(Base):
+    __tablename__ = "transactions"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    profile: Mapped[str] = mapped_column(String)
+    type: Mapped[str] = mapped_column(String)
+    category: Mapped[str] = mapped_column(String)
+    amount: Mapped[float] = mapped_column(Float)
+    date: Mapped[date] = mapped_column(Date)
+    note: Mapped[str] = mapped_column(String, default="")
+    account_id: Mapped[int] = mapped_column(ForeignKey("accounts.id"))
+    attachment_name: Mapped[str] = mapped_column(String, default="")
+
+    account: Mapped["Account"] = relationship()
+
+
+class Loan(Base):
+    __tablename__ = "loans"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    name: Mapped[str] = mapped_column(String)
+    principal: Mapped[float] = mapped_column(Float)
+    balance: Mapped[float] = mapped_column(Float)
+    rate: Mapped[float] = mapped_column(Float)
+    payment: Mapped[float] = mapped_column(Float)
+
+
+class Bill(Base):
+    __tablename__ = "bills"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    name: Mapped[str] = mapped_column(String)
+    amount: Mapped[float] = mapped_column(Float)
+    due_day: Mapped[int] = mapped_column(Integer)
+    paid: Mapped[float] = mapped_column(Float, default=0)
+
+
+class Goal(Base):
+    __tablename__ = "goals"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    name: Mapped[str] = mapped_column(String)
+    target: Mapped[float] = mapped_column(Float)
+    current: Mapped[float] = mapped_column(Float, default=0)
+    target_date: Mapped[date] = mapped_column(Date)
+    color: Mapped[str] = mapped_column(String, default="#12898F")
+
+
+class Budget(Base):
+    __tablename__ = "budgets"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    profile: Mapped[str] = mapped_column(String)
+    category: Mapped[str] = mapped_column(String)
+    allocated: Mapped[float] = mapped_column(Float, default=0)
+    rollover: Mapped[bool] = mapped_column(Boolean, default=False)
+
+
+class Settings(Base):
+    __tablename__ = "settings"
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), primary_key=True)
+    theme: Mapped[str] = mapped_column(String, default="light")
+    accent_key: Mapped[str] = mapped_column(String, default="teal")
+
+
+class FamilyInvite(Base):
+    __tablename__ = "family_invites"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    email: Mapped[str] = mapped_column(String)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="margin-bottom:20px;">
+  <div style="font-size:13px;color:var(--secondary);font-weight:600;margin-bottom:6px;">Patrimonio neto</div>
+  <div class="mono" style="font-size:48px;font-weight:700;color:{{ accent_hex }};letter-spacing:-0.01em;">{{ overview.net_worth }}</div>
+  <div style="font-size:12.5px;color:var(--secondary);margin-top:6px;">{{ overview.net_worth_sub }}</div>
+</div>
+
+<div class="hero-gradient" style="margin-bottom:22px;">
+  <span style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.25);flex-shrink:0;display:flex;align-items:center;justify-content:center;">
+    <span style="width:14px;height:14px;border-radius:50%;border:2.5px solid #fff;"></span>
+  </span>
+  <div>
+    <div style="font-size:13px;font-weight:700;color:#fff;">{{ overview.tip.title }}</div>
+    <div style="font-size:12.5px;color:rgba(255,255,255,0.88);margin-top:2px;">{{ overview.tip.body }}</div>
+  </div>
+</div>
+
+<div class="section-title">Perfiles este mes</div>
+<div class="grid-auto" style="margin-bottom:26px;">
+  {% for p in overview.profile_rings %}
+  <a href="/{{ p.id }}" class="card card-pad-18" style="cursor:pointer;display:flex;align-items:center;gap:14px;">
+    <svg viewBox="0 0 72 72" width="56" height="56" style="flex-shrink:0;">
+      <circle cx="36" cy="36" r="30" fill="none" stroke="var(--trackBg)" stroke-width="8"></circle>
+      <circle cx="36" cy="36" r="30" fill="none" stroke="{{ p.color }}" stroke-width="8" stroke-linecap="round" stroke-dasharray="{{ p.dash }}" transform="rotate(-90 36 36)"></circle>
+      <text x="36" y="41" font-size="13" font-family="Space Mono, monospace" font-weight="700" text-anchor="middle" fill="var(--ink)">{{ p.pct_label }}</text>
+    </svg>
+    <div style="min-width:0;">
+      <div style="font-size:13.5px;font-weight:700;">{{ p.name }}</div>
+      <div class="mono" style="font-size:11.5px;color:var(--secondary);margin-top:2px;">{{ p.spent }} / {{ p.budget }}</div>
+    </div>
+  </a>
+  {% endfor %}
+</div>
+
+<div style="display:grid;grid-template-columns:1.2fr 1fr;gap:16px;align-items:start;">
+  <div class="card" style="min-width:0;">
+    <div class="section-title">Actividad reciente</div>
+    {% for t in overview.recent %}
+    <div style="display:flex;align-items:center;gap:12px;padding:9px 0;border-top:1px solid var(--border);">
+      <span style="width:36px;height:36px;border-radius:50%;flex-shrink:0;background:{{ t.icon_bg }};display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:{{ t.icon_color }};">{{ t.initial }}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:600;">{{ t.category }}</div>
+        <div style="font-size:11.5px;color:var(--secondary);margin-top:1px;">{{ t.profile_name }} · {{ t.date_label|date_es }}</div>
+      </div>
+      <div class="mono" style="font-size:13px;font-weight:700;color:{{ t.color }};white-space:nowrap;">{{ t.amount_label }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="card" style="min-width:0;">
+    <div class="section-title">Deudas y metas</div>
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:12.5px;color:var(--secondary);">Deuda pendiente</span>
+        <span class="mono" style="font-size:13px;font-weight:700;color:#E2574C;">{{ overview.total_debt }}</span>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <span style="font-size:12.5px;color:var(--secondary);">Metas activas</span>
+        <span class="mono" style="font-size:13px;font-weight:700;">{{ overview.goals_count }}</span>
+      </div>
+      {% for g in overview.top_goals %}
+      <div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;"><span style="font-weight:600;">{{ g.name }}</span><span class="mono" style="color:var(--secondary);">{{ g.pct_label }}</span></div>
+        <div class="track-bar thin"><div class="track-fill" style="width:{{ g.pct_width }};background:{{ g.color }};"></div></div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

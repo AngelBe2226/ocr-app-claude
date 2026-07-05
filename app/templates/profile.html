@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="profile-hero" style="background:{{ profile.color }};margin-bottom:20px;">
+  <div style="font-size:24px;font-weight:800;">{{ profile.name }}</div>
+  <div style="font-size:12.5px;color:rgba(255,255,255,0.85);margin-top:4px;">Perfil de ingresos</div>
+  <div style="display:flex;gap:22px;margin-top:16px;">
+    <div><div style="font-size:11px;color:rgba(255,255,255,0.75);">Ingresos</div><div class="mono" style="font-size:16px;font-weight:700;">{{ profile.income }}</div></div>
+    <div><div style="font-size:11px;color:rgba(255,255,255,0.75);">Gastos</div><div class="mono" style="font-size:16px;font-weight:700;">{{ profile.expense }}</div></div>
+    <div><div style="font-size:11px;color:rgba(255,255,255,0.75);">Neto</div><div class="mono" style="font-size:16px;font-weight:700;">{{ profile.net }}</div></div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1.3fr;gap:16px;align-items:start;margin-bottom:20px;">
+  <div class="card" style="min-width:0;">
+    <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Añadir movimiento</div>
+    <form method="get" action="/{{ profile.id }}" id="type-switch-form">
+      <input type="hidden" name="form_type" id="form_type_hidden" value="{{ profile.form_type }}">
+    </form>
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <button type="button" onclick="document.getElementById('form_type_hidden').value='income';document.getElementById('type-switch-form').submit();"
+        style="flex:1;padding:9px;border-radius:11px;border:1px solid var(--borderInput);cursor:pointer;font-size:12.5px;font-weight:700;background:{{ '#3FA65C' if profile.form_type == 'income' else 'var(--card)' }};color:{{ '#fff' if profile.form_type == 'income' else 'var(--ink)' }};">Ingreso</button>
+      <button type="button" onclick="document.getElementById('form_type_hidden').value='expense';document.getElementById('type-switch-form').submit();"
+        style="flex:1;padding:9px;border-radius:11px;border:1px solid var(--borderInput);cursor:pointer;font-size:12.5px;font-weight:700;background:{{ '#E2574C' if profile.form_type == 'expense' else 'var(--card)' }};color:{{ '#fff' if profile.form_type == 'expense' else 'var(--ink)' }};">Gasto</button>
+    </div>
+    <form method="post" action="/{{ profile.id }}/transactions" enctype="multipart/form-data" class="form-col">
+      <input type="hidden" name="type" value="{{ profile.form_type }}">
+      <select name="category" class="input">
+        {% for c in profile.categories %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+      </select>
+      <select name="account_id" class="input">
+        {% for ac in accounts %}<option value="{{ ac.id }}">{{ ac.name }}</option>{% endfor %}
+      </select>
+      <input type="number" step="0.01" name="amount" placeholder="Importe (€)" class="input mono" required>
+      <input type="date" name="date" value="{{ today_iso }}" class="input mono" required>
+      <input type="text" name="note" placeholder="Nota (opcional)" class="input">
+      <label style="display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:10px;border:1px dashed var(--borderInput);font-size:12px;color:var(--secondary);cursor:pointer;">
+        📎 Adjuntar recibo
+        <input type="file" name="attachment" style="display:none;">
+      </label>
+      <button type="submit" class="btn" style="margin-top:2px;">Añadir</button>
+    </form>
+  </div>
+
+  <div style="display:flex;flex-direction:column;gap:16px;min-width:0;">
+    <div class="card">
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Tendencia mensual (neto)</div>
+      <svg viewBox="0 0 600 170" style="width:100%;height:140px;overflow:visible;">
+        <polyline points="{{ profile.line_points }}" fill="none" stroke="{{ profile.color }}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>
+        {% for d in profile.line_dots %}
+        <circle cx="{{ d.x }}" cy="{{ d.y }}" r="3.5" fill="{{ profile.color }}"></circle>
+        <text x="{{ d.x }}" y="164" font-size="11" text-anchor="middle" fill="var(--secondary)">{{ d.label }}</text>
+        {% endfor %}
+      </svg>
+    </div>
+    <div class="card">
+      <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Gastos por categoría</div>
+      {% if profile.has_expenses %}
+      <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;">
+        <svg viewBox="0 0 180 180" width="140" height="140" style="flex-shrink:0;">
+          <circle cx="90" cy="90" r="60" fill="none" stroke="var(--trackBg)" stroke-width="24"></circle>
+          {% for seg in profile.donut_segs %}
+          <circle cx="90" cy="90" r="60" fill="none" stroke="{{ seg.color }}" stroke-width="24" stroke-dasharray="{{ seg.dash }}" stroke-dashoffset="{{ seg.offset }}" transform="rotate(-90 90 90)"></circle>
+          {% endfor %}
+        </svg>
+        <div style="display:flex;flex-direction:column;gap:7px;flex:1;min-width:130px;">
+          {% for seg in profile.donut_segs %}
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:12px;">
+            <span style="display:flex;align-items:center;gap:6px;color:var(--secondaryAlt);"><span style="width:8px;height:8px;border-radius:50%;background:{{ seg.color }};display:inline-block;flex-shrink:0;"></span>{{ seg.name }}</span>
+            <span class="mono" style="color:var(--secondary);">{{ seg.pct }}%</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% else %}
+      <div class="empty-note">Aún no hay gastos en este perfil.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:20px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+    <div style="font-size:14px;font-weight:700;">Presupuestos</div>
+    <div style="font-size:11.5px;color:var(--secondary);">Este mes</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:14px;">
+    {% for b in profile.budgets %}
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:12.5px;margin-bottom:6px;flex-wrap:wrap;gap:6px;">
+        <span style="font-weight:700;">{{ b.category }}</span>
+        <span class="mono" style="color:var(--secondary);">{{ b.spent_label }} / {{ b.allocated_label }}</span>
+      </div>
+      <div class="track-bar" style="margin-bottom:6px;"><div class="track-fill" style="width:{{ b.pct_width }};background:{{ b.bar_color }};"></div></div>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:11.5px;color:var(--secondary);">
+        {% if b.has_suggestion %}
+        <span>Sugerencia: <span class="mono">{{ b.suggestion_label }}</span></span>
+        <form method="post" action="/{{ profile.id }}/budgets/{{ b.category }}/apply-suggestion" style="display:inline;">
+          <input type="hidden" name="suggestion" value="{{ b.suggestion }}">
+          <button type="submit" style="border:none;background:none;padding:0;color:{{ profile.color }};font-weight:700;cursor:pointer;font-size:11.5px;">Usar sugerencia</button>
+        </form>
+        {% endif %}
+        <form method="post" action="/{{ profile.id }}/budgets/{{ b.category }}/topup" style="display:inline;">
+          <button type="submit" style="border:none;background:none;padding:0;cursor:pointer;font-weight:700;color:var(--ink);font-size:11.5px;">+10€ top-up</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  <form method="post" action="/{{ profile.id }}/budgets/rebalance" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;padding-top:14px;border-top:1px solid var(--border);align-items:center;">
+    <span style="font-size:11.5px;color:var(--secondary);">Reequilibrar:</span>
+    <select name="from_category" class="input-sm">
+      {% for b in profile.budgets %}<option value="{{ b.category }}" {{ 'selected' if b.category == rebalance_from else '' }}>{{ b.category }}</option>{% endfor %}
+    </select>
+    <span style="font-size:12px;color:var(--secondary);">→</span>
+    <select name="to_category" class="input-sm">
+      {% for b in profile.budgets %}<option value="{{ b.category }}" {{ 'selected' if b.category == rebalance_to else '' }}>{{ b.category }}</option>{% endfor %}
+    </select>
+    <input type="number" step="0.01" name="amount" placeholder="€" class="input-sm mono" style="width:70px;">
+    <button type="submit" class="btn-sm" style="background:{{ profile.color }};color:#fff;">Mover</button>
+  </form>
+</div>
+
+<div class="card">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+    <div style="font-size:14px;font-weight:700;">Historial</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <form method="get" action="/{{ profile.id }}">
+        <input type="text" name="search" placeholder="Buscar..." value="{{ search }}" class="input-sm" style="width:150px;" onchange="this.form.submit()">
+      </form>
+    </div>
+  </div>
+  <form method="post" action="/{{ profile.id }}/transactions/bulk-delete" id="bulk-form">
+  <div style="overflow-x:auto;">
+    <table style="min-width:520px;">
+      <thead><tr>
+        <th style="padding:0 8px 10px 0;"></th>
+        <th>Fecha</th><th>Categoría</th><th>Nota</th><th style="text-align:right;">Importe</th><th></th>
+      </tr></thead>
+      <tbody>
+        {% for t in profile.history %}
+        <tr class="row">
+          <td style="padding:10px 8px 10px 0;"><input type="checkbox" name="tx_id" value="{{ t.id }}"></td>
+          <td style="font-size:12px;color:var(--secondary);white-space:nowrap;">{{ t.date_label|date_es }}</td>
+          <td style="font-size:13px;">{{ t.category }}</td>
+          <td style="font-size:12px;color:var(--secondary);">{{ t.note }}</td>
+          <td style="text-align:right;" class="mono">{{ t.amount_label }}</td>
+          <td style="text-align:right;">
+            <button type="submit" formaction="/{{ profile.id }}/transactions/{{ t.id }}/delete" style="border:none;background:none;padding:0;cursor:pointer;font-size:11.5px;color:var(--muted);">Eliminar</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% if not profile.history %}<div class="empty-note">No hay movimientos que coincidan.</div>{% endif %}
+  </div>
+  <div style="display:flex;gap:8px;margin-top:12px;">
+    <select name="category" class="input-sm">
+      <option value="">Cambiar categoría…</option>
+      {% for c in profile.categories %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
+    </select>
+    <button type="submit" formaction="/{{ profile.id }}/transactions/bulk-category" class="btn-sm btn-track">Cambiar categoría</button>
+    <button type="submit" class="btn-sm btn-danger">Eliminar selección</button>
+  </div>
+  </form>
+</div>
+{% endblock %}

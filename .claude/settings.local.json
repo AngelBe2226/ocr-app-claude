@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(unzip -l \"/Users/angel/Downloads/Personal Finance Dashboard Design.zip\")",
+      "Bash(mkdir -p /private/tmp/claude-501/-Users-angel-Documents-GitHub-ocr-app-claude/b5b080ab-45f1-4ed9-bf7b-de9ca2457131/scratchpad/finance_design)",
+      "Bash(unzip -o \"/Users/angel/Downloads/Personal Finance Dashboard Design.zip\")",
+      "Bash(ls -la /Users/angel/Documents/GitHub/ 2>&1)",
+      "Bash(mkdir -p app/routers app/templates/partials static && python3 --version)",
+      "Bash(python3 -)",
+      "Bash(pip3 install *)",
+      "Bash(python3 -c \"import app.main\")",
+      "Bash(curl -s http://127.0.0.1:8000/static/style.css)",
+      "Bash(curl -s -c /tmp/cookies.txt -b /tmp/cookies.txt -X POST http://127.0.0.1:8000/login -d \"email=angelgbct@gmail.com&password=finanzas123\" -o /dev/null -w \"%{http_code}\\\\n\")",
+      "Bash(curl -s -b /tmp/cookies.txt http://127.0.0.1:8000/reports/export.csv)",
+      "Bash(curl -s -b /tmp/cookies.txt http://127.0.0.1:8000/settings/backup.json)",
+      "Bash(curl -s -b /tmp/cookies.txt -X POST http://127.0.0.1:8000/settings/accent -d \"key=teal\" -o /dev/null -w \"%{http_code}\\\\n\")",
+      "Bash(curl -s -b /tmp/cookies.txt -X POST http://127.0.0.1:8000/settings/theme -o /dev/null -w \"%{http_code}\\\\n\")",
+      "Bash(curl -s -b /tmp/cookies.txt -X POST http://127.0.0.1:8000/settings/family/remove/1 -o /dev/null -w \"%{http_code}\\\\n\")"
+    ]
+  }
+}

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mis Finanzas</title>
+<link rel="stylesheet" href="/static/style.css?v={{ static_version }}">
+<script src="https://unpkg.com/htmx.org@1.9.12"></script>
+<style>
+:root {
+  --bg: {{ T.bg }}; --card: {{ T.card }}; --ink: {{ T.ink }}; --secondary: {{ T.secondary }}; --secondaryAlt: {{ T.secondaryAlt }};
+  --border: {{ T.border }}; --borderStrong: {{ T.borderStrong }}; --borderInput: {{ T.borderInput }};
+  --shadow: {{ T.shadow }}; --muted: {{ T.muted }}; --trackBg: {{ T.trackBg }};
+  --solidBtnBg: {{ T.solidBtnBg }}; --solidBtnColor: {{ T.solidBtnColor }}; --navActiveBg: {{ T.navActiveBg }};
+  --accent: {{ accent_hex }}; --accentSoft: {{ accent_hex_soft }};
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <div class="sidebar">
+    <div style="padding:4px 10px 20px;">
+      <div class="sidebar-title">Mis Finanzas</div>
+      <div class="sidebar-date">{{ current_date_label }}</div>
+    </div>
+    {% for item in sidebar_items %}
+      {% if item.is_label %}
+        <div class="sidebar-label">{{ item.label }}</div>
+      {% else %}
+        <a href="/{{ '' if item.id == 'overview' else item.id }}" class="sidebar-link {{ 'active' if item.active else '' }}">
+          <span class="nav-dot" style="background:{{ item.dot }};"></span>
+          <span class="label">{{ item.label }}</span>
+        </a>
+      {% endif %}
+    {% endfor %}
+    <div class="sidebar-bottom">
+      <form method="post" action="/settings/theme">
+        <button type="submit" class="theme-toggle-row" style="width:100%;">
+          <span style="font-size:12.5px;color:var(--ink);font-weight:600;">Modo oscuro</span>
+          <span class="toggle-track" style="background:{{ theme_track_bg }};">
+            <span class="knob" style="left:{{ theme_knob_left }};"></span>
+          </span>
+        </button>
+      </form>
+      <div class="footnote">Uso personal · sin planes premium</div>
+    </div>
+  </div>
+
+  <div class="main-col">
+    <div class="mobile-topbar">Mis Finanzas</div>
+
+    <div class="page">
+      {% block content %}{% endblock %}
+      <div style="height: 36px;"></div>
+    </div>
+  </div>
+
+  <div class="bottom-nav">
+    {% for tab in bottom_tabs %}
+      {% if tab.id == 'more' %}
+        <div class="tab" onclick="document.getElementById('more-sheet-wrap').style.display='block'">
+          <span class="nav-dot" style="background:var(--secondary);"></span>
+          <span class="label" style="color:var(--secondary);">{{ tab.label }}</span>
+        </div>
+      {% else %}
+        <a href="/{{ '' if tab.id == 'overview' else tab.id }}" class="tab">
+          <span class="nav-dot" style="background:{{ 'var(--accent)' if tab.active else 'var(--secondary)' }};"></span>
+          <span class="label" style="font-weight:{{ '700' if tab.active else '500' }};color:{{ 'var(--ink)' if tab.active else 'var(--secondary)' }};">{{ tab.label }}</span>
+        </a>
+      {% endif %}
+    {% endfor %}
+  </div>
+  <div id="more-sheet-wrap" style="display:none;">
+    <div class="more-sheet-backdrop" onclick="document.getElementById('more-sheet-wrap').style.display='none'"></div>
+    <div class="more-sheet">
+      {% for item in more_items %}
+        <a href="/{{ item.id }}" class="item">
+          <span class="nav-dot" style="background:{{ item.dot }};"></span>
+          <span style="font-size:14px;font-weight:600;">{{ item.label }}</span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="margin-bottom:18px;"><div class="page-title">Metas</div><div class="page-subtitle">Objetivos de ahorro con fecha y progreso</div></div>
+<div class="grid-auto" style="margin-bottom:24px;">
+  {% for g in goals %}
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px;">
+      <svg viewBox="0 0 72 72" width="56" height="56" style="flex-shrink:0;">
+        <circle cx="36" cy="36" r="30" fill="none" stroke="var(--trackBg)" stroke-width="8"></circle>
+        <circle cx="36" cy="36" r="30" fill="none" stroke="{{ g.color }}" stroke-width="8" stroke-linecap="round" stroke-dasharray="{{ g.dash }}" transform="rotate(-90 36 36)"></circle>
+        <text x="36" y="41" font-size="12" font-family="Space Mono, monospace" font-weight="700" text-anchor="middle" fill="var(--ink)">{{ g.pct_label }}</text>
+      </svg>
+      <div style="min-width:0;flex:1;">
+        <div style="font-size:14px;font-weight:700;">{{ g.name }}</div>
+        <div style="font-size:11.5px;color:var(--secondary);margin-top:2px;">Meta: {{ g.target_date|date_es }}</div>
+      </div>
+      <form method="post" action="/goals/{{ g.id }}/delete"><button type="submit" style="border:none;background:none;padding:0;cursor:pointer;font-size:11.5px;color:var(--muted);">Eliminar</button></form>
+    </div>
+    <div class="mono" style="font-size:13px;color:var(--secondary);margin-bottom:10px;">{{ g.current }} / {{ g.target }}</div>
+    <form method="post" action="/goals/{{ g.id }}/contribute" style="display:flex;gap:8px;">
+      <input type="number" step="0.01" name="amount" placeholder="Añadir €" class="input-sm mono" style="flex:1;">
+      <button type="submit" class="btn-sm" style="background:{{ g.color }};color:#fff;">Añadir</button>
+    </form>
+  </div>
+  {% endfor %}
+</div>
+<div class="card" style="max-width:460px;">
+  <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Nueva meta</div>
+  <form method="post" action="/goals" class="form-col">
+    <input type="text" name="name" placeholder="Nombre de la meta" class="input" required>
+    <div class="grid-2">
+      <input type="number" step="0.01" name="target" placeholder="Objetivo (€)" class="input mono" required>
+      <input type="date" name="target_date" class="input mono" required>
+    </div>
+    <button type="submit" class="btn">Crear meta</button>
+  </form>
+</div>
+{% endblock %}

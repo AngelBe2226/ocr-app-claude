@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mis Finanzas — Iniciar sesión</title>
+<link rel="stylesheet" href="/static/style.css?v={{ static_version }}">
+<style>
+:root {
+  --bg: #FAF9F6; --card: #FFFFFF; --ink: #211F1A; --secondary: #7A756C; --secondaryAlt: #57534A;
+  --border: rgba(33,31,26,0.07); --borderStrong: rgba(33,31,26,0.1); --borderInput: rgba(33,31,26,0.14);
+  --shadow: 0 2px 10px rgba(33,31,26,0.06); --muted: #A39C90; --trackBg: #F0EDE6;
+  --solidBtnBg: #211F1A; --solidBtnColor: #FAF9F6; --navActiveBg: #F3F1EA; --accent: #12898F; --accentSoft: #5cbcc0;
+}
+body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+</style>
+</head>
+<body>
+  <form method="post" action="/login" class="card" style="width:320px;">
+    <div style="font-size:20px;font-weight:800;margin-bottom:4px;">Mis Finanzas</div>
+    <div style="font-size:13px;color:var(--secondary);margin-bottom:18px;">Inicia sesión para continuar</div>
+    {% if error %}
+      <div style="background:rgba(226,87,76,0.12);color:#E2574C;font-size:12.5px;padding:8px 10px;border-radius:10px;margin-bottom:12px;">{{ error }}</div>
+    {% endif %}
+    <div class="form-col">
+      <input class="input" type="email" name="email" placeholder="Correo electrónico" required>
+      <input class="input" type="password" name="password" placeholder="Contraseña" required>
+      <button type="submit" class="btn" style="margin-top:4px;">Entrar</button>
+    </div>
+  </form>
+</body>
+</html>

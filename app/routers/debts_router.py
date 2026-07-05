@@ -1,0 +1,105 @@
+from fastapi import APIRouter, Depends, Form, Request
+from fastapi.responses import RedirectResponse
+from sqlalchemy.orm import Session
+
+from app.auth import get_current_user
+from app.database import get_db
+from app.finance import amortize, fmt_eur, payoff_date_label, ring_dash
+from app.models import Bill, Loan, User
+from app.templates_env import templates
+from app.view_context import base_context
+
+router = APIRouter()
+
+
+@router.get("/debts")
+def debts_page(request: Request, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    ctx = base_context(db, user, "debts")
+    A = ctx["A"]
+
+    loans = db.query(Loan).filter(Loan.user_id == user.id).order_by(Loan.id).all()
+    bills = db.query(Bill).filter(Bill.user_id == user.id).order_by(Bill.id).all()
+
+    amort_all = [amortize(l.balance, l.rate, l.payment) for l in loans]
+    loans_out = []
+    for l, amort in zip(loans, amort_all):
+        pct = min(1.0, 1 - (l.balance / l.principal)) if l.principal else 0
+        loans_out.append({
+            "id": l.id, "name": l.name, "balance": fmt_eur(l.balance), "payment": fmt_eur(l.payment),
+            "rate": f"{l.rate:.2f}%", "flagged": amort["never_pays_off"],
+            "border_color": "rgba(226,87,76,0.4)" if amort["never_pays_off"] else None,
+            "ring_color": A("#E2574C" if amort["never_pays_off"] else "#12898F"),
+            "dash": ring_dash(pct), "pct_label": f"{round(pct * 100)}%",
+            "total_interest": fmt_eur(amort["total_interest"]),
+            "payoff_date": payoff_date_label(amort["payoff_month"], amort["never_pays_off"]),
+        })
+
+    bills_out = []
+    for b in bills:
+        pct = min(1.0, b.paid / b.amount) if b.amount else 0
+        bills_out.append({
+            "id": b.id, "name": b.name, "due_day": b.due_day, "paid": fmt_eur(b.paid), "amount": fmt_eur(b.amount),
+            "pct_width": f"{round(pct * 100)}%", "bar_color": "#3FA65C" if pct >= 1 else A("#D9932E"),
+            "toggle_label": "Marcar como pendiente" if b.paid >= b.amount else "Marcar como pagada",
+        })
+
+    total_debt = sum(l.balance for l in loans)
+    total_payment = sum(l.payment for l in loans)
+    any_never = any(a["never_pays_off"] for a in amort_all)
+    max_months = max([0] + [a["payoff_month"] or 0 for a in amort_all if not a["never_pays_off"]])
+    if not loans:
+        debt_free_date = "—"
+    elif any_never:
+        debt_free_date = "Indeterminado"
+    else:
+        debt_free_date = payoff_date_label(max_months, False, long=True)
+
+    kpis = [
+        {"label": "Deuda pendiente", "value": fmt_eur(total_debt), "color": A("#D9932E")},
+        {"label": "Pago mensual total", "value": fmt_eur(total_payment), "color": A("#12898F")},
+        {"label": "Préstamos activos", "value": str(len(loans)), "color": ctx["T"]["ink"]},
+        {"label": "Libre de deudas (est.)", "value": debt_free_date, "color": A("#E2574C" if any_never else "#3FA65C")},
+    ]
+
+    return templates.TemplateResponse(request, "debts.html", {
+        **ctx, "kpis": kpis, "loans": loans_out, "bills": bills_out,
+    })
+
+
+@router.post("/loans")
+def add_loan(
+    name: str = Form(...), principal: float = Form(...), balance: float = Form(...),
+    rate: float = Form(...), payment: float = Form(...),
+    db: Session = Depends(get_db), user: User = Depends(get_current_user),
+):
+    db.add(Loan(user_id=user.id, name=name, principal=principal, balance=balance, rate=rate, payment=payment))
+    db.commit()
+    return RedirectResponse("/debts", status_code=303)
+
+
+@router.post("/loans/{loan_id}/delete")
+def delete_loan(loan_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    l = db.query(Loan).filter(Loan.id == loan_id, Loan.user_id == user.id).first()
+    if l:
+        db.delete(l)
+        db.commit()
+    return RedirectResponse("/debts", status_code=303)
+
+
+@router.post("/bills")
+def add_bill(
+    name: str = Form(...), amount: float = Form(...), due_day: int = Form(...),
+    db: Session = Depends(get_db), user: User = Depends(get_current_user),
+):
+    db.add(Bill(user_id=user.id, name=name, amount=amount, due_day=due_day, paid=0))
+    db.commit()
+    return RedirectResponse("/debts", status_code=303)
+
+
+@router.post("/bills/{bill_id}/toggle")
+def toggle_bill(bill_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    b = db.query(Bill).filter(Bill.id == bill_id, Bill.user_id == user.id).first()
+    if b:
+        b.paid = 0 if b.paid >= b.amount else b.amount
+        db.commit()
+    return RedirectResponse("/debts", status_code=303)

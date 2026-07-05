@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="margin-bottom:18px;"><div class="page-title">Deudas y Facturas</div><div class="page-subtitle">Préstamos, proyección de pago y facturas recurrentes</div></div>
+
+<div class="grid-auto" style="margin-bottom:22px;">
+  {% for k in kpis %}
+  <div class="card card-pad-18">
+    <div style="font-size:12px;color:var(--secondary);margin-bottom:8px;">{{ k.label }}</div>
+    <div class="mono" style="font-size:19px;font-weight:700;color:{{ k.color }};">{{ k.value }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-bottom:20px;">
+  {% for l in loans %}
+  <div class="card" style="min-width:0;{{ 'border-color:' ~ l.border_color ~ ';' if l.border_color else '' }}">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;">
+      <svg viewBox="0 0 72 72" width="52" height="52" style="flex-shrink:0;">
+        <circle cx="36" cy="36" r="30" fill="none" stroke="var(--trackBg)" stroke-width="8"></circle>
+        <circle cx="36" cy="36" r="30" fill="none" stroke="{{ l.ring_color }}" stroke-width="8" stroke-linecap="round" stroke-dasharray="{{ l.dash }}" transform="rotate(-90 36 36)"></circle>
+        <text x="36" y="41" font-size="11.5" font-family="Space Mono, monospace" font-weight="700" text-anchor="middle" fill="var(--ink)">{{ l.pct_label }}</text>
+      </svg>
+      <div style="flex:1;min-width:0;"><div style="font-size:15px;font-weight:700;">{{ l.name }}</div><div style="font-size:11.5px;color:var(--secondary);">Pagado</div></div>
+      <form method="post" action="/loans/{{ l.id }}/delete"><button type="submit" style="border:none;background:none;padding:0;cursor:pointer;font-size:11.5px;color:var(--muted);">Eliminar</button></form>
+    </div>
+    {% if l.flagged %}
+    <div style="background:rgba(226,87,76,0.12);color:#E2574C;font-size:11.5px;padding:8px 10px;border-radius:10px;margin-bottom:12px;font-weight:600;">⚠ La cuota no cubre el interés generado</div>
+    {% endif %}
+    <div class="grid-2" style="font-size:12.5px;margin-bottom:12px;">
+      <div><div style="color:var(--secondary);margin-bottom:2px;">Saldo restante</div><div class="mono" style="font-weight:700;">{{ l.balance }}</div></div>
+      <div><div style="color:var(--secondary);margin-bottom:2px;">Cuota mensual</div><div class="mono">{{ l.payment }}</div></div>
+      <div><div style="color:var(--secondary);margin-bottom:2px;">Interés anual</div><div class="mono">{{ l.rate }}</div></div>
+      <div><div style="color:var(--secondary);margin-bottom:2px;">Interés restante</div><div class="mono">{{ l.total_interest }}</div></div>
+    </div>
+    <div style="font-size:12px;color:var(--secondary);">Libre de deuda: <span style="color:var(--ink);font-weight:700;">{{ l.payoff_date }}</span></div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="card" style="margin-bottom:20px;">
+  <div style="font-size:14px;font-weight:700;margin-bottom:14px;">Facturas recurrentes</div>
+  <div style="display:flex;flex-direction:column;gap:14px;">
+    {% for bl in bills %}
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;font-size:13px;margin-bottom:6px;flex-wrap:wrap;gap:6px;">
+        <span style="font-weight:700;">{{ bl.name }}</span>
+        <span style="font-size:11.5px;color:var(--secondary);">Vence el día {{ bl.due_day }} · <span class="mono">{{ bl.paid }} / {{ bl.amount }}</span></span>
+      </div>
+      <div class="track-bar" style="margin-bottom:6px;"><div class="track-fill" style="width:{{ bl.pct_width }};background:{{ bl.bar_color }};"></div></div>
+      <form method="post" action="/bills/{{ bl.id }}/toggle"><button type="submit" style="border:none;background:none;padding:0;font-size:11.5px;color:var(--accent);font-weight:700;cursor:pointer;">{{ bl.toggle_label }}</button></form>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+  <div class="card">
+    <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Añadir préstamo</div>
+    <form method="post" action="/loans" class="form-col">
+      <input type="text" name="name" placeholder="Nombre" class="input" required>
+      <div class="grid-2">
+        <input type="number" step="0.01" name="principal" placeholder="Principal (€)" class="input mono" required>
+        <input type="number" step="0.01" name="balance" placeholder="Saldo actual (€)" class="input mono" required>
+        <input type="number" step="0.01" name="rate" placeholder="Interés anual (%)" class="input mono" required>
+        <input type="number" step="0.01" name="payment" placeholder="Cuota mensual (€)" class="input mono" required>
+      </div>
+      <button type="submit" class="btn">Añadir préstamo</button>
+    </form>
+  </div>
+  <div class="card">
+    <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Añadir factura</div>
+    <form method="post" action="/bills" class="form-col">
+      <input type="text" name="name" placeholder="Nombre" class="input" required>
+      <div class="grid-2">
+        <input type="number" step="0.01" name="amount" placeholder="Importe (€)" class="input mono" required>
+        <input type="number" name="due_day" placeholder="Día de vencimiento" class="input mono" required>
+      </div>
+      <button type="submit" class="btn">Añadir factura</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
