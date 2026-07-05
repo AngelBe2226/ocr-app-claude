@@ -1,4 +1,5 @@
 import os
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse
@@ -13,11 +14,18 @@ from app.routers import (
 )
 from app.seed import seed_if_empty
 
-Base.metadata.create_all(bind=engine)
-with SessionLocal() as db:
-    seed_if_empty(db)
 
-app = FastAPI(title="Mis Finanzas")
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Arranque: crea las tablas y siembra los datos iniciales si la BD está vacía.
+    Base.metadata.create_all(bind=engine)
+    with SessionLocal() as db:
+        seed_if_empty(db)
+    yield
+    # Apagado: nada que limpiar por ahora.
+
+
+app = FastAPI(title="Mis Finanzas", lifespan=lifespan)
 app.add_middleware(SessionMiddleware, secret_key=os.environ.get("SESSION_SECRET", "dev-secret-mis-finanzas"))
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
