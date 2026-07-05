@@ -30,7 +30,13 @@
       "Bash(brew --version)",
       "Bash(brew install *)",
       "Bash(curl -sv https://github.com -o /dev/null)",
-      "Bash(GIT_CURL_VERBOSE=1 git ls-remote origin HEAD)"
+      "Bash(GIT_CURL_VERBOSE=1 git ls-remote origin HEAD)",
+      "Bash(python3 -c \"import ast; ast.parse\\(open\\('app/database.py'\\).read\\(\\)\\); print\\('OK: no syntax error'\\)\")",
+      "Bash(python3 -c \"import app.database; print\\('imports fine, engine:', app.database.engine\\)\")",
+      "Bash(python3 -c ' *)",
+      "Bash(python3 -c \"import fastapi, starlette; print\\('fastapi', fastapi.__version__\\); print\\('starlette', starlette.__version__\\)\")",
+      "Bash(python3 -c \"import starlette; print\\('starlette', starlette.__version__\\)\")",
+      "Bash(python3 -W ignore -c ' *)"
     ]
   }
 }

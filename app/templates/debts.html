@@ -33,6 +33,20 @@
       <div><div style="color:var(--secondary);margin-bottom:2px;">Interés restante</div><div class="mono">{{ l.total_interest }}</div></div>
     </div>
     <div style="font-size:12px;color:var(--secondary);">Libre de deuda: <span style="color:var(--ink);font-weight:700;">{{ l.payoff_date }}</span></div>
+
+    <details class="edit">
+      <summary>Editar</summary>
+      <form method="post" action="/loans/{{ l.id }}/edit" class="form-col">
+        <input type="text" name="name" value="{{ l.name }}" placeholder="Nombre" class="input" required>
+        <div class="grid-2">
+          <input type="number" step="0.01" name="principal" value="{{ l.raw_principal }}" placeholder="Principal (€)" class="input mono" required>
+          <input type="number" step="0.01" name="balance" value="{{ l.raw_balance }}" placeholder="Saldo actual (€)" class="input mono" required>
+          <input type="number" step="0.01" name="rate" value="{{ l.raw_rate }}" placeholder="Interés anual (%)" class="input mono" required>
+          <input type="number" step="0.01" name="payment" value="{{ l.raw_payment }}" placeholder="Cuota mensual (€)" class="input mono" required>
+        </div>
+        <button type="submit" class="btn">Guardar cambios</button>
+      </form>
+    </details>
   </div>
   {% endfor %}
 </div>
@@ -47,7 +61,20 @@
         <span style="font-size:11.5px;color:var(--secondary);">Vence el día {{ bl.due_day }} · <span class="mono">{{ bl.paid }} / {{ bl.amount }}</span></span>
       </div>
       <div class="track-bar" style="margin-bottom:6px;"><div class="track-fill" style="width:{{ bl.pct_width }};background:{{ bl.bar_color }};"></div></div>
-      <form method="post" action="/bills/{{ bl.id }}/toggle"><button type="submit" style="border:none;background:none;padding:0;font-size:11.5px;color:var(--accent);font-weight:700;cursor:pointer;">{{ bl.toggle_label }}</button></form>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <form method="post" action="/bills/{{ bl.id }}/toggle"><button type="submit" style="border:none;background:none;padding:0;font-size:11.5px;color:var(--accent);font-weight:700;cursor:pointer;">{{ bl.toggle_label }}</button></form>
+        <details class="edit" style="margin:0;border:none;padding:0;">
+          <summary>Editar</summary>
+          <form method="post" action="/bills/{{ bl.id }}/edit" class="form-col" style="margin-top:10px;">
+            <input type="text" name="name" value="{{ bl.name }}" placeholder="Nombre" class="input" required>
+            <div class="grid-2">
+              <input type="number" step="0.01" name="amount" value="{{ bl.raw_amount }}" placeholder="Importe (€)" class="input mono" required>
+              <input type="number" name="due_day" value="{{ bl.raw_due_day }}" placeholder="Día de vencimiento" class="input mono" required>
+            </div>
+            <button type="submit" class="btn">Guardar cambios</button>
+          </form>
+        </details>
+      </div>
     </div>
     {% endfor %}
   </div>

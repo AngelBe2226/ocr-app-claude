@@ -35,6 +35,7 @@ SIDEBAR_DEF = [
     {"id": "personal", "label": "Personal", "kind": "link"},
     {"label": "Gestión", "kind": "label"},
     {"id": "accounts", "label": "Cuentas", "kind": "link"},
+    {"id": "categories", "label": "Categorías", "kind": "link"},
     {"id": "goals", "label": "Metas", "kind": "link"},
     {"id": "debts", "label": "Deudas y Facturas", "kind": "link"},
     {"id": "reports", "label": "Informes", "kind": "link"},
@@ -56,6 +57,7 @@ MORE_DEF = [
     {"id": "freelance", "label": "Freelance"},
     {"id": "personal", "label": "Personal"},
     {"id": "accounts", "label": "Cuentas"},
+    {"id": "categories", "label": "Categorías"},
     {"id": "reports", "label": "Informes"},
     {"id": "settings", "label": "Ajustes"},
 ]

@@ -21,6 +21,19 @@
       <input type="number" step="0.01" name="amount" placeholder="Añadir €" class="input-sm mono" style="flex:1;">
       <button type="submit" class="btn-sm" style="background:{{ g.color }};color:#fff;">Añadir</button>
     </form>
+
+    <details class="edit">
+      <summary>Editar</summary>
+      <form method="post" action="/goals/{{ g.id }}/edit" class="form-col">
+        <input type="text" name="name" value="{{ g.name }}" placeholder="Nombre de la meta" class="input" required>
+        <div class="grid-2">
+          <input type="number" step="0.01" name="target" value="{{ g.target_value }}" placeholder="Objetivo (€)" class="input mono" required>
+          <input type="date" name="target_date" value="{{ g.target_date_value }}" class="input mono" required>
+        </div>
+        <input type="color" name="color" value="{{ g.raw_color }}" class="color-swatch" title="Color">
+        <button type="submit" class="btn">Guardar cambios</button>
+      </form>
+    </details>
   </div>
   {% endfor %}
 </div>

@@ -5,11 +5,27 @@ from datetime import date
 from passlib.hash import bcrypt
 from sqlalchemy.orm import Session
 
-from app.finance import last_n_months
-from app.models import Account, Bill, Budget, Goal, Loan, Settings, Transaction, User
+from app.constants import PROFILES
+from app.finance import hash_color, last_n_months
+from app.models import Account, Bill, Budget, Category, Goal, Loan, Settings, Transaction, User
 
 DEFAULT_EMAIL = "angelgbct@gmail.com"
 DEFAULT_PASSWORD = "finanzas123"
+
+
+def ensure_categories(db: Session) -> None:
+    """Migración idempotente: crea las categorías en BD a partir de las constantes
+    para cualquier usuario que aún no las tenga. Los nombres coinciden con los que
+    ya usan las transacciones/presupuestos, así que el histórico sigue coherente."""
+    for user in db.query(User).all():
+        if db.query(Category).filter(Category.user_id == user.id).first():
+            continue
+        for pid, conf in PROFILES.items():
+            for kind, key in (("income", "income_categories"), ("expense", "expense_categories")):
+                for name in conf[key]:
+                    db.add(Category(user_id=user.id, profile=pid, kind=kind,
+                                    name=name, color=hash_color(name)))
+    db.commit()
 
 
 def days_in_month(y: int, m: int) -> int:

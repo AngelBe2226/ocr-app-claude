@@ -32,6 +32,7 @@ def debts_page(request: Request, db: Session = Depends(get_db), user: User = Dep
             "dash": ring_dash(pct), "pct_label": f"{round(pct * 100)}%",
             "total_interest": fmt_eur(amort["total_interest"]),
             "payoff_date": payoff_date_label(amort["payoff_month"], amort["never_pays_off"]),
+            "raw_principal": l.principal, "raw_balance": l.balance, "raw_rate": l.rate, "raw_payment": l.payment,
         })
 
     bills_out = []
@@ -41,6 +42,7 @@ def debts_page(request: Request, db: Session = Depends(get_db), user: User = Dep
             "id": b.id, "name": b.name, "due_day": b.due_day, "paid": fmt_eur(b.paid), "amount": fmt_eur(b.amount),
             "pct_width": f"{round(pct * 100)}%", "bar_color": "#3FA65C" if pct >= 1 else A("#D9932E"),
             "toggle_label": "Marcar como pendiente" if b.paid >= b.amount else "Marcar como pagada",
+            "raw_amount": b.amount, "raw_due_day": b.due_day,
         })
 
     total_debt = sum(l.balance for l in loans)
@@ -77,6 +79,24 @@ def add_loan(
     return RedirectResponse("/debts", status_code=303)
 
 
+@router.post("/loans/{loan_id}/edit")
+def edit_loan(
+    loan_id: int,
+    name: str = Form(...), principal: float = Form(...), balance: float = Form(...),
+    rate: float = Form(...), payment: float = Form(...),
+    db: Session = Depends(get_db), user: User = Depends(get_current_user),
+):
+    l = db.query(Loan).filter(Loan.id == loan_id, Loan.user_id == user.id).first()
+    if l:
+        l.name = name.strip() or l.name
+        l.principal = principal
+        l.balance = balance
+        l.rate = rate
+        l.payment = payment
+        db.commit()
+    return RedirectResponse("/debts", status_code=303)
+
+
 @router.post("/loans/{loan_id}/delete")
 def delete_loan(loan_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     l = db.query(Loan).filter(Loan.id == loan_id, Loan.user_id == user.id).first()
@@ -93,6 +113,24 @@ def add_bill(
 ):
     db.add(Bill(user_id=user.id, name=name, amount=amount, due_day=due_day, paid=0))
     db.commit()
+    return RedirectResponse("/debts", status_code=303)
+
+
+@router.post("/bills/{bill_id}/edit")
+def edit_bill(
+    bill_id: int,
+    name: str = Form(...), amount: float = Form(...), due_day: int = Form(...),
+    db: Session = Depends(get_db), user: User = Depends(get_current_user),
+):
+    b = db.query(Bill).filter(Bill.id == bill_id, Bill.user_id == user.id).first()
+    if b:
+        b.name = name.strip() or b.name
+        b.amount = amount
+        b.due_day = due_day
+        # Si ya estaba marcada como pagada, mantenemos el importe pagado alineado al nuevo total.
+        if b.paid >= b.amount:
+            b.paid = b.amount
+        db.commit()
     return RedirectResponse("/debts", status_code=303)
 
 

@@ -3,3 +3,4 @@ __pycache__/
 finance.db
 venv/
 .DS_Store
+uploads/

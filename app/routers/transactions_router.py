@@ -3,6 +3,7 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
+from app.categories import category_names
 from app.constants import PROFILE_FILTER_OPTIONS, PROFILES, TYPE_FILTER_OPTIONS
 from app.database import get_db
 from app.finance import filter_transactions, fmt_eur
@@ -23,7 +24,7 @@ def transactions_page(request: Request, db: Session = Depends(get_db), user: Use
     transactions = db.query(Transaction).filter(Transaction.user_id == user.id).all()
     filtered = filter_transactions(transactions, search=search, profile=profile, type_=type_)
 
-    all_categories = sorted({c for p in PROFILES.values() for c in p["income_categories"] + p["expense_categories"]})
+    all_categories = category_names(db, user.id)
     rows = []
     for t in filtered:
         rows.append({
