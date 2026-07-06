@@ -77,8 +77,34 @@
       </div>
     </div>
     {% endfor %}
+    {% if not bills %}<div class="empty-note">No hay facturas pendientes.</div>{% endif %}
   </div>
 </div>
+
+{% if completed_count %}
+<div class="acct-group collapsed" style="margin-bottom:20px;">
+  <div class="card">
+    <div class="group-header collapsible" onclick="toggleGroup(this)" style="padding:2px 0;border:none;text-transform:none;font-size:14px;color:var(--ink);">
+      <span style="display:flex;align-items:center;gap:8px;"><span class="chevron">▶</span>Completadas ({{ completed_count }})</span>
+      <span style="font-size:11.5px;color:var(--secondary);font-weight:600;">saldadas / pagadas</span>
+    </div>
+    <div class="group-body" style="margin-top:12px;display:flex;flex-direction:column;gap:10px;">
+      {% for l in completed_loans %}
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--border);">
+        <span style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;"><span style="color:#3FA65C;">✓</span> {{ l.name }}</span>
+        <span style="display:flex;align-items:center;gap:12px;"><span style="font-size:11.5px;color:#3FA65C;">Préstamo saldado</span><form method="post" action="/loans/{{ l.id }}/delete"><button type="submit" style="border:none;background:none;padding:0;cursor:pointer;font-size:11.5px;color:var(--muted);">Eliminar</button></form></span>
+      </div>
+      {% endfor %}
+      {% for bl in paid_bills %}
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--border);">
+        <span style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;"><span style="color:#3FA65C;">✓</span> {{ bl.name }} <span class="mono" style="color:var(--secondary);font-weight:400;font-size:11.5px;">{{ bl.amount }}</span></span>
+        <form method="post" action="/bills/{{ bl.id }}/toggle"><button type="submit" style="border:none;background:none;padding:0;font-size:11.5px;color:var(--accent);font-weight:700;cursor:pointer;">Marcar como pendiente</button></form>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endif %}
 
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
   <div class="card">

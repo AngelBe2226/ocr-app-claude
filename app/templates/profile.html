@@ -43,13 +43,22 @@
 
   <div style="display:flex;flex-direction:column;gap:16px;min-width:0;">
     <div class="card">
-      <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Tendencia mensual (neto)</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+        <div style="font-size:14px;font-weight:700;">Tendencia mensual</div>
+        <div style="display:flex;gap:14px;font-size:11px;color:var(--secondary);">
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:3px;border-radius:2px;background:{{ profile.color }};"></span>Neto (6m)</span>
+          {% if profile.cumulative_points %}<span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:0;border-top:2px dashed #E2574C;"></span>Gasto acumulado (mes)</span>{% endif %}
+        </div>
+      </div>
       <svg viewBox="0 0 600 170" style="width:100%;height:140px;overflow:visible;">
         <polyline points="{{ profile.line_points }}" fill="none" stroke="{{ profile.color }}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>
         {% for d in profile.line_dots %}
         <circle cx="{{ d.x }}" cy="{{ d.y }}" r="3.5" fill="{{ profile.color }}"></circle>
         <text x="{{ d.x }}" y="164" font-size="11" text-anchor="middle" fill="var(--secondary)">{{ d.label }}</text>
         {% endfor %}
+        {% if profile.cumulative_points %}
+        <polyline points="{{ profile.cumulative_points }}" fill="none" stroke="#E2574C" stroke-width="2.5" stroke-dasharray="6 4" stroke-linecap="round" stroke-linejoin="round"></polyline>
+        {% endif %}
       </svg>
     </div>
     <div class="card">
@@ -121,50 +130,14 @@
 </div>
 
 <div class="card">
-  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:8px;">
     <div style="font-size:14px;font-weight:700;">Historial</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <form method="get" action="/{{ profile.id }}">
-        <input type="text" name="search" placeholder="Buscar..." value="{{ search }}" class="input-sm" style="width:150px;" onchange="this.form.submit()">
-      </form>
-    </div>
+    <form method="get" action="/{{ profile.id }}">
+      <input type="text" name="search" placeholder="Buscar..." value="{{ search }}" class="input-sm" style="width:150px;" onchange="this.form.submit()">
+    </form>
   </div>
-  <form method="post" action="/{{ profile.id }}/transactions/bulk-delete" id="bulk-form">
-  <div style="overflow-x:auto;">
-    <table style="min-width:520px;">
-      <thead><tr>
-        <th style="padding:0 8px 10px 0;"></th>
-        <th>Fecha</th><th>Categoría</th><th>Nota</th><th style="text-align:right;">Importe</th><th></th>
-      </tr></thead>
-      <tbody>
-        {% for t in profile.history %}
-        <tr class="row">
-          <td style="padding:10px 8px 10px 0;"><input type="checkbox" name="tx_id" value="{{ t.id }}"></td>
-          <td style="font-size:12px;color:var(--secondary);white-space:nowrap;">{{ t.date_label|date_es }}</td>
-          <td style="font-size:13px;">{{ t.category }}</td>
-          <td style="font-size:12px;color:var(--secondary);">
-            {{ t.note }}
-            {% if t.place_name %}<span style="white-space:nowrap;"> · 📍 {{ t.place_name }}</span>{% endif %}
-            {% if t.has_receipt %} · <a href="/receipt/{{ t.id }}" target="_blank" class="receipt-link">📎 recibo</a>{% endif %}
-          </td>
-          <td style="text-align:right;" class="mono">{{ t.amount_label }}</td>
-          <td style="text-align:right;">
-            <button type="submit" formaction="/{{ profile.id }}/transactions/{{ t.id }}/delete" style="border:none;background:none;padding:0;cursor:pointer;font-size:11.5px;color:var(--muted);">Eliminar</button>
-          </td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    {% if not profile.history %}<div class="empty-note">No hay movimientos que coincidan.</div>{% endif %}
-  </div>
-  <div style="display:flex;gap:8px;margin-top:12px;">
-    <select name="category" class="input-sm">
-      <option value="">Cambiar categoría…</option>
-      {% for c in profile.bulk_categories %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
-    </select>
-    <button type="submit" formaction="/{{ profile.id }}/transactions/bulk-category" class="btn-sm btn-track">Cambiar categoría</button>
-    <button type="submit" class="btn-sm btn-danger">Eliminar selección</button>
-  </div>
-  </form>
+  {% with groups=profile.history_groups, bulk_prefix="/" ~ profile.id ~ "/transactions", categories=profile.bulk_categories, accounts=accounts, show_profile=False %}
+    {% include "partials/_tx_table.html" %}
+  {% endwith %}
 </div>
 {% endblock %}

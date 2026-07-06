@@ -12,6 +12,9 @@ NEW_COLUMNS = {
         "longitude": "FLOAT",
         "place_name": "VARCHAR DEFAULT ''",
     },
+    "budgets": {
+        "period": "VARCHAR DEFAULT 'monthly'",
+    },
 }
 
 

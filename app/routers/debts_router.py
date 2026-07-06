@@ -20,11 +20,12 @@ def debts_page(request: Request, db: Session = Depends(get_db), user: User = Dep
     loans = db.query(Loan).filter(Loan.user_id == user.id).order_by(Loan.id).all()
     bills = db.query(Bill).filter(Bill.user_id == user.id).order_by(Bill.id).all()
 
-    amort_all = [amortize(l.balance, l.rate, l.payment) for l in loans]
-    loans_out = []
-    for l, amort in zip(loans, amort_all):
+    active_loans, completed_loans = [], []
+    active_amorts = []
+    for l in loans:
+        amort = amortize(l.balance, l.rate, l.payment)
         pct = min(1.0, 1 - (l.balance / l.principal)) if l.principal else 0
-        loans_out.append({
+        card = {
             "id": l.id, "name": l.name, "balance": fmt_eur(l.balance), "payment": fmt_eur(l.payment),
             "rate": f"{l.rate:.2f}%", "flagged": amort["never_pays_off"],
             "border_color": "rgba(226,87,76,0.4)" if amort["never_pays_off"] else None,
@@ -33,23 +34,32 @@ def debts_page(request: Request, db: Session = Depends(get_db), user: User = Dep
             "total_interest": fmt_eur(amort["total_interest"]),
             "payoff_date": payoff_date_label(amort["payoff_month"], amort["never_pays_off"]),
             "raw_principal": l.principal, "raw_balance": l.balance, "raw_rate": l.rate, "raw_payment": l.payment,
-        })
+        }
+        if l.balance <= 0:
+            completed_loans.append(card)
+        else:
+            active_loans.append(card)
+            active_amorts.append(amort)
 
-    bills_out = []
+    pending_bills, paid_bills = [], []
     for b in bills:
         pct = min(1.0, b.paid / b.amount) if b.amount else 0
-        bills_out.append({
+        card = {
             "id": b.id, "name": b.name, "due_day": b.due_day, "paid": fmt_eur(b.paid), "amount": fmt_eur(b.amount),
             "pct_width": f"{round(pct * 100)}%", "bar_color": "#3FA65C" if pct >= 1 else A("#D9932E"),
             "toggle_label": "Marcar como pendiente" if b.paid >= b.amount else "Marcar como pagada",
             "raw_amount": b.amount, "raw_due_day": b.due_day,
-        })
+        }
+        if b.amount and b.paid >= b.amount:
+            paid_bills.append(card)
+        else:
+            pending_bills.append(card)
 
-    total_debt = sum(l.balance for l in loans)
-    total_payment = sum(l.payment for l in loans)
-    any_never = any(a["never_pays_off"] for a in amort_all)
-    max_months = max([0] + [a["payoff_month"] or 0 for a in amort_all if not a["never_pays_off"]])
-    if not loans:
+    total_debt = sum(l.balance for l in loans if l.balance > 0)
+    total_payment = sum(l.payment for l in loans if l.balance > 0)
+    any_never = any(a["never_pays_off"] for a in active_amorts)
+    max_months = max([0] + [a["payoff_month"] or 0 for a in active_amorts if not a["never_pays_off"]])
+    if not active_loans:
         debt_free_date = "—"
     elif any_never:
         debt_free_date = "Indeterminado"
@@ -59,12 +69,14 @@ def debts_page(request: Request, db: Session = Depends(get_db), user: User = Dep
     kpis = [
         {"label": "Deuda pendiente", "value": fmt_eur(total_debt), "color": A("#D9932E")},
         {"label": "Pago mensual total", "value": fmt_eur(total_payment), "color": A("#12898F")},
-        {"label": "Préstamos activos", "value": str(len(loans)), "color": ctx["T"]["ink"]},
+        {"label": "Préstamos activos", "value": str(len(active_loans)), "color": ctx["T"]["ink"]},
         {"label": "Libre de deudas (est.)", "value": debt_free_date, "color": A("#E2574C" if any_never else "#3FA65C")},
     ]
 
+    completed_count = len(completed_loans) + len(paid_bills)
     return templates.TemplateResponse(request, "debts.html", {
-        **ctx, "kpis": kpis, "loans": loans_out, "bills": bills_out,
+        **ctx, "kpis": kpis, "loans": active_loans, "bills": pending_bills,
+        "completed_loans": completed_loans, "paid_bills": paid_bills, "completed_count": completed_count,
     })
 
 

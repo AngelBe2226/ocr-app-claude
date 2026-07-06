@@ -10,8 +10,8 @@ from app.auth import NotAuthenticated
 from app.database import Base, SessionLocal, engine
 from app.migrations import ensure_schema
 from app.routers import (
-    accounts_router, add_router, auth_router, categories_router, debts_router, goals_router,
-    overview_router, profiles_router, reports_router, settings_router, transactions_router,
+    accounts_router, add_router, auth_router, budgets_router, categories_router, debts_router,
+    goals_router, overview_router, profiles_router, reports_router, settings_router, transactions_router,
 )
 from app.seed import ensure_categories, seed_if_empty
 
@@ -46,6 +46,7 @@ app.include_router(overview_router.router)
 # catch-all, otherwise it would swallow paths like /accounts, /goals, etc.
 app.include_router(accounts_router.router)
 app.include_router(categories_router.router)
+app.include_router(budgets_router.router)
 app.include_router(goals_router.router)
 app.include_router(debts_router.router)
 app.include_router(reports_router.router)

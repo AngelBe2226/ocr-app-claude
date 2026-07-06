@@ -9,7 +9,9 @@
 </div>
 
 {% for group in groups %}
-<div class="group-header"><span>{{ group.label }}</span><span class="subtotal">{{ group.subtotal_label }}</span></div>
+<div class="acct-group">
+<div class="group-header collapsible" onclick="toggleGroup(this)"><span style="display:flex;align-items:center;gap:8px;"><span class="chevron">▶</span>{{ group.label }}</span><span class="subtotal">{{ group.subtotal_label }}</span></div>
+<div class="group-body">
 <div class="grid-auto" style="margin-bottom:6px;">
   {% for a in group.accounts %}
   <div class="card card-pad-18">
@@ -59,6 +61,8 @@
     </details>
   </div>
   {% endfor %}
+</div>
+</div>
 </div>
 {% endfor %}
 

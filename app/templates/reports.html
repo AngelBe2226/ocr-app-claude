@@ -1,47 +1,16 @@
 {% extends "base.html" %}
 {% block content %}
-<div style="margin-bottom:18px;"><div class="page-title">Informes</div><div class="page-subtitle">Filtra por perfil, cuenta, categoría y fecha</div></div>
+<div style="margin-bottom:18px;"><div class="page-title">Reportes</div><div class="page-subtitle">Analiza tu dinero desde distintos ángulos</div></div>
 
-<form method="get" action="/reports" class="card" style="margin-bottom:18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
-  <select name="profile" class="input-sm" onchange="this.form.submit()">
-    {% for o in profile_filter_options %}<option value="{{ o.id }}" {{ 'selected' if o.id == filters.profile else '' }}>{{ o.name }}</option>{% endfor %}
-  </select>
-  <select name="type" class="input-sm" onchange="this.form.submit()">
-    {% for o in type_filter_options %}<option value="{{ o.id }}" {{ 'selected' if o.id == filters.type else '' }}>{{ o.name }}</option>{% endfor %}
-  </select>
-  <input type="date" name="date_from" value="{{ filters.date_from }}" class="input-sm mono" onchange="this.form.submit()">
-  <input type="date" name="date_to" value="{{ filters.date_to }}" class="input-sm mono" onchange="this.form.submit()">
-  <span style="margin-left:auto;display:flex;gap:8px;">
-    <a href="/reports/export.csv?{{ request.query_params }}" class="btn-sm btn-track" style="display:inline-block;">Exportar CSV</a>
-    <button type="button" onclick="window.print()" class="btn-sm" style="background:var(--solidBtnBg);color:var(--solidBtnColor);">Exportar PDF</button>
-  </span>
-</form>
-
-<div class="grid-auto" style="margin-bottom:18px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));">
-  {% for k in kpis %}
-  <div class="card card-pad-18">
-    <div style="font-size:12px;color:var(--secondary);margin-bottom:8px;">{{ k.label }}</div>
-    <div class="mono" style="font-size:19px;font-weight:700;color:{{ k.color }};">{{ k.value }}</div>
-  </div>
+<div class="grid-auto" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));">
+  {% for c in cards %}
+  <a href="/reports/{{ c.id }}" class="card card-pad-18" style="display:flex;align-items:center;gap:12px;">
+    <span style="width:40px;height:40px;border-radius:12px;background:var(--trackBg);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;">{{ c.icon }}</span>
+    <div style="min-width:0;">
+      <div style="font-size:14px;font-weight:700;">{{ c.title }}</div>
+      <div style="font-size:11.5px;color:var(--secondary);margin-top:2px;">{{ c.subtitle }}</div>
+    </div>
+  </a>
   {% endfor %}
-</div>
-
-<div class="card">
-  <div style="overflow-x:auto;">
-    <table style="min-width:520px;">
-      <thead><tr><th>Fecha</th><th>Perfil</th><th>Categoría</th><th style="text-align:right;">Importe</th></tr></thead>
-      <tbody>
-        {% for t in rows %}
-        <tr class="row">
-          <td style="font-size:12px;color:var(--secondary);white-space:nowrap;">{{ t.date_label|date_es }}</td>
-          <td style="font-size:12px;"><span class="pill" style="background:{{ t.profile_tint }};color:{{ t.profile_color }};">{{ t.profile_name }}</span></td>
-          <td style="font-size:13px;">{{ t.category }}</td>
-          <td style="text-align:right;" class="mono">{{ t.amount_label }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    {% if empty %}<div class="empty-note">Sin resultados para estos filtros.</div>{% endif %}
-  </div>
 </div>
 {% endblock %}
