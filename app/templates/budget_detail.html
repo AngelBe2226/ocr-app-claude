@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+  <a href="/budgets?period={{ b.period }}" style="font-size:13px;color:var(--secondary);">← Presupuestos</a>
+</div>
+
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+  <span style="width:44px;height:44px;border-radius:50%;background:{{ b.raw_color }}22;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:{{ b.color }};">{{ b.icon }}</span>
+  <div>
+    <div class="page-title" style="font-size:22px;">{{ b.category }}</div>
+    <div class="page-subtitle" style="margin-top:2px;">{{ b.profile_name }} · {{ b.period_label }}</div>
+  </div>
+</div>
+
+<div class="card" style="text-align:center;margin-bottom:14px;padding:14px;">
+  {% if b.on_budget %}
+  <div style="font-size:14px;font-weight:700;color:#3FA65C;">✓ Dentro del presupuesto</div>
+  {% else %}
+  <div style="font-size:14px;font-weight:700;color:#E2574C;">! Has superado el presupuesto</div>
+  {% endif %}
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+  <div class="card" style="text-align:center;"><div style="font-size:12px;color:var(--secondary);margin-bottom:6px;">Restante</div><div class="mono" style="font-size:26px;font-weight:800;">{{ b.remaining_label }}</div></div>
+  <div class="card" style="text-align:center;"><div style="font-size:12px;color:var(--secondary);margin-bottom:6px;">Gastado</div><div class="mono" style="font-size:26px;font-weight:800;">{{ b.spent_label }}</div></div>
+</div>
+
+<div class="card" style="text-align:center;margin-bottom:14px;">
+  <div style="font-size:12px;color:var(--secondary);margin-bottom:6px;">Presupuesto diario</div>
+  <div class="mono" style="font-size:26px;font-weight:800;">{{ b.daily_label }}</div>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+  <div class="card" style="text-align:center;"><div style="font-size:12px;color:var(--secondary);margin-bottom:6px;">Restante</div><div class="mono" style="font-size:22px;font-weight:800;">{{ b.remaining_pct_label }}</div></div>
+  <div class="card" style="text-align:center;"><div style="font-size:12px;color:var(--secondary);margin-bottom:6px;">Presupuestado</div><div class="mono" style="font-size:22px;font-weight:800;">{{ b.allocated_label }}</div></div>
+</div>
+
+<div class="card" style="margin-bottom:14px;">
+  <div class="track-bar" style="margin-bottom:12px;"><div class="track-fill" style="width:{{ b.pct_width }};background:{{ b.bar_color }};"></div></div>
+  <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--secondary);">
+    <span>{{ b.start_label|date_es }}</span>
+    <span style="text-transform:uppercase;letter-spacing:0.03em;font-size:10.5px;font-weight:700;">{{ b.days_remaining }} días restantes</span>
+    <span>{{ b.end_label|date_es }}</span>
+  </div>
+</div>
+
+<a href="/{{ b.profile }}" class="card" style="display:block;text-align:center;color:var(--accent);font-weight:700;font-size:13px;">Ver movimientos de {{ b.profile_name }}</a>
+{% endblock %}

@@ -6,6 +6,31 @@
   <div style="font-size:12.5px;color:var(--secondary);margin-top:6px;">{{ overview.net_worth_sub }}</div>
 </div>
 
+{% if spend_limit %}
+<div class="grid-auto" style="margin-bottom:22px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));">
+  {% if spend_limit.has_daily %}
+  <div class="card card-pad-18">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+      <span style="font-size:13px;font-weight:700;">Límite diario</span>
+      <span style="font-size:11px;color:var(--secondary);">{{ spend_limit.daily_limit }}</span>
+    </div>
+    <div class="mono" style="font-size:26px;font-weight:800;color:{{ '#E2574C' if spend_limit.daily_over else 'var(--ink)' }};">{{ spend_limit.daily_remaining }}</div>
+    <div style="font-size:11.5px;color:var(--secondary);margin-top:2px;">restante hoy · gastado {{ spend_limit.spent_today }}</div>
+  </div>
+  {% endif %}
+  {% if spend_limit.has_monthly %}
+  <div class="card card-pad-18">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+      <span style="font-size:13px;font-weight:700;">Límite mensual</span>
+      <span style="font-size:11px;color:var(--secondary);">{{ spend_limit.monthly_limit }}</span>
+    </div>
+    <div class="mono" style="font-size:26px;font-weight:800;color:{{ '#E2574C' if spend_limit.monthly_over else 'var(--ink)' }};">{{ spend_limit.monthly_remaining }}</div>
+    <div style="font-size:11.5px;color:var(--secondary);margin-top:2px;">restante este mes · gastado {{ spend_limit.spent_month }}</div>
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+
 <div class="hero-gradient" style="margin-bottom:22px;">
   <span style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.25);flex-shrink:0;display:flex;align-items:center;justify-content:center;">
     <span style="width:14px;height:14px;border-radius:50%;border:2.5px solid #fff;"></span>

@@ -3,7 +3,7 @@
 <div style="margin-bottom:16px;"><div class="page-title">Todos los Movimientos</div><div class="page-subtitle">Historial completo a través de todos los perfiles</div></div>
 
 <form method="get" action="/transactions" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
-  <input type="text" name="search" placeholder="Buscar por nota o categoría..." value="{{ filters.search }}" class="input" style="flex:1;min-width:180px;" onchange="this.form.submit()">
+  <input type="text" name="search" placeholder="Buscar por nota, categoría, importe o cuenta..." value="{{ filters.search }}" class="input" style="flex:1;min-width:180px;" onchange="this.form.submit()">
   <select name="profile" class="input" style="max-width:200px;" onchange="this.form.submit()">
     {% for o in profile_filter_options %}<option value="{{ o.id }}" {{ 'selected' if o.id == filters.profile else '' }}>{{ o.name }}</option>{% endfor %}
   </select>
@@ -12,36 +12,9 @@
   </select>
 </form>
 
-<form method="post" id="bulk-form">
 <div class="card">
-  <div style="overflow-x:auto;">
-    <table style="min-width:580px;">
-      <thead><tr>
-        <th style="padding:0 8px 10px 0;"></th><th>Fecha</th><th>Perfil</th><th>Categoría</th><th>Nota</th><th style="text-align:right;">Importe</th>
-      </tr></thead>
-      <tbody>
-        {% for t in rows %}
-        <tr class="row">
-          <td style="padding:10px 8px 10px 0;"><input type="checkbox" name="tx_id" value="{{ t.id }}"></td>
-          <td style="font-size:12px;color:var(--secondary);white-space:nowrap;">{{ t.date_label|date_es }}</td>
-          <td style="font-size:12px;"><span class="pill" style="background:{{ t.profile_tint }};color:{{ t.profile_color }};">{{ t.profile_name }}</span></td>
-          <td style="font-size:13px;">{{ t.category }}</td>
-          <td style="font-size:12px;color:var(--secondary);">{{ t.note }}</td>
-          <td style="text-align:right;" class="mono">{{ t.amount_label }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    {% if empty %}<div class="empty-note">No hay movimientos que coincidan con los filtros.</div>{% endif %}
-  </div>
-  <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;">
-    <select name="category" class="input-sm">
-      <option value="">Cambiar categoría…</option>
-      {% for c in all_categories %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
-    </select>
-    <button type="submit" formaction="/transactions/bulk-category" class="btn-sm btn-track">Cambiar categoría</button>
-    <button type="submit" formaction="/transactions/bulk-delete" class="btn-sm btn-danger">Eliminar selección</button>
-  </div>
+  {% with groups=groups, bulk_prefix="/transactions", categories=all_categories, accounts=accounts, show_profile=True %}
+    {% include "partials/_tx_table.html" %}
+  {% endwith %}
 </div>
-</form>
 {% endblock %}

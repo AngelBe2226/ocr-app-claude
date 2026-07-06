@@ -97,6 +97,16 @@ class Budget(Base):
     category: Mapped[str] = mapped_column(String)
     allocated: Mapped[float] = mapped_column(Float, default=0)
     rollover: Mapped[bool] = mapped_column(Boolean, default=False)
+    period: Mapped[str] = mapped_column(String, default="monthly")  # monthly / annual
+
+
+class SpendingLimit(Base):
+    __tablename__ = "spending_limits"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    profile: Mapped[str | None] = mapped_column(String, nullable=True)  # None = global
+    daily: Mapped[float | None] = mapped_column(Float, nullable=True)
+    monthly: Mapped[float | None] = mapped_column(Float, nullable=True)
 
 
 class Category(Base):

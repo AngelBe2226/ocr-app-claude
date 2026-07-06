@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+{% include "partials/_report_head.html" %}
+<div class="card">
+  <div style="display:flex;gap:16px;margin-bottom:10px;font-size:11.5px;color:var(--secondary);">
+    <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:3px;background:{{ income_color }};"></span>Ingresos</span>
+    <span style="display:flex;align-items:center;gap:5px;"><span style="width:10px;height:10px;border-radius:3px;background:{{ expense_color }};"></span>Gastos</span>
+  </div>
+  <svg viewBox="0 0 600 165" style="width:100%;height:200px;overflow:visible;">
+    {% for b in bars %}
+    <rect x="{{ b.ix }}" y="{{ b.iy }}" width="{{ b.w }}" height="{{ b.ih }}" rx="2" fill="{{ income_color }}"></rect>
+    <rect x="{{ b.ex }}" y="{{ b.ey }}" width="{{ b.w }}" height="{{ b.eh }}" rx="2" fill="{{ expense_color }}"></rect>
+    <text x="{{ b.labelx }}" y="152" font-size="9.5" text-anchor="middle" fill="var(--secondary)">{{ b.label }}</text>
+    {% endfor %}
+  </svg>
+</div>
+{% endblock %}

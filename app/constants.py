@@ -36,10 +36,12 @@ SIDEBAR_DEF = [
     {"label": "Gestión", "kind": "label"},
     {"id": "accounts", "label": "Cuentas", "kind": "link"},
     {"id": "categories", "label": "Categorías", "kind": "link"},
+    {"id": "budgets", "label": "Presupuestos", "kind": "link"},
     {"id": "goals", "label": "Metas", "kind": "link"},
     {"id": "debts", "label": "Deudas y Facturas", "kind": "link"},
     {"id": "reports", "label": "Informes", "kind": "link"},
     {"id": "transactions", "label": "Todos los Movimientos", "kind": "link"},
+    {"id": "search", "label": "Buscar", "kind": "link"},
     {"id": "settings", "label": "Ajustes", "kind": "link"},
 ]
 
@@ -58,7 +60,9 @@ MORE_DEF = [
     {"id": "personal", "label": "Personal"},
     {"id": "accounts", "label": "Cuentas"},
     {"id": "categories", "label": "Categorías"},
+    {"id": "budgets", "label": "Presupuestos"},
     {"id": "reports", "label": "Informes"},
+    {"id": "search", "label": "Buscar"},
     {"id": "settings", "label": "Ajustes"},
 ]
 

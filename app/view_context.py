@@ -36,7 +36,7 @@ def base_context(db: Session, user: User, view: str) -> dict:
         dot = PROFILES.get(n["id"], {}).get("color", theme["ink"])
         if n["id"] == "overview":
             dot = accent_hex
-        if n["id"] in ("accounts", "categories", "goals", "debts", "reports", "transactions", "settings"):
+        if n["id"] in ("accounts", "categories", "budgets", "goals", "debts", "reports", "transactions", "search", "settings"):
             dot = theme["secondary"]
         else:
             dot = A(dot) if n["id"] in PROFILES else dot

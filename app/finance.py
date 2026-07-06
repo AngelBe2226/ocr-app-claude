@@ -162,21 +162,47 @@ def budget_rows(profile_id: str, budgets, transactions, cur_key: str, months3_ke
 
 
 def filter_transactions(transactions, search: str = "", profile: str = "all", type_: str = "all",
-                         date_from: str = "", date_to: str = "") -> list:
+                        account_id: str = "all", date_from: str = "", date_to: str = "") -> list:
     out = list(transactions)
     if profile and profile != "all":
         out = [t for t in out if t.profile == profile]
     if type_ and type_ != "all":
         out = [t for t in out if t.type == type_]
+    if account_id and account_id != "all":
+        out = [t for t in out if str(t.account_id) == str(account_id)]
     if date_from:
         out = [t for t in out if t.date.isoformat() >= date_from]
     if date_to:
         out = [t for t in out if t.date.isoformat() <= date_to]
     if search:
         q = search.lower()
-        out = [t for t in out if q in (t.note or "").lower() or q in (t.category or "").lower()]
+        def matches(t):
+            acc = (t.account.name if t.account else "")
+            haystack = " ".join([(t.note or ""), (t.category or ""), acc, f"{t.amount:.2f}", str(t.amount)]).lower()
+            return q in haystack
+        out = [t for t in out if matches(t)]
     out.sort(key=lambda t: (t.date.isoformat(), t.id), reverse=True)
     return out
+
+
+def month_groups(rows: list[dict]) -> list[dict]:
+    """Agrupa filas de transacciones (dicts con 'date' y 'signed') por mes, en orden
+    descendente, con etiqueta en español y total neto del mes."""
+    groups: list[dict] = []
+    current = None
+    for r in rows:
+        d = r["date"]
+        key = (d.year, d.month)
+        if current is None or current["key"] != key:
+            label = f"{MESES_LONG[d.month - 1].capitalize()} {d.year}"
+            current = {"key": key, "label": label, "rows": [], "total": 0.0}
+            groups.append(current)
+        current["rows"].append(r)
+        current["total"] += r.get("signed", 0.0)
+    for g in groups:
+        g["count"] = len(g["rows"])
+        g["total_label"] = fmt_eur(g["total"])
+    return groups
 
 
 def export_csv_bytes(rows) -> bytes:
@@ -202,6 +228,85 @@ def export_backup_json(accounts, transactions, loans, bills, goals, budgets) -> 
         "budgets": [ser(b, ["id", "profile", "category", "allocated", "rollover"]) for b in budgets],
     }
     return json.dumps(data, indent=2, ensure_ascii=False).encode("utf-8")
+
+
+def period_bounds(today: date, period: str) -> dict:
+    """Devuelve los límites del periodo (mensual o anual) para calcular presupuestos:
+    inicio, fin, días totales y días restantes."""
+    if period == "annual":
+        start = date(today.year, 1, 1)
+        end = date(today.year, 12, 31)
+        days_total = (end - start).days + 1
+        days_remaining = (end - today).days
+        label = str(today.year)
+    else:  # monthly
+        import calendar as _cal
+        last = _cal.monthrange(today.year, today.month)[1]
+        start = date(today.year, today.month, 1)
+        end = date(today.year, today.month, last)
+        days_total = last
+        days_remaining = last - today.day
+        label = f"{MESES[today.month - 1]} {today.year}"
+    return {"start": start, "end": end, "days_total": days_total,
+            "days_remaining": max(0, days_remaining), "label": label}
+
+
+def spent_in_period(transactions, profile: str, category: str, start: date, end: date) -> float:
+    return sum(
+        t.amount for t in transactions
+        if t.profile == profile and t.type == "expense" and t.category == category
+        and start <= t.date <= end
+    )
+
+
+def net_worth_series(current_net: float, transactions, months: list[date]) -> list[dict]:
+    """Serie aproximada de patrimonio neto por mes: como los saldos son manuales
+    (no derivados de transacciones), reconstruimos el histórico restando al neto
+    actual los flujos de transacciones posteriores al fin de cada mes."""
+    import calendar as _cal
+    out = []
+    for m in months:
+        last = _cal.monthrange(m.year, m.month)[1]
+        month_end = date(m.year, m.month, last)
+        flow_after = sum((t.amount if t.type == "income" else -t.amount)
+                         for t in transactions if t.date > month_end)
+        out.append({"label": month_short_label(m), "value": current_net - flow_after})
+    return out
+
+
+def line_chart(values: list[float], labels: list[str], width: float = 560, height: float = 120,
+               x0: float = 20, y0: float = 15) -> dict:
+    n = len(values)
+    lo = min([0.0] + list(values))
+    hi = max([1.0] + list(values))
+    rng = (hi - lo) or 1
+    dots = []
+    for i, (v, lab) in enumerate(zip(values, labels)):
+        x = (i / (n - 1 if n > 1 else 1)) * width + x0
+        y = (y0 + height) - ((v - lo) / rng) * height
+        dots.append({"x": round(x, 1), "y": round(y, 1), "label": lab, "value": v})
+    return {"points": " ".join(f"{d['x']},{d['y']}" for d in dots), "dots": dots}
+
+
+def bar_chart(series: list[dict], width: float = 560, height: float = 120,
+              x0: float = 20, y0: float = 15) -> list[dict]:
+    """series: [{label, income, expense}]. Devuelve geometría de barras income/expense."""
+    maxv = max([1.0] + [max(s["income"], s["expense"]) for s in series])
+    n = max(1, len(series))
+    slot = width / n
+    bw = min(18, slot * 0.28)
+    bars = []
+    for i, s in enumerate(series):
+        cx = x0 + i * slot + slot / 2
+        ih = (s["income"] / maxv) * height
+        eh = (s["expense"] / maxv) * height
+        bars.append({
+            "label": s["label"],
+            "ix": round(cx - bw - 1, 1), "iy": round(y0 + height - ih, 1), "ih": round(ih, 1),
+            "ex": round(cx + 1, 1), "ey": round(y0 + height - eh, 1), "eh": round(eh, 1),
+            "w": round(bw, 1), "labelx": round(cx, 1),
+        })
+    return bars
 
 
 def payoff_date_label(payoff_month: int | None, never_pays_off: bool, long: bool = False) -> str:

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+{% include "partials/_report_head.html" %}
+<div class="card">
+  {% if rows %}
+  <div style="display:flex;flex-direction:column;">
+    {% for r in rows %}
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-top:1px solid var(--border);">
+      <div>
+        <div style="font-size:13.5px;font-weight:700;">{{ r.name }}</div>
+        <div style="font-size:11.5px;color:var(--secondary);">Vence el día {{ r.due_day }}{% if r.paid is defined and r.paid %} · <span style="color:#3FA65C;">pagada</span>{% endif %}</div>
+      </div>
+      <div class="mono" style="font-size:14px;font-weight:700;">{{ r.amount }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-note">No hay facturas registradas.</div>
+  {% endif %}
+</div>
+{% endblock %}

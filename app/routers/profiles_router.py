@@ -9,7 +9,7 @@ from app.categories import category_names
 from app.constants import PROFILE_IDS, PROFILES
 from app.database import get_db
 from app.finance import (
-    budget_rows, donut_segments, fmt_eur, last_n_months, month_short_label, monthly_series,
+    budget_rows, donut_segments, fmt_eur, last_n_months, month_groups, monthly_series,
     filter_transactions, totals_for,
 )
 from app.models import Account, Budget, Transaction, User
@@ -64,9 +64,28 @@ def profile_page(
         line_dots.append({"x": round(x, 1), "y": round(y, 1), "label": s["label"]})
     line_points = " ".join(f"{d['x']},{d['y']}" for d in line_dots)
 
+    # Segunda línea: gasto acumulado (running total) del mes en curso.
     cur_key = date.today().strftime("%Y-%m")
+    month_exp = sorted([t for t in list_tx if t.type == "expense" and t.date.strftime("%Y-%m") == cur_key],
+                       key=lambda t: t.date)
+    cumulative_points = ""
+    if len(month_exp) >= 2:
+        running, cum_vals = 0.0, []
+        for t in month_exp:
+            running += t.amount
+            cum_vals.append(running)
+        cmax = max(cum_vals) or 1
+        cn = len(cum_vals)
+        pts = []
+        for i, v in enumerate(cum_vals):
+            x = (i / (cn - 1)) * 560 + 20
+            y = 140 - (v / cmax) * 120
+            pts.append(f"{round(x, 1)},{round(y, 1)}")
+        cumulative_points = " ".join(pts)
+
     months3_keys = [m.strftime("%Y-%m") for m in last_n_months(3)]
-    budgets = db.query(Budget).filter(Budget.user_id == user.id, Budget.profile == profile_id).order_by(Budget.id).all()
+    budgets = db.query(Budget).filter(Budget.user_id == user.id, Budget.profile == profile_id,
+                                      Budget.period == "monthly").order_by(Budget.id).all()
     b_rows = budget_rows(profile_id, budgets, list_tx, cur_key, months3_keys)
     for row in b_rows:
         row["spent_label"] = fmt_eur(row["spent"])
@@ -76,20 +95,22 @@ def profile_page(
 
     filtered = filter_transactions(list_tx, search=search, type_=type)
     history_rows = [{
-        "id": t.id, "category": t.category, "note": t.note, "date_label": t.date,
+        "id": t.id, "category": t.category, "note": t.note, "date": t.date,
         "amount_label": ("+ " if t.type == "income" else "- ") + fmt_eur(t.amount),
         "color": A("#3FA65C" if t.type == "income" else "#E2574C"),
+        "signed": t.amount if t.type == "income" else -t.amount,
         "has_receipt": bool(t.attachment_name), "place_name": t.place_name or "",
     } for t in filtered]
+    history_groups = month_groups(history_rows)
 
     profile_ctx = {
         "id": profile_id, "name": conf["name"], "color": A(conf["color"]),
         "income": fmt_eur(totals["income"]), "expense": fmt_eur(totals["expense"]), "net": fmt_eur(totals["net"]),
         "categories": categories, "bulk_categories": bulk_categories, "form_type": form_type,
         "donut_segs": donut_segs, "has_expenses": len(donut_segs) > 0,
-        "line_points": line_points, "line_dots": line_dots,
+        "line_points": line_points, "line_dots": line_dots, "cumulative_points": cumulative_points,
         "budgets": b_rows,
-        "history": history_rows,
+        "history_groups": history_groups, "history_count": len(history_rows),
     }
 
     return templates.TemplateResponse(request, "profile.html", {
@@ -152,9 +173,24 @@ async def bulk_category(profile_id: str, request: Request, db: Session = Depends
     return RedirectResponse(f"/{profile_id}", status_code=303)
 
 
+@router.post("/{profile_id}/transactions/bulk-account")
+async def bulk_account(profile_id: str, request: Request, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    form = await request.form()
+    ids = [int(v) for v in form.getlist("tx_id")]
+    account_id = form.get("account_id")
+    if ids and account_id:
+        acc = db.query(Account).filter(Account.id == int(account_id), Account.user_id == user.id).first()
+        if acc:
+            db.query(Transaction).filter(Transaction.id.in_(ids), Transaction.user_id == user.id).update(
+                {"account_id": acc.id}, synchronize_session=False
+            )
+            db.commit()
+    return RedirectResponse(f"/{profile_id}", status_code=303)
+
+
 @router.post("/{profile_id}/budgets/{category}/topup")
 def topup_budget(profile_id: str, category: str, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    b = db.query(Budget).filter(Budget.user_id == user.id, Budget.profile == profile_id, Budget.category == category).first()
+    b = db.query(Budget).filter(Budget.user_id == user.id, Budget.profile == profile_id, Budget.category == category, Budget.period == 'monthly').first()
     if b:
         b.allocated = round(b.allocated + 10, 2)
         db.commit()
@@ -163,7 +199,7 @@ def topup_budget(profile_id: str, category: str, db: Session = Depends(get_db), 
 
 @router.post("/{profile_id}/budgets/{category}/apply-suggestion")
 def apply_suggestion(profile_id: str, category: str, suggestion: float = Form(...), db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    b = db.query(Budget).filter(Budget.user_id == user.id, Budget.profile == profile_id, Budget.category == category).first()
+    b = db.query(Budget).filter(Budget.user_id == user.id, Budget.profile == profile_id, Budget.category == category, Budget.period == 'monthly').first()
     if b:
         b.allocated = round(suggestion)
         db.commit()
@@ -176,8 +212,8 @@ def rebalance(
     db: Session = Depends(get_db), user: User = Depends(get_current_user),
 ):
     if from_category != to_category and amount and amount > 0:
-        b_from = db.query(Budget).filter(Budget.user_id == user.id, Budget.profile == profile_id, Budget.category == from_category).first()
-        b_to = db.query(Budget).filter(Budget.user_id == user.id, Budget.profile == profile_id, Budget.category == to_category).first()
+        b_from = db.query(Budget).filter(Budget.user_id == user.id, Budget.profile == profile_id, Budget.category == from_category, Budget.period == 'monthly').first()
+        b_to = db.query(Budget).filter(Budget.user_id == user.id, Budget.profile == profile_id, Budget.category == to_category, Budget.period == 'monthly').first()
         if b_from and b_to:
             b_from.allocated = max(0, round(b_from.allocated - amount, 2))
             b_to.allocated = round(b_to.allocated + amount, 2)
