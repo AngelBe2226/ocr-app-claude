@@ -50,7 +50,7 @@ def accounts_page(request: Request, db: Session = Depends(get_db), user: User = 
         grouped[group_key]["subtotal"] += eur
         is_card = a.type == "card"
         grouped[group_key]["accounts"].append({
-            "id": a.id, "name": a.name, "initial": a.name[0].upper() if a.name else "?",
+            "id": a.id, "name": a.name, "initial": a.name[0].upper() if a.name else "?", "icon": a.icon,
             "color": A(a.color), "raw_color": a.color,
             "tint": "rgba(255,255,255,0.08)" if ctx["is_dark"] else a.color + "22",
             "type": a.type, "currency": a.currency, "balance": a.balance,
@@ -79,9 +79,10 @@ def accounts_page(request: Request, db: Session = Depends(get_db), user: User = 
 @router.post("/accounts")
 def add_account(
     name: str = Form(...), type: str = Form(...), currency: str = Form(...), balance: float = Form(...),
-    db: Session = Depends(get_db), user: User = Depends(get_current_user),
+    icon: str = Form(""), db: Session = Depends(get_db), user: User = Depends(get_current_user),
 ):
-    db.add(Account(user_id=user.id, name=name, type=type, currency=currency, balance=balance, color=hash_color(name)))
+    db.add(Account(user_id=user.id, name=name, type=type, currency=currency, balance=balance,
+                   color=hash_color(name), icon=icon.strip()))
     db.commit()
     return RedirectResponse("/accounts", status_code=303)
 
@@ -90,7 +91,7 @@ def add_account(
 def edit_account(
     account_id: int,
     name: str = Form(...), type: str = Form(...), currency: str = Form(...),
-    balance: float = Form(...), color: str = Form(...),
+    balance: float = Form(...), color: str = Form(...), icon: str = Form(""),
     cycle_end: str = Form(""), due_date: str = Form(""),
     db: Session = Depends(get_db), user: User = Depends(get_current_user),
 ):
@@ -101,6 +102,7 @@ def edit_account(
         acc.currency = currency
         acc.balance = balance
         acc.color = color or acc.color
+        acc.icon = icon.strip()
         if type == "card":
             acc.cycle_end = _parse_date(cycle_end)
             acc.due_date = _parse_date(due_date)

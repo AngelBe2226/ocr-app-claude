@@ -4,10 +4,10 @@ from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
 from app.categories import UNCATEGORIZED_NAME, ensure_uncategorized, list_categories
-from app.constants import PROFILE_IDS, PROFILES
 from app.database import get_db
 from app.finance import hash_color
 from app.models import Budget, Category, Subcategory, Transaction, User
+from app.profiles import list_profiles, profiles_map
 from app.templates_env import templates
 from app.view_context import base_context
 
@@ -29,22 +29,24 @@ def categories_page(request: Request, kind: str = "expense",
         key = (t.profile, t.category)
         tx_counts[key] = tx_counts.get(key, 0) + 1
 
+    profiles = list_profiles(db, user.id)
     groups = []
-    for pid in PROFILE_IDS:
+    for prof in profiles:
         rows = []
-        for c in [c for c in cats if c.profile == pid]:
+        for c in [c for c in cats if c.profile == prof.slug]:
             rows.append({
-                "id": c.id, "name": c.name, "icon": c.icon or c.name[0].upper(),
+                "id": c.id, "name": c.name, "raw_icon": c.icon,
+                "initial": (c.name[0].upper() if c.name else "?"),
                 "color": A(c.color), "raw_color": c.color, "is_system": c.is_system,
-                "tx_count": tx_counts.get((pid, c.name), 0),
+                "tx_count": tx_counts.get((prof.slug, c.name), 0),
                 "subcategories": [{"id": s.id, "name": s.name, "icon": s.icon} for s in c.subcategories],
             })
         if rows:
-            groups.append({"profile": pid, "name": PROFILES[pid]["name"], "color": A(PROFILES[pid]["color"]), "categories": rows})
+            groups.append({"profile": prof.slug, "name": prof.name, "color": A(prof.color), "categories": rows})
 
     return templates.TemplateResponse(request, "categories.html", {
         **ctx, "kind": kind, "groups": groups,
-        "profiles": [{"id": p, "name": PROFILES[p]["name"]} for p in PROFILE_IDS],
+        "profiles": [{"id": p.slug, "name": p.name} for p in profiles],
     })
 
 
@@ -52,7 +54,7 @@ def categories_page(request: Request, kind: str = "expense",
 def add_category(kind: str = Form(...), profile: str = Form(...), name: str = Form(...),
                  icon: str = Form(""), db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     name = name.strip()
-    if name and profile in PROFILES and kind in ("income", "expense"):
+    if name and profile in profiles_map(db, user.id) and kind in ("income", "expense"):
         exists = (db.query(Category)
                   .filter(Category.user_id == user.id, Category.profile == profile,
                           Category.kind == kind, Category.name == name).first())

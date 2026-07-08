@@ -1,0 +1,20 @@
+/* Punto de extensión para una FUENTE DE ICONOS propia (p.ej. exportada de RightFont).
+ *
+ * CÓMO ACTIVARLA:
+ * 1. Exporta tu fuente de iconos (woff2/ttf) desde RightFont y colócala en static/fonts/.
+ * 2. Declara la @font-face aquí (descomenta y ajusta el nombre/ruta):
+ *
+ *    @font-face {
+ *      font-family: "MisIconos";
+ *      src: url("/static/fonts/misiconos.woff2") format("woff2");
+ *      font-display: swap;
+ *    }
+ *    .cicon { font-family: "MisIconos"; }
+ *
+ * 3. En cualquier categoría/cuenta/perfil, guarda el valor de icono como
+ *    "font:XXXX" donde XXXX es el codepoint hex del glifo (p.ej. "font:e900").
+ *    app/icons.py lo renderiza como <i class="cicon">&#xe900;</i>.
+ *
+ * Mientras no haya fuente, .cicon simplemente no muestra glifo (sin romper nada).
+ */
+.cicon { font-family: "MisIconos", inherit; }

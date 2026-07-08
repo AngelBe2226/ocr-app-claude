@@ -6,9 +6,9 @@ from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
 from app.categories import list_categories
-from app.constants import PROFILE_IDS, PROFILES
 from app.database import get_db
 from app.models import Account, Transaction, Transfer, User
+from app.profiles import list_profiles, profiles_map
 from app.receipts import receipt_path, save_receipt
 
 router = APIRouter()
@@ -27,7 +27,7 @@ def add_options(db: Session = Depends(get_db), user: User = Depends(get_current_
     accounts = db.query(Account).filter(Account.user_id == user.id).order_by(Account.id).all()
     cats = list_categories(db, user.id)
     return JSONResponse({
-        "profiles": [{"id": p, "name": PROFILES[p]["name"]} for p in PROFILE_IDS],
+        "profiles": [{"id": p.slug, "name": p.name} for p in list_profiles(db, user.id)],
         "accounts": [{"id": a.id, "name": a.name} for a in accounts],
         "categories": [{"profile": c.profile, "kind": c.kind, "name": c.name} for c in cats],
     })
@@ -35,7 +35,7 @@ def add_options(db: Session = Depends(get_db), user: User = Depends(get_current_
 
 def _add_transaction(db, user, kind, profile, category, account_id, amount, date_, note,
                      latitude=None, longitude=None, place_name="", attachment: UploadFile | None = None):
-    if profile not in PROFILES or not amount or amount <= 0:
+    if profile not in profiles_map(db, user.id) or not amount or amount <= 0:
         return None
     tx = Transaction(
         user_id=user.id, profile=profile, type=kind, category=category,

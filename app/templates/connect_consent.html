@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width:440px;margin:0 auto;">
+  <div class="card" style="padding:0;overflow:hidden;">
+    <div style="background:{{ bank_color }};padding:22px 24px;color:#fff;">
+      <div style="font-size:12px;opacity:0.85;">Conexión segura vía {{ provider_name }}</div>
+      <div style="font-size:20px;font-weight:800;margin-top:2px;">{{ conn.bank_name }}</div>
+    </div>
+    <div style="padding:22px 24px;">
+      <div style="font-size:13.5px;font-weight:700;margin-bottom:10px;">Autoriza el acceso a tus cuentas</div>
+      <div style="font-size:12.5px;color:var(--secondary);line-height:1.5;margin-bottom:16px;">
+        <strong>Mis Finanzas</strong> solicita permiso, a través de {{ provider_name }}, para acceder a la información de tus cuentas en {{ conn.bank_name }}:
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px;">
+        <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;"><span style="color:#3FA65C;">✓</span> Leer el saldo de tus cuentas</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;"><span style="color:#3FA65C;">✓</span> Leer el historial de transacciones</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);"><span>✕</span> Iniciar pagos o transferencias</div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <a href="/connect" class="btn-sm btn-track" style="flex:1;text-align:center;padding:11px;">Cancelar</a>
+        <form method="post" action="/connect/authorize/{{ conn.id }}" style="flex:2;">
+          <button type="submit" class="btn" style="width:100%;background:{{ bank_color }};color:#fff;">Autorizar acceso</button>
+        </form>
+      </div>
+      <div style="font-size:10.5px;color:var(--muted);text-align:center;margin-top:14px;">🔒 Pantalla de consentimiento simulada · modo demo</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

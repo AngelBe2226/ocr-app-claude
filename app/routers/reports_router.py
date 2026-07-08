@@ -1,4 +1,5 @@
 from datetime import date
+from urllib.parse import quote
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import Response
@@ -6,7 +7,6 @@ from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
 from app.categories import category_names
-from app.constants import PROFILES
 from app.database import get_db
 from app.finance import (
     bar_chart, donut_segments, export_csv_bytes, filter_transactions, fmt_eur, hash_color,
@@ -14,6 +14,7 @@ from app.finance import (
     totals_for,
 )
 from app.models import Account, Bill, Loan, Transaction, User
+from app.pdf import build_report_pdf
 from app.templates_env import templates
 from app.view_context import base_context
 
@@ -62,6 +63,7 @@ def report_net_worth(request: Request, db: Session = Depends(get_db), user: User
     return templates.TemplateResponse(request, "report_line.html", {
         **ctx, "title": "Mi Patrimonio Neto", "subtitle": "Evolución de los últimos 12 meses",
         "kpis": kpis, "chart": chart, "line_color": ctx["accent_hex"], "fill": True,
+        "export_href": "/reports/net-worth/export.pdf",
     })
 
 
@@ -83,6 +85,7 @@ def report_income_expense(request: Request, db: Session = Depends(get_db), user:
     return templates.TemplateResponse(request, "report_bars.html", {
         **ctx, "title": "Ingresos vs Gastos", "subtitle": "Comparativa mensual (12 meses)",
         "kpis": kpis, "bars": bars, "income_color": A("#3FA65C"), "expense_color": A("#E2574C"),
+        "export_href": "/reports/income-expense/export.pdf",
     })
 
 
@@ -108,6 +111,7 @@ def report_top_categories(request: Request, type: str = "expense",
     return templates.TemplateResponse(request, "report_top.html", {
         **ctx, "title": "Top Categorías", "type": type, "segs": segs, "rows": rows,
         "total_label": fmt_eur(sum(by_cat.values())),
+        "export_href": f"/reports/top-categories/export.pdf?type={type}",
     })
 
 
@@ -133,6 +137,7 @@ def report_category(request: Request, name: str = "", db: Session = Depends(get_
     return templates.TemplateResponse(request, "report_category.html", {
         **ctx, "title": "Análisis por Categoría", "categories": all_cats, "selected": name,
         "kpis": kpis, "chart": chart, "line_color": A(hash_color(name)) if name else ctx["accent_hex"],
+        "export_href": f"/reports/category/export.pdf?name={quote(name)}",
     })
 
 
@@ -165,6 +170,7 @@ def report_projection(request: Request, db: Session = Depends(get_db), user: Use
     return templates.TemplateResponse(request, "report_line.html", {
         **ctx, "title": "Proyección Anual", "subtitle": f"Estimación de patrimonio a fin de {today.year}",
         "kpis": kpis, "chart": chart, "line_color": ctx["accent_hex"], "fill": True, "dashed": True,
+        "export_href": "/reports/projection/export.pdf",
     })
 
 
@@ -183,6 +189,7 @@ def report_bills(request: Request, db: Session = Depends(get_db), user: User = D
     ]
     return templates.TemplateResponse(request, "report_bills.html", {
         **ctx, "title": "Facturas y Suscripciones", "subtitle": "Costes fijos mensuales", "kpis": kpis, "rows": rows,
+        "export_href": "/reports/bills/export.pdf",
     })
 
 
@@ -205,7 +212,7 @@ def report_subscriptions(request: Request, db: Session = Depends(get_db), user: 
     ]
     return templates.TemplateResponse(request, "report_bills.html", {
         **ctx, "title": "Análisis de Suscripciones", "subtitle": "Pagos recurrentes y suscripciones",
-        "kpis": kpis, "rows": rows,
+        "kpis": kpis, "rows": rows, "export_href": "/reports/subscriptions/export.pdf",
     })
 
 
@@ -225,6 +232,7 @@ def report_payees(request: Request, db: Session = Depends(get_db), user: User = 
             for n, v in ranked]
     return templates.TemplateResponse(request, "report_payees.html", {
         **ctx, "title": "Beneficiarios", "subtitle": "Transacciones agrupadas por nota / beneficiario", "rows": rows,
+        "export_href": "/reports/payees/export.pdf",
     })
 
 
@@ -251,3 +259,104 @@ def export_csv(request: Request, db: Session = Depends(get_db), user: User = Dep
     filtered = filter_transactions(transactions, **filters)
     data = export_csv_bytes(filtered)
     return Response(content=data, media_type="text/csv", headers={"Content-Disposition": "attachment; filename=movimientos.csv"})
+
+
+def _pdf_response(data: bytes, filename: str) -> Response:
+    return Response(content=data, media_type="application/pdf",
+                    headers={"Content-Disposition": f"attachment; filename={filename}"})
+
+
+@router.get("/reports/{report_id}/export.pdf")
+def export_report_pdf(report_id: str, type: str = "expense", name: str = "",
+                      db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    accounts = db.query(Account).filter(Account.user_id == user.id).all()
+    loans = db.query(Loan).filter(Loan.user_id == user.id).all()
+    transactions = _txs(db, user)
+
+    if report_id == "net-worth":
+        current = net_worth_eur(accounts, loans)
+        series = net_worth_series(current, transactions, last_n_months(12))
+        vals = [s["value"] for s in series]
+        pdf = build_report_pdf("Mi Patrimonio Neto", "Evolución de los últimos 12 meses",
+                               kpis=[{"label": "Actual", "value": fmt_eur(current)},
+                                     {"label": "Mínimo", "value": fmt_eur(min(vals))},
+                                     {"label": "Máximo", "value": fmt_eur(max(vals))}],
+                               line={"values": vals, "labels": [s["label"] for s in series]})
+    elif report_id == "income-expense":
+        series = monthly_series(transactions, last_n_months(12))
+        ti, te = sum(s["income"] for s in series), sum(s["expense"] for s in series)
+        pdf = build_report_pdf("Ingresos vs Gastos", "Comparativa mensual (12 meses)",
+                               kpis=[{"label": "Ingresos", "value": fmt_eur(ti)},
+                                     {"label": "Gastos", "value": fmt_eur(te)},
+                                     {"label": "Neto", "value": fmt_eur(ti - te)}],
+                               bars=series)
+    elif report_id == "top-categories":
+        type = "income" if type == "income" else "expense"
+        by_cat = {}
+        for t in transactions:
+            if t.type == type:
+                by_cat[t.category] = by_cat.get(t.category, 0) + t.amount
+        ranked = sorted(by_cat.items(), key=lambda e: -e[1])[:8]
+        total = sum(by_cat.values()) or 1
+        pdf = build_report_pdf(f"Top Categorías ({'gastos' if type == 'expense' else 'ingresos'})",
+                               f"Total: {fmt_eur(sum(by_cat.values()))}",
+                               pie={"names": [n for n, _ in ranked], "values": [v for _, v in ranked]},
+                               table={"columns": ["Categoría", "Importe", "%"],
+                                      "rows": [[n, fmt_eur(v), f"{round(v / total * 100)}%"] for n, v in ranked],
+                                      "right": [1, 2]})
+    elif report_id == "category":
+        cats = category_names(db, user.id)
+        if name not in cats and cats:
+            name = cats[0]
+        catt = [t for t in transactions if t.category == name]
+        series = monthly_series(catt, last_n_months(12))
+        vals = [s["income"] + s["expense"] for s in series]
+        total = sum(vals)
+        pdf = build_report_pdf(f"Categoría · {name}", "Últimos 12 meses",
+                               kpis=[{"label": "Total", "value": fmt_eur(total)},
+                                     {"label": "Media/mes", "value": fmt_eur(total / 12)},
+                                     {"label": "Movimientos", "value": str(len(catt))}],
+                               line={"values": vals, "labels": [s["label"] for s in series]})
+    elif report_id == "projection":
+        current = net_worth_eur(accounts, loans)
+        s6 = monthly_series(transactions, last_n_months(6))
+        avg = sum(s["net"] for s in s6) / 6 if s6 else 0
+        today = date.today()
+        rem = 12 - today.month
+        labels, vals = [], []
+        for i in range(rem + 1):
+            mm = today.month + i
+            yy = today.year + (mm - 1) // 12
+            labels.append(month_short_label(date(yy, (mm - 1) % 12 + 1, 1)))
+            vals.append(current + avg * i)
+        pdf = build_report_pdf("Proyección Anual", f"Estimación a fin de {today.year}",
+                               kpis=[{"label": "Actual", "value": fmt_eur(current)},
+                                     {"label": "Flujo medio/mes", "value": fmt_eur(avg)},
+                                     {"label": f"Dic {today.year}", "value": fmt_eur(current + avg * rem)}],
+                               line={"values": vals, "labels": labels})
+    elif report_id in ("bills", "subscriptions"):
+        bills = db.query(Bill).filter(Bill.user_id == user.id).order_by(Bill.due_day).all()
+        total = sum(b.amount for b in bills)
+        pdf = build_report_pdf("Facturas y Suscripciones", "Costes fijos mensuales",
+                               kpis=[{"label": "Coste mensual", "value": fmt_eur(total)},
+                                     {"label": "Coste anual", "value": fmt_eur(total * 12)},
+                                     {"label": "Facturas", "value": str(len(bills))}],
+                               table={"columns": ["Factura", "Día", "Importe"],
+                                      "rows": [[b.name, str(b.due_day), fmt_eur(b.amount)] for b in bills],
+                                      "right": [2]})
+    elif report_id == "payees":
+        by = {}
+        for t in transactions:
+            k = (t.note or "").strip() or "(sin nota)"
+            d = by.setdefault(k, {"total": 0.0, "count": 0})
+            d["total"] += t.amount
+            d["count"] += 1
+        ranked = sorted(by.items(), key=lambda e: -e[1]["total"])[:40]
+        pdf = build_report_pdf("Beneficiarios", "Agrupado por nota / beneficiario",
+                               table={"columns": ["Beneficiario", "Nº", "Importe"],
+                                      "rows": [[n, str(v["count"]), fmt_eur(v["total"])] for n, v in ranked],
+                                      "right": [1, 2]})
+    else:
+        pdf = build_report_pdf("Reporte", note="Este reporte aún no tiene exportación a PDF.")
+
+    return _pdf_response(pdf, f"reporte-{report_id}.pdf")

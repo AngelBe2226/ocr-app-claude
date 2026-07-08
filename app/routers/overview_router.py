@@ -5,10 +5,10 @@ from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
-from app.constants import PROFILE_IDS, PROFILES
 from app.database import get_db
 from app.finance import fmt_eur, hash_color, net_worth_eur, period_bounds, ring_dash
 from app.models import Account, Budget, Goal, Loan, SpendingLimit, Transaction, User
+from app.profiles import pname, profiles_map
 from app.templates_env import templates
 from app.view_context import base_context
 
@@ -27,9 +27,10 @@ def overview(request: Request, db: Session = Depends(get_db), user: User = Depen
 
     cur_key = date.today().strftime("%Y-%m")
     net_worth = net_worth_eur(accounts, loans)
+    pmap = profiles_map(db, user.id)
 
     profile_rings = []
-    for pid in PROFILE_IDS:
+    for pid, prof in pmap.items():
         budgets = db.query(Budget).filter(Budget.user_id == user.id, Budget.profile == pid,
                                           Budget.period == "monthly").all()
         total_budget = sum(b.allocated for b in budgets) or 1
@@ -39,7 +40,7 @@ def overview(request: Request, db: Session = Depends(get_db), user: User = Depen
         )
         pct = min(1.0, spent / total_budget)
         profile_rings.append({
-            "id": pid, "name": PROFILES[pid]["name"], "color": A(PROFILES[pid]["color"]),
+            "id": pid, "name": prof.name, "color": A(prof.color),
             "dash": ring_dash(pct), "pct_label": f"{round(pct * 100)}%",
             "spent": fmt_eur(spent), "budget": fmt_eur(total_budget),
         })
@@ -52,7 +53,7 @@ def overview(request: Request, db: Session = Depends(get_db), user: User = Depen
             "category": t.category, "date_label": t.date,
             "amount_label": ("+ " if t.type == "income" else "- ") + fmt_eur(t.amount),
             "color": A("#3FA65C" if t.type == "income" else "#E2574C"),
-            "profile_name": PROFILES[t.profile]["name"], "initial": t.category[0].upper(),
+            "profile_name": pname(pmap, t.profile), "initial": t.category[0].upper() if t.category else "?",
             "icon_bg": "rgba(255,255,255,0.08)" if ctx["is_dark"] else col + "22", "icon_color": A(col),
         })
 

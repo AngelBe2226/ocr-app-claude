@@ -1,7 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 <div style="margin-bottom:12px;"><a href="/reports" style="font-size:13px;color:var(--secondary);">← Reportes</a></div>
-<div style="margin-bottom:14px;"><div class="page-title">{{ title }}</div></div>
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+  <div class="page-title">{{ title }}</div>
+  <a href="{{ export_href }}" class="btn-sm btn-track" style="white-space:nowrap;">Exportar PDF</a>
+</div>
 
 <form method="get" action="/reports/category" style="margin-bottom:16px;max-width:320px;">
   <select name="name" class="input" onchange="this.form.submit()">

@@ -5,7 +5,7 @@
 </div>
 
 <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-  <span style="width:44px;height:44px;border-radius:50%;background:{{ b.raw_color }}22;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:{{ b.color }};">{{ b.icon }}</span>
+  <span class="icon-circle" style="width:44px;height:44px;border-radius:50%;background:{{ b.raw_color }}22;font-size:18px;font-weight:800;color:{{ b.color }};">{% if b.raw_icon %}{{ icon(b.raw_icon, 22) }}{% else %}{{ b.initial }}{% endif %}</span>
   <div>
     <div class="page-title" style="font-size:22px;">{{ b.category }}</div>
     <div class="page-subtitle" style="margin-top:2px;">{{ b.profile_name }} · {{ b.period_label }}</div>

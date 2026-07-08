@@ -23,6 +23,7 @@ class Account(Base):
     currency: Mapped[str] = mapped_column(String, default="EUR")
     balance: Mapped[float] = mapped_column(Float, default=0)
     color: Mapped[str] = mapped_column(String, default="#7A756C")
+    icon: Mapped[str] = mapped_column(String, default="")
     cycle_end: Mapped[date | None] = mapped_column(Date, nullable=True)
     due_date: Mapped[date | None] = mapped_column(Date, nullable=True)
 
@@ -109,6 +110,17 @@ class SpendingLimit(Base):
     monthly: Mapped[float | None] = mapped_column(Float, nullable=True)
 
 
+class Profile(Base):
+    __tablename__ = "profiles"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    slug: Mapped[str] = mapped_column(String)   # identificador estable usado en transacciones/URLs
+    name: Mapped[str] = mapped_column(String)
+    color: Mapped[str] = mapped_column(String, default="#12898F")
+    icon: Mapped[str] = mapped_column(String, default="")
+    position: Mapped[int] = mapped_column(Integer, default=0)
+
+
 class Category(Base):
     __tablename__ = "categories"
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -148,3 +160,17 @@ class FamilyInvite(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
     email: Mapped[str] = mapped_column(String)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class BankConnection(Base):
+    __tablename__ = "bank_connections"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    provider: Mapped[str] = mapped_column(String, default="demo")  # tink / gocardless / truelayer / demo
+    bank_id: Mapped[str] = mapped_column(String)
+    bank_name: Mapped[str] = mapped_column(String)
+    status: Mapped[str] = mapped_column(String, default="pending")  # pending / connected / disconnected
+    account_id: Mapped[int | None] = mapped_column(ForeignKey("accounts.id"), nullable=True)
+    synced_count: Mapped[int] = mapped_column(Integer, default=0)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    last_sync: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)

@@ -6,10 +6,10 @@ from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
 from app.categories import list_categories
-from app.constants import PROFILE_IDS, PROFILES
 from app.database import get_db
 from app.finance import fmt_eur, period_bounds, spent_in_period
 from app.models import Budget, Category, SpendingLimit, Transaction, User
+from app.profiles import list_profiles, pname, profiles_map
 from app.templates_env import templates
 from app.view_context import base_context
 
@@ -22,7 +22,7 @@ def _category_lookup(db: Session, user_id: int) -> dict:
     return {(c.profile, c.name): c for c in list_categories(db, user_id)}
 
 
-def _budget_card(b: Budget, transactions, cat_lookup, A, today: date) -> dict:
+def _budget_card(b: Budget, transactions, cat_lookup, A, today: date, pmap: dict) -> dict:
     pb = period_bounds(today, b.period)
     spent = spent_in_period(transactions, b.profile, b.category, pb["start"], pb["end"])
     remaining = b.allocated - spent
@@ -31,8 +31,9 @@ def _budget_card(b: Budget, transactions, cat_lookup, A, today: date) -> dict:
     cat = cat_lookup.get((b.profile, b.category))
     color = A(cat.color) if cat else A("#12898F")
     return {
-        "id": b.id, "profile": b.profile, "profile_name": PROFILES[b.profile]["name"],
-        "category": b.category, "icon": (cat.icon if cat and cat.icon else b.category[0].upper()),
+        "id": b.id, "profile": b.profile, "profile_name": pname(pmap, b.profile),
+        "category": b.category, "raw_icon": (cat.icon if cat else ""),
+        "initial": (b.category[0].upper() if b.category else "?"),
         "color": color, "raw_color": cat.color if cat else "#12898F",
         "allocated": b.allocated, "allocated_label": fmt_eur(b.allocated),
         "spent_label": fmt_eur(spent), "remaining_label": fmt_eur(remaining),
@@ -56,9 +57,10 @@ def budgets_page(request: Request, period: str = "monthly",
 
     transactions = db.query(Transaction).filter(Transaction.user_id == user.id).all()
     cat_lookup = _category_lookup(db, user.id)
+    pmap = profiles_map(db, user.id)
     budgets = (db.query(Budget).filter(Budget.user_id == user.id, Budget.period == period)
                .order_by(Budget.profile, Budget.category).all())
-    cards = [_budget_card(b, transactions, cat_lookup, A, today) for b in budgets]
+    cards = [_budget_card(b, transactions, cat_lookup, A, today, pmap) for b in budgets]
 
     total_alloc = sum(c["allocated"] for c in cards)
     total_spent = sum(spent_in_period(transactions, b.profile, b.category,
@@ -67,9 +69,9 @@ def budgets_page(request: Request, period: str = "monthly",
 
     # Opciones "Perfil — Categoría" de gasto para el formulario de alta.
     cat_options = []
-    for pid in PROFILE_IDS:
-        for c in list_categories(db, user.id, profile=pid, kind="expense"):
-            cat_options.append({"value": f"{pid}|{c.name}", "label": f"{PROFILES[pid]['name']} — {c.name}"})
+    for prof in list_profiles(db, user.id):
+        for c in list_categories(db, user.id, profile=prof.slug, kind="expense"):
+            cat_options.append({"value": f"{prof.slug}|{c.name}", "label": f"{prof.name} — {c.name}"})
 
     limits = _limits_context(db, user.id, transactions, today, A)
 
@@ -92,7 +94,7 @@ def budget_detail(budget_id: int, request: Request,
     today = date.today()
     transactions = db.query(Transaction).filter(Transaction.user_id == user.id).all()
     cat_lookup = _category_lookup(db, user.id)
-    card = _budget_card(b, transactions, cat_lookup, A, today)
+    card = _budget_card(b, transactions, cat_lookup, A, today, profiles_map(db, user.id))
     pb = period_bounds(today, b.period)
     card["start_label"] = pb["start"]
     card["end_label"] = pb["end"]
@@ -105,7 +107,7 @@ def add_budget(profile_category: str = Form(...), allocated: float = Form(...), 
     if period not in ("monthly", "annual") or "|" not in profile_category or not allocated or allocated <= 0:
         return RedirectResponse(f"/budgets?period={period}", status_code=303)
     profile, category = profile_category.split("|", 1)
-    if profile in PROFILES:
+    if profile in profiles_map(db, user.id):
         existing = (db.query(Budget).filter(Budget.user_id == user.id, Budget.profile == profile,
                                             Budget.category == category, Budget.period == period).first())
         if existing:
@@ -141,7 +143,7 @@ def delete_budget(budget_id: int, db: Session = Depends(get_db), user: User = De
 def _limits_context(db: Session, user_id: int, transactions, today: date, A) -> dict:
     pb = period_bounds(today, "monthly")
     rows = []
-    scopes = [(None, "Global")] + [(p, PROFILES[p]["name"]) for p in PROFILE_IDS]
+    scopes = [(None, "Global")] + [(p.slug, p.name) for p in list_profiles(db, user_id)]
     limits_by_scope = {lim.profile: lim for lim in db.query(SpendingLimit).filter(SpendingLimit.user_id == user_id).all()}
     for scope, label in scopes:
         lim = limits_by_scope.get(scope)
@@ -165,7 +167,7 @@ def _limits_context(db: Session, user_id: int, transactions, today: date, A) -> 
 @router.post("/limits")
 def set_limit(scope: str = Form(""), daily: str = Form(""), monthly: str = Form(""),
               db: Session = Depends(get_db), user: User = Depends(get_current_user)):
-    profile = scope if scope in PROFILES else None
+    profile = scope if scope in profiles_map(db, user.id) else None
     daily_val = float(daily) if daily.strip() else None
     monthly_val = float(monthly) if monthly.strip() else None
     lim = db.query(SpendingLimit).filter(SpendingLimit.user_id == user.id, SpendingLimit.profile == profile).first()

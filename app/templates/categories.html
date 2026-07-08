@@ -15,7 +15,7 @@
   {% for c in group.categories %}
   <div class="card card-pad-18">
     <div style="display:flex;align-items:center;gap:10px;">
-      <span style="width:34px;height:34px;border-radius:50%;background:{{ c.raw_color }}22;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:{{ c.color }};flex-shrink:0;">{{ c.icon }}</span>
+      <span class="icon-circle" style="width:34px;height:34px;border-radius:50%;background:{{ c.raw_color }}22;font-size:14px;font-weight:800;color:{{ c.color }};">{% if c.raw_icon %}{{ icon(c.raw_icon, 17) }}{% else %}{{ c.initial }}{% endif %}</span>
       <div style="flex:1;min-width:0;">
         <div style="font-size:13.5px;font-weight:700;">{{ c.name }}</div>
         <div style="font-size:11px;color:var(--secondary);">
@@ -52,10 +52,11 @@
       <summary>Editar / subcategoría</summary>
       <form method="post" action="/categories/{{ c.id }}/rename" class="form-col" style="margin-bottom:10px;">
         <div class="grid-2">
-          <input type="text" name="icon" value="{{ c.icon if c.icon != c.name[0]|upper else '' }}" placeholder="Emoji (opcional)" class="input">
+          <input type="text" name="name" value="{{ c.name }}" placeholder="Nombre" class="input" required>
           <input type="color" name="color" value="{{ c.raw_color }}" class="color-swatch" title="Color">
         </div>
-        <input type="text" name="name" value="{{ c.name }}" placeholder="Nombre" class="input" required>
+        <div style="font-size:11px;color:var(--secondary);">Icono</div>
+        {% with field='icon', current=c.raw_icon %}{% include 'partials/_icon_picker.html' %}{% endwith %}
         <button type="submit" class="btn">Renombrar</button>
       </form>
       <form method="post" action="/categories/{{ c.id }}/subcategories" style="display:flex;gap:6px;margin-bottom:10px;">
@@ -80,13 +81,12 @@
   <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Añadir categoría de {{ 'ingresos' if kind == 'income' else 'gastos' }}</div>
   <form method="post" action="/categories" class="form-col">
     <input type="hidden" name="kind" value="{{ kind }}">
-    <div class="grid-2">
-      <select name="profile" class="input">
-        {% for p in profiles %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}
-      </select>
-      <input type="text" name="icon" placeholder="Emoji (opcional)" class="input">
-    </div>
+    <select name="profile" class="input">
+      {% for p in profiles %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}
+    </select>
     <input type="text" name="name" placeholder="Nombre de la categoría" class="input" required>
+    <div style="font-size:11px;color:var(--secondary);">Icono</div>
+    {% with field='icon', current='' %}{% include 'partials/_icon_picker.html' %}{% endwith %}
     <button type="submit" class="btn">Añadir categoría</button>
   </form>
 </div>

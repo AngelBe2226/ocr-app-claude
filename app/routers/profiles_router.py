@@ -6,23 +6,81 @@ from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
 from app.categories import category_names
-from app.constants import PROFILE_IDS, PROFILES
 from app.database import get_db
 from app.finance import (
-    budget_rows, donut_segments, fmt_eur, last_n_months, month_groups, monthly_series,
+    budget_rows, donut_segments, fmt_eur, hash_color, last_n_months, month_groups, monthly_series,
     filter_transactions, totals_for,
 )
-from app.models import Account, Budget, Transaction, User
+from app.models import Account, Budget, Category, Profile, Transaction, User
+from app.profiles import list_profiles, slugify
 from app.templates_env import templates
 from app.view_context import base_context
 
 router = APIRouter()
 
+RESERVED_SLUGS = {"profiles", "accounts", "connect", "categories", "budgets", "goals", "debts",
+                  "reports", "transactions", "search", "settings", "login", "logout", "add",
+                  "webhooks", "receipt", "static"}
 
-def _profile_or_404(profile_id: str):
-    if profile_id not in PROFILE_IDS:
-        raise HTTPException(status_code=404)
-    return PROFILES[profile_id]
+
+@router.get("/profiles")
+def profiles_hub(request: Request, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    ctx = base_context(db, user, "profiles")
+    A = ctx["A"]
+    profiles = list_profiles(db, user.id)
+    rows = []
+    for p in profiles:
+        totals = totals_for(db.query(Transaction).filter(Transaction.user_id == user.id, Transaction.profile == p.slug).all())
+        rows.append({"slug": p.slug, "name": p.name, "color": A(p.color), "raw_color": p.color,
+                     "icon": p.icon, "net": fmt_eur(totals["net"])})
+    return templates.TemplateResponse(request, "profiles.html", {**ctx, "profiles": rows})
+
+
+@router.post("/profiles")
+def add_profile(name: str = Form(...), color: str = Form("#12898F"), icon: str = Form(""),
+                db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    name = name.strip()
+    if name:
+        existing = {p.slug for p in list_profiles(db, user.id)} | RESERVED_SLUGS
+        slug = slugify(name, existing)
+        pos = db.query(Profile).filter(Profile.user_id == user.id).count()
+        db.add(Profile(user_id=user.id, slug=slug, name=name, color=color or "#12898F", icon=icon.strip(), position=pos))
+        # Categorías iniciales para que el perfil sea usable de inmediato.
+        for kind, names in (("income", ["Ingreso", "Otros ingresos"]), ("expense", ["Compras", "Otros"])):
+            for cname in names:
+                db.add(Category(user_id=user.id, profile=slug, kind=kind, name=cname, color=hash_color(cname)))
+        db.commit()
+    return RedirectResponse("/profiles", status_code=303)
+
+
+@router.post("/profiles/{slug}/edit")
+def edit_profile(slug: str, name: str = Form(...), color: str = Form(...), icon: str = Form(""),
+                 db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    p = db.query(Profile).filter(Profile.slug == slug, Profile.user_id == user.id).first()
+    if p and name.strip():
+        p.name = name.strip()
+        p.color = color or p.color
+        p.icon = icon.strip()
+        db.commit()
+    return RedirectResponse("/profiles", status_code=303)
+
+
+@router.post("/profiles/{slug}/delete")
+def delete_profile(slug: str, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    profiles = list_profiles(db, user.id)
+    if len(profiles) <= 1:
+        return RedirectResponse("/profiles", status_code=303)  # debe quedar al menos uno
+    p = next((x for x in profiles if x.slug == slug), None)
+    if p:
+        # Reasigna las transacciones al primer perfil restante y borra categorías/presupuestos propios.
+        fallback = next(x for x in profiles if x.slug != slug)
+        db.query(Transaction).filter(Transaction.user_id == user.id, Transaction.profile == slug).update(
+            {"profile": fallback.slug}, synchronize_session=False)
+        db.query(Category).filter(Category.user_id == user.id, Category.profile == slug).delete(synchronize_session=False)
+        db.query(Budget).filter(Budget.user_id == user.id, Budget.profile == slug).delete(synchronize_session=False)
+        db.delete(p)
+        db.commit()
+    return RedirectResponse("/profiles", status_code=303)
 
 
 @router.get("/{profile_id}")
@@ -30,9 +88,10 @@ def profile_page(
     profile_id: str, request: Request, search: str = "", type: str = "all",
     db: Session = Depends(get_db), user: User = Depends(get_current_user),
 ):
-    if profile_id not in PROFILE_IDS:
+    profile_obj = db.query(Profile).filter(Profile.slug == profile_id, Profile.user_id == user.id).first()
+    if not profile_obj:
         raise HTTPException(status_code=404)
-    conf = PROFILES[profile_id]
+    conf = {"name": profile_obj.name, "color": profile_obj.color}
     ctx = base_context(db, user, profile_id)
     A = ctx["A"]
 
@@ -128,7 +187,7 @@ def add_transaction(
     amount: float = Form(...), date_: str = Form(..., alias="date"), note: str = Form(""),
     db: Session = Depends(get_db), user: User = Depends(get_current_user),
 ):
-    if profile_id not in PROFILE_IDS:
+    if not db.query(Profile).filter(Profile.slug == profile_id, Profile.user_id == user.id).first():
         raise HTTPException(status_code=404)
     if amount and amount > 0:
         tx = Transaction(

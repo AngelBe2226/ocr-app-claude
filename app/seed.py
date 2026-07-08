@@ -5,12 +5,25 @@ from datetime import date
 from passlib.hash import bcrypt
 from sqlalchemy.orm import Session
 
-from app.constants import PROFILES
+from app.constants import PROFILE_IDS, PROFILES
 from app.finance import hash_color, last_n_months
-from app.models import Account, Bill, Budget, Category, Goal, Loan, Settings, Transaction, User
+from app.models import Account, Bill, Budget, Category, Goal, Loan, Profile, Settings, Transaction, User
 
 DEFAULT_EMAIL = "angelgbct@gmail.com"
 DEFAULT_PASSWORD = "finanzas123"
+
+
+def ensure_profiles(db: Session) -> None:
+    """Migración idempotente: crea los 4 perfiles por defecto en BD (a partir de las
+    constantes) para cualquier usuario que aún no los tenga. Los slugs coinciden con
+    los que ya usan las transacciones/categorías, así que el histórico sigue coherente."""
+    for user in db.query(User).all():
+        if db.query(Profile).filter(Profile.user_id == user.id).first():
+            continue
+        for pos, pid in enumerate(PROFILE_IDS):
+            conf = PROFILES[pid]
+            db.add(Profile(user_id=user.id, slug=pid, name=conf["name"], color=conf["color"], position=pos))
+    db.commit()
 
 
 def ensure_categories(db: Session) -> None:

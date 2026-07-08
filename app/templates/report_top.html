@@ -1,7 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 <div style="margin-bottom:12px;"><a href="/reports" style="font-size:13px;color:var(--secondary);">← Reportes</a></div>
-<div style="margin-bottom:16px;"><div class="page-title">{{ title }}</div><div class="page-subtitle">Total: {{ total_label }}</div></div>
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+  <div><div class="page-title">{{ title }}</div><div class="page-subtitle">Total: {{ total_label }}</div></div>
+  <a href="{{ export_href }}" class="btn-sm btn-track" style="white-space:nowrap;">Exportar PDF</a>
+</div>
 
 <div style="display:inline-flex;background:var(--trackBg);border-radius:11px;padding:3px;margin-bottom:18px;">
   <a href="/reports/top-categories?type=expense" class="tab-pill {{ 'active' if type == 'expense' else '' }}">Gastos</a>

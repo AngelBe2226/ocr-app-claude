@@ -1,5 +1,8 @@
 <div style="margin-bottom:12px;"><a href="/reports" style="font-size:13px;color:var(--secondary);">← Reportes</a></div>
-<div style="margin-bottom:16px;"><div class="page-title">{{ title }}</div>{% if subtitle %}<div class="page-subtitle">{{ subtitle }}</div>{% endif %}</div>
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+  <div><div class="page-title">{{ title }}</div>{% if subtitle %}<div class="page-subtitle">{{ subtitle }}</div>{% endif %}</div>
+  {% if export_href %}<a href="{{ export_href }}" class="btn-sm btn-track" style="white-space:nowrap;">Exportar PDF</a>{% endif %}
+</div>
 {% if kpis %}
 <div class="grid-auto" style="margin-bottom:16px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));">
   {% for k in kpis %}

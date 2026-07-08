@@ -17,7 +17,7 @@
   <div class="card card-pad-18">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
       <span style="display:flex;align-items:center;gap:10px;">
-        <span style="width:34px;height:34px;border-radius:50%;background:{{ a.tint }};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:{{ a.color }};">{{ a.initial }}</span>
+        <span class="icon-circle" style="width:34px;height:34px;border-radius:50%;background:{{ a.tint }};font-size:13px;font-weight:800;color:{{ a.color }};">{% if a.icon %}{{ icon(a.icon, 17) }}{% else %}{{ a.initial }}{% endif %}</span>
         <span style="font-size:13.5px;font-weight:700;">{{ a.name }}</span>
       </span>
       <form method="post" action="/accounts/{{ a.id }}/delete"><button type="submit" style="border:none;background:none;padding:0;cursor:pointer;font-size:11.5px;color:var(--muted);">Eliminar</button></form>
@@ -56,6 +56,8 @@
           <input type="date" name="cycle_end" value="{{ a.cycle_end_value }}" class="input mono" title="Cierre de ciclo (solo tarjetas)">
           <input type="date" name="due_date" value="{{ a.due_date_value }}" class="input mono" title="Fecha límite de pago (solo tarjetas)">
         </div>
+        <div style="font-size:11.5px;color:var(--secondary);">Icono</div>
+        {% with field='icon', current=a.icon %}{% include 'partials/_icon_picker.html' %}{% endwith %}
         <button type="submit" class="btn">Guardar cambios</button>
       </form>
     </details>
@@ -79,6 +81,8 @@
       </select>
     </div>
     <input type="number" step="0.01" name="balance" placeholder="Saldo actual" class="input mono" required>
+    <div style="font-size:11.5px;color:var(--secondary);">Icono</div>
+    {% with field='icon', current='' %}{% include 'partials/_icon_picker.html' %}{% endwith %}
     <button type="submit" class="btn">Añadir cuenta</button>
   </form>
 </div>

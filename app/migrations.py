@@ -15,6 +15,12 @@ NEW_COLUMNS = {
     "budgets": {
         "period": "VARCHAR DEFAULT 'monthly'",
     },
+    "accounts": {
+        "icon": "VARCHAR DEFAULT ''",
+    },
+    "profiles": {
+        "icon": "VARCHAR DEFAULT ''",
+    },
 }
 
 

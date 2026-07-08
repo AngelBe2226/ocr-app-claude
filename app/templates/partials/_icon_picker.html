@@ -1,0 +1,11 @@
+{# Selector de iconos reutilizable. Uso:
+   {% with field='icon', current=obj.icon %}{% include 'partials/_icon_picker.html' %}{% endwith %} #}
+<div class="icon-picker">
+  <input type="hidden" name="{{ field }}" value="{{ current or '' }}" class="icon-input">
+  <div class="icon-grid">
+    <button type="button" class="icon-opt {{ 'sel' if not current else '' }}" data-icon="" onclick="pickIcon(this)" title="Sin icono">—</button>
+    {% for n in icon_names %}
+    <button type="button" class="icon-opt {{ 'sel' if current == n else '' }}" data-icon="{{ n }}" onclick="pickIcon(this)" title="{{ n }}">{{ icon(n, 18) }}</button>
+    {% endfor %}
+  </div>
+</div>

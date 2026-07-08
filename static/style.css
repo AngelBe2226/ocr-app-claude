@@ -189,6 +189,37 @@ details[open] > summary .chevron { transform: rotate(90deg); }
 }
 @media (max-width: 900px) { .bulk-bar { bottom: 74px; } }
 
+/* Selector de iconos */
+.icon-picker { }
+.icon-grid { display: flex; flex-wrap: wrap; gap: 6px; max-height: 132px; overflow-y: auto; padding: 8px; border: 1px solid var(--borderInput); border-radius: 10px; }
+.icon-opt { width: 34px; height: 34px; border: 1px solid transparent; border-radius: 9px; background: var(--trackBg); color: var(--secondaryAlt); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; flex-shrink: 0; }
+.icon-opt:hover { color: var(--ink); }
+.icon-opt.sel { border-color: var(--accent); color: var(--accent); background: var(--card); }
+.icon-circle { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.cicon { line-height: 1; font-style: normal; }
+
+/* Iconos de navegación (línea, estilo MoneyCoach) */
+.nav-ico { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--secondary); }
+.sidebar-link .nav-ico { width: 20px; }
+.sidebar-link.active .nav-ico { color: var(--accent); }
+
+/* Pulido de interacción global */
+.sidebar-link { transition: background .12s ease; }
+.sidebar-link:not(.active):hover { background: var(--navActiveBg); }
+a.card { transition: transform .12s ease, box-shadow .12s ease; }
+a.card:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(33,31,26,0.10); }
+.btn, .btn-sm { transition: filter .12s ease, transform .05s ease; }
+.btn:hover, .btn-sm:hover { filter: brightness(1.06); }
+.btn:active, .btn-sm:active { transform: translateY(1px); }
+.fab { transition: transform .12s ease, filter .12s ease; }
+.fab:active { transform: scale(0.95); }
+.more-sheet .item { transition: background .12s ease; }
+.more-sheet .item:hover { background: var(--navActiveBg); }
+input:focus, select:focus, textarea:focus {
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
 /* Encabezado de grupo colapsable (cuentas, categorías) */
 .group-header.collapsible { cursor: pointer; }
 .group-header .chevron { transition: transform .15s; transform: rotate(90deg); }

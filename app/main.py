@@ -10,10 +10,11 @@ from app.auth import NotAuthenticated
 from app.database import Base, SessionLocal, engine
 from app.migrations import ensure_schema
 from app.routers import (
-    accounts_router, add_router, auth_router, budgets_router, categories_router, debts_router,
-    goals_router, overview_router, profiles_router, reports_router, settings_router, transactions_router,
+    accounts_router, add_router, auth_router, budgets_router, categories_router, connect_router,
+    debts_router, goals_router, overview_router, profiles_router, reports_router, settings_router,
+    transactions_router,
 )
-from app.seed import ensure_categories, seed_if_empty
+from app.seed import ensure_categories, ensure_profiles, seed_if_empty
 
 
 @asynccontextmanager
@@ -24,6 +25,7 @@ async def lifespan(app: FastAPI):
     ensure_schema(engine)
     with SessionLocal() as db:
         seed_if_empty(db)
+        ensure_profiles(db)
         ensure_categories(db)
     yield
     # Apagado: nada que limpiar por ahora.
@@ -52,4 +54,5 @@ app.include_router(debts_router.router)
 app.include_router(reports_router.router)
 app.include_router(transactions_router.router)
 app.include_router(settings_router.router)
+app.include_router(connect_router.router)
 app.include_router(profiles_router.router)

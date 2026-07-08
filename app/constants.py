@@ -29,12 +29,11 @@ PROFILE_IDS = ["melia", "realestate", "freelance", "personal"]
 SIDEBAR_DEF = [
     {"id": "overview", "label": "Resumen", "kind": "link"},
     {"label": "Perfiles", "kind": "label"},
-    {"id": "melia", "label": "Meliá", "kind": "link"},
-    {"id": "realestate", "label": "Real Estate", "kind": "link"},
-    {"id": "freelance", "label": "Freelance", "kind": "link"},
-    {"id": "personal", "label": "Personal", "kind": "link"},
+    {"kind": "profiles"},  # marcador: se expande a los perfiles de la BD (editables)
+    {"id": "profiles", "label": "Gestionar perfiles", "kind": "link"},
     {"label": "Gestión", "kind": "label"},
     {"id": "accounts", "label": "Cuentas", "kind": "link"},
+    {"id": "connect", "label": "Conectar banco", "kind": "link"},
     {"id": "categories", "label": "Categorías", "kind": "link"},
     {"id": "budgets", "label": "Presupuestos", "kind": "link"},
     {"id": "goals", "label": "Metas", "kind": "link"},
@@ -54,11 +53,9 @@ BOTTOM_TAB_DEF = [
 ]
 
 MORE_DEF = [
-    {"id": "melia", "label": "Meliá"},
-    {"id": "realestate", "label": "Real Estate"},
-    {"id": "freelance", "label": "Freelance"},
-    {"id": "personal", "label": "Personal"},
+    {"id": "profiles", "label": "Perfiles"},
     {"id": "accounts", "label": "Cuentas"},
+    {"id": "connect", "label": "Conectar banco"},
     {"id": "categories", "label": "Categorías"},
     {"id": "budgets", "label": "Presupuestos"},
     {"id": "reports", "label": "Informes"},
@@ -92,16 +89,34 @@ FX_RATES = {"EUR": 1, "USD": 0.92, "GBP": 1.17}
 MESES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
 
 LIGHT_THEME = {
-    "bg": "#FAF9F6", "card": "#FFFFFF", "ink": "#211F1A", "secondary": "#7A756C", "secondaryAlt": "#57534A",
-    "border": "rgba(33,31,26,0.07)", "borderStrong": "rgba(33,31,26,0.1)", "borderInput": "rgba(33,31,26,0.14)",
-    "shadow": "0 2px 10px rgba(33,31,26,0.06)", "muted": "#A39C90", "trackBg": "#F0EDE6",
-    "solidBtnBg": "#211F1A", "solidBtnColor": "#FAF9F6", "navActiveBg": "#F3F1EA",
+    "bg": "#F4F2EE", "card": "#FFFFFF", "ink": "#211F1A", "secondary": "#7A756C", "secondaryAlt": "#57534A",
+    "border": "rgba(33,31,26,0.05)", "borderStrong": "rgba(33,31,26,0.08)", "borderInput": "rgba(33,31,26,0.12)",
+    "shadow": "0 6px 20px rgba(33,31,26,0.07), 0 1px 3px rgba(33,31,26,0.04)", "muted": "#A39C90", "trackBg": "#EFECE5",
+    "solidBtnBg": "#211F1A", "solidBtnColor": "#FAF9F6", "navActiveBg": "#F3F1EA", "cardHi": "rgba(255,255,255,0.75)",
 }
 DARK_THEME = {
-    "bg": "#1C1A14", "card": "#252319", "ink": "#F5F1E8", "secondary": "#ABA294", "secondaryAlt": "#C9C0B0",
-    "border": "rgba(255,255,255,0.08)", "borderStrong": "rgba(255,255,255,0.12)", "borderInput": "rgba(255,255,255,0.16)",
-    "shadow": "0 2px 10px rgba(0,0,0,0.4)", "muted": "#8B8474", "trackBg": "#302C1F",
-    "solidBtnBg": "#F5F1E8", "solidBtnColor": "#1C1A14", "navActiveBg": "#26241A",
+    "bg": "#16150F", "card": "#252319", "ink": "#F5F1E8", "secondary": "#ABA294", "secondaryAlt": "#C9C0B0",
+    "border": "rgba(255,255,255,0.07)", "borderStrong": "rgba(255,255,255,0.11)", "borderInput": "rgba(255,255,255,0.15)",
+    "shadow": "0 8px 24px rgba(0,0,0,0.5), 0 1px 3px rgba(0,0,0,0.35)", "muted": "#8B8474", "trackBg": "#302C1F",
+    "solidBtnBg": "#F5F1E8", "solidBtnColor": "#1C1A14", "navActiveBg": "#26241A", "cardHi": "rgba(255,255,255,0.05)",
 }
 
 ACCOUNT_TYPE_LABELS = {"cash": "Efectivo", "bank": "Banco", "savings": "Ahorro", "card": "Tarjeta"}
+
+# Bancos disponibles para el flujo de conexión (modo demo hasta configurar un agregador real).
+BANKS = [
+    {"id": "bbva", "name": "BBVA", "color": "#004481"},
+    {"id": "santander", "name": "Santander", "color": "#EC0000"},
+    {"id": "caixabank", "name": "CaixaBank", "color": "#007EAE"},
+    {"id": "ing", "name": "ING", "color": "#FF6200"},
+    {"id": "sabadell", "name": "Banco Sabadell", "color": "#00A0DF"},
+    {"id": "bankinter", "name": "Bankinter", "color": "#FF6600"},
+    {"id": "openbank", "name": "Openbank", "color": "#E4022B"},
+    {"id": "revolut", "name": "Revolut", "color": "#0075EB"},
+]
+# Agregadores Open Banking soportados (requieren registro + API keys para uso real).
+AGGREGATORS = [
+    {"id": "tink", "name": "Tink"},
+    {"id": "gocardless", "name": "GoCardless"},
+    {"id": "truelayer", "name": "TrueLayer"},
+]

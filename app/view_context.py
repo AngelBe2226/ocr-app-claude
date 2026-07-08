@@ -4,15 +4,26 @@ from sqlalchemy.orm import Session
 
 from app.auth import get_or_create_settings
 from app.constants import (
-    ACCENT_OPTIONS, BOTTOM_TAB_DEF, DARK_THEME, LIGHT_THEME, MORE_DEF, PROFILES, SIDEBAR_DEF,
+    ACCENT_OPTIONS, BOTTOM_TAB_DEF, DARK_THEME, LIGHT_THEME, MORE_DEF, SIDEBAR_DEF,
 )
 from app.finance import lighten
 from app.models import User
+from app.profiles import list_profiles
 
 MESES_LONG = [
     "enero", "febrero", "marzo", "abril", "mayo", "junio",
     "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
 ]
+
+MANAGE_IDS = ("profiles", "accounts", "connect", "categories", "budgets", "goals",
+              "debts", "reports", "transactions", "search", "settings")
+
+NAV_ICONS = {
+    "overview": "grid", "profiles": "users", "accounts": "wallet", "connect": "bank",
+    "categories": "tag", "budgets": "piggy-bank", "goals": "target", "debts": "receipt",
+    "reports": "chart", "transactions": "list", "search": "search", "settings": "gear",
+    "more": "more",
+}
 
 
 def base_context(db: Session, user: User, view: str) -> dict:
@@ -27,28 +38,29 @@ def base_context(db: Session, user: User, view: str) -> dict:
     accent_hex = A(accent["hex"])
     accent_hex_soft = lighten(accent_hex, 0.28)
 
+    profiles = list_profiles(db, user.id)
+
     sidebar_items = []
     for n in SIDEBAR_DEF:
+        if n["kind"] == "profiles":
+            # Perfiles dinámicos desde la BD (editables): usan su punto/icono de color.
+            for p in profiles:
+                sidebar_items.append({"is_label": False, "id": p.slug, "label": p.name,
+                                      "active": view == p.slug, "dot": A(p.color),
+                                      "profile_icon": p.icon})
+            continue
         if n["kind"] == "label":
             sidebar_items.append({"is_label": True, "label": n["label"]})
             continue
-        active = view == n["id"]
-        dot = PROFILES.get(n["id"], {}).get("color", theme["ink"])
-        if n["id"] == "overview":
-            dot = accent_hex
-        if n["id"] in ("accounts", "categories", "budgets", "goals", "debts", "reports", "transactions", "search", "settings"):
-            dot = theme["secondary"]
-        else:
-            dot = A(dot) if n["id"] in PROFILES else dot
-        sidebar_items.append({
-            "is_label": False, "id": n["id"], "label": n["label"], "active": active, "dot": dot,
-        })
+        sidebar_items.append({"is_label": False, "id": n["id"], "label": n["label"],
+                              "active": view == n["id"], "nav_icon": NAV_ICONS.get(n["id"], "circle")})
 
-    bottom_tabs = [{"id": n["id"], "label": n["label"], "active": (view == n["id"])} for n in BOTTOM_TAB_DEF]
-    more_items = [
-        {"id": n["id"], "label": n["label"], "dot": A(PROFILES.get(n["id"], {}).get("color", theme["secondary"]))}
-        for n in MORE_DEF
-    ]
+    bottom_tabs = [{"id": n["id"], "label": n["label"], "active": (view == n["id"]),
+                    "nav_icon": NAV_ICONS.get(n["id"], "circle")} for n in BOTTOM_TAB_DEF]
+    more_items = [{"id": "profiles", "label": "Perfiles", "nav_icon": "users"}]
+    more_items += [{"id": p.slug, "label": p.name, "dot": A(p.color), "profile_icon": p.icon} for p in profiles]
+    more_items += [{"id": n["id"], "label": n["label"], "nav_icon": NAV_ICONS.get(n["id"], "circle")}
+                   for n in MORE_DEF if n["id"] != "profiles"]
 
     accent_options = [
         {"hex": a["hex"], "key": a["key"], "active": settings.accent_key == a["key"]}

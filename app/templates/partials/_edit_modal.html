@@ -1,0 +1,23 @@
+<div id="edit-modal" class="modal-backdrop" style="display:none;" onclick="if(event.target===this)closeEditModal()">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div style="font-size:15px;font-weight:800;">Editar movimiento</div>
+      <button type="button" class="modal-close" onclick="closeEditModal()">&times;</button>
+    </div>
+    <form id="form-edit" method="post" class="form-col">
+      <div class="grid-2">
+        <select name="type" class="input js-etype">
+          <option value="expense">Gasto</option>
+          <option value="income">Ingreso</option>
+        </select>
+        <select name="profile" class="input js-eprofile"></select>
+      </div>
+      <select name="category" class="input js-ecategory"></select>
+      <select name="account_id" class="input js-eaccount"></select>
+      <input type="number" step="0.01" min="0" name="amount" placeholder="Importe (€)" class="input mono js-eamount" required>
+      <input type="date" name="date" class="input mono js-edate" required>
+      <input type="text" name="note" placeholder="Nota (opcional)" class="input js-enote">
+      <button type="submit" class="btn">Guardar cambios</button>
+    </form>
+  </div>
+</div>
