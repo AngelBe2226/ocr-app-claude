@@ -115,15 +115,24 @@ def profile_page(
     months6 = last_n_months(6)
     series = monthly_series(list_tx, months6)
     net_vals = [s["net"] for s in series]
-    min_net, max_net = min([0] + net_vals), max([1] + net_vals)
-    rng = (max_net - min_net) or 1
+    exp_vals = [s["expense"] for s in series]
+    inc_vals = [s["income"] for s in series]
+    # Eje compartido para neto, ingresos y gastos.
+    lo = min([0] + net_vals)
+    hi = max([1] + net_vals + exp_vals + inc_vals)
+    rng = (hi - lo) or 1
     n = len(series)
-    line_dots = []
-    for i, s in enumerate(series):
-        x = (i / (n - 1 if n > 1 else 1)) * 560 + 20
-        y = 140 - ((s["net"] - min_net) / rng) * 120
-        line_dots.append({"x": round(x, 1), "y": round(y, 1), "label": s["label"]})
+
+    def _y(v):
+        return round(140 - ((v - lo) / rng) * 120, 1)
+
+    def _x(i):
+        return round((i / (n - 1 if n > 1 else 1)) * 560 + 20, 1)
+
+    line_dots = [{"x": _x(i), "y": _y(s["net"]), "label": s["label"]} for i, s in enumerate(series)]
     line_points = " ".join(f"{d['x']},{d['y']}" for d in line_dots)
+    expense_points = " ".join(f"{_x(i)},{_y(v)}" for i, v in enumerate(exp_vals))
+    income_points = " ".join(f"{_x(i)},{_y(v)}" for i, v in enumerate(inc_vals))
 
     # Segunda línea: gasto acumulado (running total) del mes en curso.
     cur_key = date.today().strftime("%Y-%m")
@@ -177,6 +186,7 @@ def profile_page(
         "categories": categories, "bulk_categories": bulk_categories, "form_type": form_type,
         "donut_segs": donut_segs, "has_expenses": len(donut_segs) > 0,
         "line_points": line_points, "line_dots": line_dots, "cumulative_points": cumulative_points,
+        "expense_points": expense_points, "income_points": income_points,
         "budgets": b_rows,
         "history_groups": history_groups, "history_count": len(history_rows),
     }

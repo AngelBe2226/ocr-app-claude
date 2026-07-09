@@ -1,4 +1,4 @@
-// Tablas de transacciones: colapsar meses, seleccionar todo y barra de acciones flotante.
+// Tablas de transacciones: colapsar meses, seleccionar todo y barra de acciones integrada.
 function toggleMonth(header) {
   header.parentElement.classList.toggle('collapsed');
 }
@@ -28,7 +28,7 @@ function updateBulkBar(form) {
   const n = form.querySelectorAll('.tx-check:checked').length;
   const bar = form.querySelector('.bulk-bar');
   if (bar) {
-    bar.style.display = n > 0 ? 'flex' : 'none';
+    bar.classList.toggle('active', n > 0);
     const c = bar.querySelector('.bulk-count');
     if (c) c.textContent = n;
   }

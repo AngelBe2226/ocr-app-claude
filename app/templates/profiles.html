@@ -2,7 +2,7 @@
 {% block content %}
 <div style="margin-bottom:18px;"><div class="page-title">Perfiles</div><div class="page-subtitle">Tus fuentes de ingresos y áreas — crea, edita o elimina</div></div>
 
-<div class="grid-auto" style="margin-bottom:24px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
+<div class="grid-auto edit-grid" style="margin-bottom:24px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));">
   {% for p in profiles %}
   <div class="card card-pad-18">
     <a href="/{{ p.slug }}" style="display:flex;align-items:center;gap:12px;">

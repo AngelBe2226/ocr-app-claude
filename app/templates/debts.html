@@ -11,7 +11,7 @@
   {% endfor %}
 </div>
 
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-bottom:20px;">
+<div class="edit-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-bottom:20px;">
   {% for l in loans %}
   <div class="card" style="min-width:0;{{ 'border-color:' ~ l.border_color ~ ';' if l.border_color else '' }}">
     <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px;">

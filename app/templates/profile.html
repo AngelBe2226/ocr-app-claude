@@ -45,19 +45,23 @@
     <div class="card">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
         <div style="font-size:14px;font-weight:700;">Tendencia mensual</div>
-        <div style="display:flex;gap:14px;font-size:11px;color:var(--secondary);">
-          <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:3px;border-radius:2px;background:{{ profile.color }};"></span>Neto (6m)</span>
-          {% if profile.cumulative_points %}<span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:0;border-top:2px dashed #E2574C;"></span>Gasto acumulado (mes)</span>{% endif %}
+        <div style="display:flex;gap:12px;font-size:11px;color:var(--secondary);flex-wrap:wrap;">
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:3px;border-radius:2px;background:var(--ink);"></span>Neto</span>
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:3px;border-radius:2px;background:#3FA65C;"></span>Ingresos</span>
+          <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:3px;border-radius:2px;background:#E2574C;"></span>Gastos</span>
+          {% if profile.cumulative_points %}<span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:0;border-top:2px dashed #D9932E;"></span>Acumulado (mes)</span>{% endif %}
         </div>
       </div>
       <svg viewBox="0 0 600 170" style="width:100%;height:140px;overflow:visible;">
-        <polyline points="{{ profile.line_points }}" fill="none" stroke="{{ profile.color }}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>
+        <polyline points="{{ profile.income_points }}" fill="none" stroke="#3FA65C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"></polyline>
+        <polyline points="{{ profile.expense_points }}" fill="none" stroke="#E2574C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"></polyline>
+        <polyline class="chart-draw" points="{{ profile.line_points }}" fill="none" stroke="var(--ink)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>
         {% for d in profile.line_dots %}
         <circle cx="{{ d.x }}" cy="{{ d.y }}" r="3.5" fill="{{ profile.color }}"></circle>
         <text x="{{ d.x }}" y="164" font-size="11" text-anchor="middle" fill="var(--secondary)">{{ d.label }}</text>
         {% endfor %}
         {% if profile.cumulative_points %}
-        <polyline points="{{ profile.cumulative_points }}" fill="none" stroke="#E2574C" stroke-width="2.5" stroke-dasharray="6 4" stroke-linecap="round" stroke-linejoin="round"></polyline>
+        <polyline points="{{ profile.cumulative_points }}" fill="none" stroke="#D9932E" stroke-width="2.5" stroke-dasharray="6 4" stroke-linecap="round" stroke-linejoin="round"></polyline>
         {% endif %}
       </svg>
     </div>

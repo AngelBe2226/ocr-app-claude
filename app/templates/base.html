@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Mis Finanzas</title>
+<title>MyMoney</title>
 <link rel="stylesheet" href="/static/style.css?v={{ static_version }}">
 <link rel="stylesheet" href="/static/custom-icons.css?v={{ static_version }}">
 <script src="https://unpkg.com/htmx.org@1.9.12"></script>
@@ -22,7 +22,7 @@
 
   <div class="sidebar">
     <div style="padding:4px 10px 20px;">
-      <div class="sidebar-title">Mis Finanzas</div>
+      <div class="sidebar-title">MyMoney</div>
       <div class="sidebar-date">{{ current_date_label }}</div>
     </div>
     {% for item in sidebar_items %}
@@ -49,7 +49,7 @@
   </div>
 
   <div class="main-col">
-    <div class="mobile-topbar">Mis Finanzas</div>
+    <div class="mobile-topbar">MyMoney</div>
 
     <div class="page">
       {% block content %}{% endblock %}

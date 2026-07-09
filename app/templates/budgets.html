@@ -14,7 +14,7 @@
 </div>
 
 {% if cards %}
-<div class="grid-auto" style="margin-bottom:24px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));">
+<div class="grid-auto edit-grid" style="margin-bottom:24px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));">
   {% for b in cards %}
   <div class="card card-pad-18">
     <a href="/budgets/{{ b.id }}" style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
@@ -36,8 +36,8 @@
     </div>
     <details class="edit">
       <summary>Editar</summary>
-      <form method="post" action="/budgets/{{ b.id }}/edit" style="display:flex;gap:6px;">
-        <input type="number" step="0.01" name="allocated" value="{{ b.allocated }}" class="input-sm mono" style="flex:1;" required>
+      <form method="post" action="/budgets/{{ b.id }}/edit" style="display:flex;gap:6px;flex-wrap:wrap;">
+        <input type="number" step="0.01" name="allocated" value="{{ b.allocated }}" class="input-sm mono" style="flex:1;min-width:0;" required>
         <button type="submit" class="btn-sm btn-track">Guardar</button>
         <button type="submit" formaction="/budgets/{{ b.id }}/delete" class="btn-sm btn-danger">✕</button>
       </form>
