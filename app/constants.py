@@ -91,7 +91,7 @@ MESES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "
 LIGHT_THEME = {
     "bg": "#F4F2EE", "card": "#FFFFFF", "ink": "#211F1A", "secondary": "#7A756C", "secondaryAlt": "#57534A",
     "border": "rgba(33,31,26,0.05)", "borderStrong": "rgba(33,31,26,0.08)", "borderInput": "rgba(33,31,26,0.12)",
-    "shadow": "0 6px 20px rgba(33,31,26,0.07), 0 1px 3px rgba(33,31,26,0.04)", "muted": "#A39C90", "trackBg": "#EFECE5",
+    "shadow": "0 8px 24px rgba(33,31,26,0.06), 0 1px 3px rgba(33,31,26,0.035)", "muted": "#A39C90", "trackBg": "#EFECE5",
     "solidBtnBg": "#211F1A", "solidBtnColor": "#FAF9F6", "navActiveBg": "#F3F1EA", "cardHi": "rgba(255,255,255,0.75)",
 }
 DARK_THEME = {

@@ -5,7 +5,7 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
-from app.categories import category_names
+from app.categories import category_index, category_names
 from app.database import get_db
 from app.finance import (
     budget_rows, donut_segments, fmt_eur, hash_color, last_n_months, month_groups, monthly_series,
@@ -13,6 +13,7 @@ from app.finance import (
 )
 from app.models import Account, Budget, Category, Profile, Transaction, User
 from app.profiles import list_profiles, slugify
+from app.seed import icon_for_category
 from app.templates_env import templates
 from app.view_context import base_context
 
@@ -48,7 +49,8 @@ def add_profile(name: str = Form(...), color: str = Form("#12898F"), icon: str =
         # Categorías iniciales para que el perfil sea usable de inmediato.
         for kind, names in (("income", ["Ingreso", "Otros ingresos"]), ("expense", ["Compras", "Otros"])):
             for cname in names:
-                db.add(Category(user_id=user.id, profile=slug, kind=kind, name=cname, color=hash_color(cname)))
+                db.add(Category(user_id=user.id, profile=slug, kind=kind, name=cname,
+                                color=hash_color(cname), icon=icon_for_category(cname)))
         db.commit()
     return RedirectResponse("/profiles", status_code=303)
 
@@ -153,13 +155,20 @@ def profile_page(
         row["bar_color"] = "#E2574C" if row["over"] else A(conf["color"])
 
     filtered = filter_transactions(list_tx, search=search, type_=type)
-    history_rows = [{
-        "id": t.id, "category": t.category, "note": t.note, "date": t.date,
-        "amount_label": ("+ " if t.type == "income" else "- ") + fmt_eur(t.amount),
-        "color": A("#3FA65C" if t.type == "income" else "#E2574C"),
-        "signed": t.amount if t.type == "income" else -t.amount,
-        "has_receipt": bool(t.attachment_name), "place_name": t.place_name or "",
-    } for t in filtered]
+    cat_idx = category_index(db, user.id)
+    history_rows = []
+    for t in filtered:
+        cat = cat_idx.get((t.profile, t.category))
+        cat_raw = cat.color if cat else hash_color(t.category or "?")
+        history_rows.append({
+            "id": t.id, "category": t.category, "note": t.note, "date": t.date,
+            "amount_label": ("+ " if t.type == "income" else "- ") + fmt_eur(t.amount),
+            "color": A("#3FA65C" if t.type == "income" else "#E2574C"),
+            "signed": t.amount if t.type == "income" else -t.amount,
+            "has_receipt": bool(t.attachment_name), "place_name": t.place_name or "",
+            "cat_icon": (cat.icon if cat else ""), "cat_color": A(cat_raw), "cat_raw_color": cat_raw,
+            "initial": (t.category[0].upper() if t.category else "?"),
+        })
     history_groups = month_groups(history_rows)
 
     profile_ctx = {

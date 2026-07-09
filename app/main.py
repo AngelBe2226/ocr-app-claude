@@ -14,7 +14,7 @@ from app.routers import (
     debts_router, goals_router, overview_router, profiles_router, reports_router, settings_router,
     transactions_router,
 )
-from app.seed import ensure_categories, ensure_profiles, seed_if_empty
+from app.seed import ensure_categories, ensure_category_icons, ensure_profiles, seed_if_empty
 
 
 @asynccontextmanager
@@ -27,6 +27,7 @@ async def lifespan(app: FastAPI):
         seed_if_empty(db)
         ensure_profiles(db)
         ensure_categories(db)
+        ensure_category_icons(db)
     yield
     # Apagado: nada que limpiar por ahora.
 

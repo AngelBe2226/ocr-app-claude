@@ -5,6 +5,7 @@ from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
+from app.categories import category_index
 from app.database import get_db
 from app.finance import fmt_eur, hash_color, net_worth_eur, period_bounds, ring_dash
 from app.models import Account, Budget, Goal, Loan, SpendingLimit, Transaction, User
@@ -45,15 +46,18 @@ def overview(request: Request, db: Session = Depends(get_db), user: User = Depen
             "spent": fmt_eur(spent), "budget": fmt_eur(total_budget),
         })
 
+    cat_idx = category_index(db, user.id)
     recent = sorted(transactions, key=lambda t: t.date, reverse=True)[:7]
     recent_rows = []
     for t in recent:
-        col = hash_color(t.category)
+        cat = cat_idx.get((t.profile, t.category))
+        col = cat.color if cat else hash_color(t.category or "?")
         recent_rows.append({
             "category": t.category, "date_label": t.date,
             "amount_label": ("+ " if t.type == "income" else "- ") + fmt_eur(t.amount),
             "color": A("#3FA65C" if t.type == "income" else "#E2574C"),
             "profile_name": pname(pmap, t.profile), "initial": t.category[0].upper() if t.category else "?",
+            "cat_icon": (cat.icon if cat else ""),
             "icon_bg": "rgba(255,255,255,0.08)" if ctx["is_dark"] else col + "22", "icon_color": A(col),
         })
 
@@ -95,6 +99,7 @@ def overview(request: Request, db: Session = Depends(get_db), user: User = Depen
 
     overview_ctx = {
         "net_worth": fmt_eur(net_worth),
+        "net_positive": net_worth >= 0,
         "net_worth_sub": "Vas bien — sigue así" if net_worth >= 0 else "Cuidado con el saldo negativo",
         "tip": tip,
         "profile_rings": profile_rings,

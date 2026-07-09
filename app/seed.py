@@ -26,6 +26,50 @@ def ensure_profiles(db: Session) -> None:
     db.commit()
 
 
+DEFAULT_CATEGORY_ICONS = {
+    "transporte": "bus", "comidas": "utensils", "uniforme": "shirt", "otros": "circle",
+    "marketing": "megaphone", "gasolina": "fuel", "materiales": "wrench", "comisión colaborador": "users",
+    "software/licencias": "laptop", "equipo": "laptop", "subcontratación": "briefcase",
+    "compras": "shopping-bag", "ocio": "film", "salud": "heart", "hogar": "home", "suscripciones": "bolt",
+    "salario base": "wallet", "horas extra": "wallet", "bono": "gift", "propinas": "cash",
+    "comisión venta": "briefcase", "comisión alquiler": "home", "bono de cierre": "gift",
+    "proyecto branding": "palette", "proyecto web": "laptop", "ilustración": "palette", "retainer": "briefcase",
+    "ingreso extra": "cash", "regalo": "gift", "reembolso": "receipt", "sin categoría": "circle",
+}
+# Palabras clave para categorías nuevas creadas por el usuario.
+ICON_KEYWORDS = [
+    ("transp", "bus"), ("comid", "utensils"), ("restaur", "utensils"), ("café", "coffee"), ("gasolin", "fuel"),
+    ("combust", "fuel"), ("coche", "car"), ("mercado", "shopping-bag"), ("compra", "shopping-bag"),
+    ("ropa", "shirt"), ("ocio", "film"), ("salud", "heart"), ("farmac", "pill"), ("gimnas", "dumbbell"),
+    ("hogar", "home"), ("alquil", "home"), ("luz", "bolt"), ("suscri", "bolt"), ("stream", "film"),
+    ("music", "music"), ("viaje", "plane"), ("regalo", "gift"), ("salari", "wallet"), ("nómina", "wallet"),
+    ("nomina", "wallet"), ("software", "laptop"), ("web", "laptop"), ("marketing", "megaphone"),
+    ("diseñ", "palette"), ("brand", "palette"), ("educ", "graduation"), ("mascot", "paw"),
+]
+
+
+def icon_for_category(name: str) -> str:
+    key = (name or "").strip().lower()
+    if key in DEFAULT_CATEGORY_ICONS:
+        return DEFAULT_CATEGORY_ICONS[key]
+    for kw, ico in ICON_KEYWORDS:
+        if kw in key:
+            return ico
+    return ""
+
+
+def ensure_category_icons(db: Session) -> None:
+    """Backfill: asigna un icono por defecto a las categorías que no tengan ninguno."""
+    changed = False
+    for c in db.query(Category).filter(Category.icon == "").all():
+        ico = icon_for_category(c.name)
+        if ico:
+            c.icon = ico
+            changed = True
+    if changed:
+        db.commit()
+
+
 def ensure_categories(db: Session) -> None:
     """Migración idempotente: crea las categorías en BD a partir de las constantes
     para cualquier usuario que aún no las tenga. Los nombres coinciden con los que
@@ -37,7 +81,7 @@ def ensure_categories(db: Session) -> None:
             for kind, key in (("income", "income_categories"), ("expense", "expense_categories")):
                 for name in conf[key]:
                     db.add(Category(user_id=user.id, profile=pid, kind=kind,
-                                    name=name, color=hash_color(name)))
+                                    name=name, color=hash_color(name), icon=icon_for_category(name)))
     db.commit()
 
 

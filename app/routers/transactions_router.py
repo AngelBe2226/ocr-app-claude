@@ -5,10 +5,10 @@ from fastapi.responses import JSONResponse, RedirectResponse, Response
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
-from app.categories import category_names
+from app.categories import category_index, category_names
 from app.constants import TYPE_FILTER_OPTIONS
 from app.database import get_db
-from app.finance import export_csv_bytes, fmt_date_es, filter_transactions, fmt_eur, month_groups, totals_for
+from app.finance import export_csv_bytes, fmt_date_es, filter_transactions, fmt_eur, hash_color, month_groups, totals_for
 from app.models import Account, Transaction, User
 from app.pdf import build_transactions_pdf
 from app.profiles import pcolor, pname, profile_filter_options, profiles_map
@@ -50,15 +50,20 @@ def edit_transaction(
     return RedirectResponse(ref if ref else "/transactions", status_code=303)
 
 
-def build_tx_rows(transactions, A, pmap, show_profile=True):
+def build_tx_rows(transactions, A, pmap, show_profile=True, cat_index=None):
+    cat_index = cat_index or {}
     rows = []
     for t in transactions:
         signed = t.amount if t.type == "income" else -t.amount
+        cat = cat_index.get((t.profile, t.category))
+        cat_raw_color = cat.color if cat else hash_color(t.category or "?")
         row = {
             "id": t.id, "category": t.category, "note": t.note, "date": t.date,
             "amount_label": ("+ " if t.type == "income" else "- ") + fmt_eur(t.amount),
             "color": A("#3FA65C" if t.type == "income" else "#E2574C"),
             "signed": signed, "has_receipt": bool(t.attachment_name), "place_name": t.place_name or "",
+            "cat_icon": (cat.icon if cat else ""), "cat_color": A(cat_raw_color), "cat_raw_color": cat_raw_color,
+            "initial": (t.category[0].upper() if t.category else "?"),
         }
         if show_profile:
             row["profile_name"] = pname(pmap, t.profile)
@@ -77,7 +82,8 @@ def transactions_page(request: Request, db: Session = Depends(get_db), user: Use
 
     transactions = db.query(Transaction).filter(Transaction.user_id == user.id).all()
     filtered = filter_transactions(transactions, search=search, profile=profile, type_=type_)
-    groups = month_groups(build_tx_rows(filtered, A, profiles_map(db, user.id), show_profile=True))
+    groups = month_groups(build_tx_rows(filtered, A, profiles_map(db, user.id), show_profile=True,
+                                        cat_index=category_index(db, user.id)))
 
     accounts = db.query(Account).filter(Account.user_id == user.id).order_by(Account.id).all()
     return templates.TemplateResponse(request, "transactions.html", {
@@ -175,7 +181,8 @@ def search_page(request: Request, db: Session = Depends(get_db), user: User = De
         transactions, search=filters["search"], profile=filters["profile"], type_=filters["type"],
         account_id=filters["account_id"], date_from=filters["date_from"], date_to=filters["date_to"],
     )
-    groups = month_groups(build_tx_rows(filtered, A, profiles_map(db, user.id), show_profile=True))
+    groups = month_groups(build_tx_rows(filtered, A, profiles_map(db, user.id), show_profile=True,
+                                        cat_index=category_index(db, user.id)))
     accounts = db.query(Account).filter(Account.user_id == user.id).order_by(Account.id).all()
     account_options = [{"id": "all", "name": "Todas las cuentas"}] + [{"id": a.id, "name": a.name} for a in accounts]
     return templates.TemplateResponse(request, "search.html", {

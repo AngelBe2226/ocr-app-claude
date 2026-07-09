@@ -21,7 +21,12 @@
             <td style="width:26px;padding-right:6px;"><input type="checkbox" name="tx_id" value="{{ t.id }}" class="tx-check"></td>
             <td style="font-size:12px;color:var(--secondary);white-space:nowrap;">{{ t.date|date_es }}</td>
             {% if show_profile %}<td style="font-size:12px;"><span class="pill" style="background:{{ t.profile_tint }};color:{{ t.profile_color }};">{{ t.profile_name }}</span></td>{% endif %}
-            <td style="font-size:13px;">{{ t.category }}</td>
+            <td style="font-size:13px;">
+              <span style="display:inline-flex;align-items:center;gap:8px;">
+                <span class="icon-circle" style="width:26px;height:26px;border-radius:50%;background:{{ t.cat_raw_color }}22;color:{{ t.cat_color }};font-size:11px;font-weight:800;">{% if t.cat_icon %}{{ icon(t.cat_icon, 14) }}{% else %}{{ t.initial }}{% endif %}</span>
+                {{ t.category }}
+              </span>
+            </td>
             <td style="font-size:12px;color:var(--secondary);">{{ t.note }}{% if t.place_name %} · 📍 {{ t.place_name }}{% endif %}{% if t.has_receipt %} · <a href="/receipt/{{ t.id }}" target="_blank" class="receipt-link">📎</a>{% endif %}</td>
             <td style="text-align:right;font-family:'Space Mono',monospace;font-size:13px;color:{{ t.color }};white-space:nowrap;">{{ t.amount_label }}</td>
             <td style="text-align:right;width:24px;padding-left:8px;"><button type="button" onclick="openEditModal({{ t.id }})" title="Editar" style="border:none;background:none;cursor:pointer;font-size:12px;color:var(--muted);padding:2px;">✎</button></td>

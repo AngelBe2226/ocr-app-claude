@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
 from app.categories import UNCATEGORIZED_NAME, ensure_uncategorized, list_categories
+from app.seed import icon_for_category
 from app.database import get_db
 from app.finance import hash_color
 from app.models import Budget, Category, Subcategory, Transaction, User
@@ -59,8 +60,9 @@ def add_category(kind: str = Form(...), profile: str = Form(...), name: str = Fo
                   .filter(Category.user_id == user.id, Category.profile == profile,
                           Category.kind == kind, Category.name == name).first())
         if not exists:
+            chosen_icon = icon.strip() or icon_for_category(name)
             db.add(Category(user_id=user.id, profile=profile, kind=kind, name=name,
-                            icon=icon.strip(), color=hash_color(name)))
+                            icon=chosen_icon, color=hash_color(name)))
             db.commit()
     return RedirectResponse(f"/categories?kind={kind}", status_code=303)
 

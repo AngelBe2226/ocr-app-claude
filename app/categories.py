@@ -15,6 +15,11 @@ def list_categories(db: Session, user_id: int, profile: str | None = None, kind:
     return q.order_by(Category.name).all()
 
 
+def category_index(db: Session, user_id: int) -> dict:
+    """Mapa (perfil, nombre) -> Category, para resolver icono/color de cada transacción."""
+    return {(c.profile, c.name): c for c in list_categories(db, user_id)}
+
+
 def category_names(db: Session, user_id: int, profile: str | None = None, kind: str | None = None) -> list[str]:
     seen: list[str] = []
     for c in list_categories(db, user_id, profile, kind):
