@@ -18,11 +18,11 @@ a { text-decoration: none; color: inherit; }
 .sidebar-title { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
 .sidebar-date { font-size: 11.5px; color: var(--secondary); margin-top: 4px; }
 .sidebar-label { font-size: 10.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); padding: 14px 10px 6px; }
-.sidebar-link { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: 11px; cursor: pointer; }
-.sidebar-link.active { background: var(--navActiveBg); }
+.sidebar-link { display: flex; align-items: center; gap: 11px; padding: 10px 11px; border-radius: 12px; cursor: pointer; }
+.sidebar-link.active { background: var(--accent); box-shadow: 0 5px 14px color-mix(in srgb, var(--accent) 32%, transparent); }
 .nav-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .sidebar-link span.label { font-size: 13.5px; }
-.sidebar-link.active span.label { font-weight: 700; color: var(--ink); }
+.sidebar-link.active span.label { font-weight: 700; color: #fff; }
 .sidebar-link:not(.active) span.label { font-weight: 500; color: var(--secondaryAlt); }
 .sidebar-bottom { margin-top: auto; display: flex; flex-direction: column; gap: 10px; padding-top: 14px; }
 .theme-toggle-row {
@@ -39,11 +39,15 @@ a { text-decoration: none; color: inherit; }
 .page { flex: 1; padding: 28px 34px; max-width: 1180px; width: 100%; }
 @media (max-width: 900px) {
   .page { padding: 16px 14px 84px; }
-  .mobile-topbar { display: block; position: sticky; top: 0; z-index: 20; background: var(--card); border-bottom: 1px solid var(--borderStrong); padding: 14px 18px; font-size: 17px; font-weight: 800; }
+  .mobile-topbar { display: block; position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--card) 82%, transparent); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border); padding: 14px 18px; font-size: 17px; font-weight: 800; }
 }
 
-/* Cards */
-.card { background: var(--card); border-radius: 16px; padding: 20px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+/* Cards — superficies suaves con sombra difusa y brillo superior (neumorfismo sutil) */
+.card {
+  background: var(--card); border-radius: 18px; padding: 20px;
+  box-shadow: var(--shadow), inset 0 1px 0 var(--card-hi);
+  border: 1px solid var(--border);
+}
 .card-pad-18 { padding: 18px; }
 .grid-auto { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
@@ -79,16 +83,18 @@ tr.row td { border-top: 1px solid var(--border); }
 /* Bottom nav (mobile) */
 .bottom-nav {
   display: none;
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; background: var(--card);
-  border-top: 1px solid var(--borderStrong); padding: 6px 4px;
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 25;
+  background: color-mix(in srgb, var(--card) 82%, transparent);
+  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border); padding: 6px 4px;
 }
 @media (max-width: 900px) { .bottom-nav { display: flex; } }
 .bottom-nav .tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 2px; cursor: pointer; }
 .bottom-nav .tab .label { font-size: 10.5px; }
-.more-sheet-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 29; }
+.more-sheet-backdrop { position: fixed; inset: 0; background: rgba(20,18,12,0.3); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); z-index: 29; }
 .more-sheet {
   position: fixed; left: 0; right: 0; bottom: 64px; z-index: 30; background: var(--card);
-  border-radius: 18px 18px 0 0; padding: 14px 16px 20px; box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+  border-radius: 22px 22px 0 0; padding: 14px 16px 20px; box-shadow: 0 -8px 30px rgba(0,0,0,0.18), inset 0 1px 0 var(--card-hi);
   max-height: 60vh; overflow-y: auto;
 }
 .more-sheet .item { display: flex; align-items: center; gap: 10px; padding: 12px 10px; border-radius: 11px; cursor: pointer; }
@@ -110,7 +116,7 @@ tr.row td { border-top: 1px solid var(--border); }
 .group-header .subtotal { font-family: 'Space Mono', monospace; color: var(--secondary); }
 
 /* Resumen tipo "Patrimonio neto / Activos / Pasivos" */
-.summary-card { background: var(--card); border-radius: 16px; padding: 16px 18px; box-shadow: var(--shadow); border: 1px solid var(--border); }
+.summary-card { background: var(--card); border-radius: 18px; padding: 16px 18px; box-shadow: var(--shadow), inset 0 1px 0 var(--card-hi); border: 1px solid var(--border); }
 .summary-line { display: flex; align-items: center; justify-content: space-between; padding: 3px 0; font-size: 13px; }
 .summary-line.total { font-weight: 800; font-size: 15px; }
 .summary-line .val { font-family: 'Space Mono', monospace; font-weight: 700; }
@@ -148,12 +154,14 @@ details[open] > summary .chevron { transform: rotate(90deg); }
 
 /* Modal genérico */
 .modal-backdrop {
-  position: fixed; inset: 0; z-index: 50; background: rgba(0,0,0,0.4);
+  position: fixed; inset: 0; z-index: 50; background: rgba(20,18,12,0.32);
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
   display: flex; align-items: center; justify-content: center; padding: 16px;
 }
 .modal-card {
-  background: var(--card); border-radius: 18px; padding: 20px; width: 100%; max-width: 440px;
-  max-height: 90vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  background: var(--card); border-radius: 20px; padding: 20px; width: 100%; max-width: 440px;
+  max-height: 90vh; overflow-y: auto;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.28), inset 0 1px 0 var(--card-hi);
 }
 .modal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 10px; }
 .modal-close { border: none; background: none; font-size: 22px; cursor: pointer; color: var(--secondary); line-height: 1; }
@@ -201,7 +209,9 @@ details[open] > summary .chevron { transform: rotate(90deg); }
 /* Iconos de navegación (línea, estilo MoneyCoach) */
 .nav-ico { display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--secondary); }
 .sidebar-link .nav-ico { width: 20px; }
-.sidebar-link.active .nav-ico { color: var(--accent); }
+.sidebar-link.active .nav-ico { color: #fff; }
+/* El punto de color del perfil activo se vuelve blanco sobre la pastilla de acento */
+.sidebar-link.active .nav-dot { background: #fff !important; }
 
 /* Pulido de interacción global */
 .sidebar-link { transition: background .12s ease; }
