@@ -7,7 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.middleware.sessions import SessionMiddleware
 
 from app.auth import NotAuthenticated
-from app.database import Base, SessionLocal, engine
+from app.database import Base, IS_SQLITE, SessionLocal, engine
 from app.migrations import ensure_schema
 from app.routers import (
     accounts_router, add_router, auth_router, budgets_router, categories_router, connect_router,
@@ -24,7 +24,10 @@ async def lifespan(app: FastAPI):
     # Arranque: crea tablas nuevas, añade columnas que falten, siembra datos si la
     # BD está vacía y garantiza que las categorías estén migradas a BD.
     Base.metadata.create_all(bind=engine)
-    ensure_schema(engine)
+    # Las migraciones ligeras (ALTER TABLE) usan PRAGMA de SQLite. En Postgres (Neon)
+    # no hacen falta: create_all() ya crea las tablas con todas las columnas.
+    if IS_SQLITE:
+        ensure_schema(engine)
     with SessionLocal() as db:
         seed_if_empty(db)
         ensure_profiles(db)

@@ -9,9 +9,9 @@ from app.categories import category_index, category_names
 from app.database import get_db
 from app.finance import (
     budget_rows, donut_segments, fmt_eur, hash_color, last_n_months, month_groups, monthly_series,
-    filter_transactions, totals_for,
+    filter_transactions, resolve_period, savings_breakdown, totals_for,
 )
-from app.models import Account, Budget, Category, Profile, Transaction, User
+from app.models import Account, Budget, Category, Profile, SavingsReserve, Transaction, User
 from app.profiles import list_profiles, slugify
 from app.seed import icon_for_category
 from app.templates_env import templates
@@ -33,7 +33,9 @@ def profiles_hub(request: Request, db: Session = Depends(get_db), user: User = D
     for p in profiles:
         totals = totals_for(db.query(Transaction).filter(Transaction.user_id == user.id, Transaction.profile == p.slug).all())
         rows.append({"slug": p.slug, "name": p.name, "color": A(p.color), "raw_color": p.color,
-                     "icon": p.icon, "net": fmt_eur(totals["net"])})
+                     "icon": p.icon, "net": fmt_eur(totals["net"]),
+                     "savings_rate": round(p.savings_rate or 0), "tax_rate": round(p.tax_rate or 0),
+                     "reserve_rate": round((p.savings_rate or 0) + (p.tax_rate or 0))})
     return templates.TemplateResponse(request, "profiles.html", {**ctx, "profiles": rows})
 
 
@@ -57,12 +59,21 @@ def add_profile(name: str = Form(...), color: str = Form("#12898F"), icon: str =
 
 @router.post("/profiles/{slug}/edit")
 def edit_profile(slug: str, name: str = Form(...), color: str = Form(...), icon: str = Form(""),
+                 savings_rate: str = Form(""), tax_rate: str = Form(""),
                  db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     p = db.query(Profile).filter(Profile.slug == slug, Profile.user_id == user.id).first()
     if p and name.strip():
         p.name = name.strip()
         p.color = color or p.color
         p.icon = icon.strip()
+        # Tasas de ahorro/impuestos (0–100). Se ignoran valores no numéricos o fuera de rango.
+        for field, raw in (("savings_rate", savings_rate), ("tax_rate", tax_rate)):
+            try:
+                v = float(raw)
+                if 0 <= v <= 100:
+                    setattr(p, field, v)
+            except (ValueError, TypeError):
+                pass
         db.commit()
     return RedirectResponse("/profiles", status_code=303)
 
@@ -180,6 +191,26 @@ def profile_page(
         })
     history_groups = month_groups(history_rows)
 
+    # Reserva de ahorro/impuestos de este perfil, mes en curso (impuestos y ahorro por separado).
+    per = resolve_period("month")
+    cats_all = db.query(Category).filter(Category.user_id == user.id).all()
+    txs_month = [t for t in list_tx if per["start"] <= t.date <= per["end"]]
+    sav_bd = savings_breakdown([profile_obj], cats_all, txs_month, per["start"], per["end"])
+    sav_row = sav_bd["rows"][0] if sav_bd["rows"] else None
+    reserved_month = sum(r.amount for r in db.query(SavingsReserve).filter(
+        SavingsReserve.user_id == user.id, SavingsReserve.profile == profile_id,
+        SavingsReserve.period_key == per["key"]).all())
+    savings_ctx = None
+    if sav_row:
+        pending = max(0.0, sav_row["total"] - reserved_month)
+        savings_ctx = {
+            "income": sav_row["income_label"], "tax": sav_row["tax_label"], "savings": sav_row["savings_label"],
+            "tax_rate": round(sav_row["tax_rate"]), "savings_rate": round(sav_row["savings_rate"]),
+            "total": sav_row["total_label"], "reserved": fmt_eur(reserved_month),
+            "pending": fmt_eur(pending), "has_pending": pending > 0.005,
+            "has_income": sav_row["income"] > 0.005,
+        }
+
     profile_ctx = {
         "id": profile_id, "name": conf["name"], "color": A(conf["color"]),
         "income": fmt_eur(totals["income"]), "expense": fmt_eur(totals["expense"]), "net": fmt_eur(totals["net"]),
@@ -187,7 +218,7 @@ def profile_page(
         "donut_segs": donut_segs, "has_expenses": len(donut_segs) > 0,
         "line_points": line_points, "line_dots": line_dots, "cumulative_points": cumulative_points,
         "expense_points": expense_points, "income_points": income_points,
-        "budgets": b_rows,
+        "budgets": b_rows, "savings": savings_ctx,
         "history_groups": history_groups, "history_count": len(history_rows),
     }
 

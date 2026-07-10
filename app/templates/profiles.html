@@ -10,6 +10,7 @@
       <div style="flex:1;min-width:0;">
         <div style="font-size:14px;font-weight:700;">{{ p.name }}</div>
         <div class="mono" style="font-size:11.5px;color:var(--secondary);margin-top:2px;">Neto: {{ p.net }}</div>
+        <div style="font-size:10.5px;color:var(--secondary);margin-top:3px;">Reserva {{ p.reserve_rate }}% · <span style="color:#3FA65C;">ahorro {{ p.savings_rate }}%</span> · <span style="color:#D9932E;">impuestos {{ p.tax_rate }}%</span></div>
       </div>
     </a>
     <details class="edit">
@@ -21,6 +22,15 @@
         </div>
         <div style="font-size:11.5px;color:var(--secondary);">Icono</div>
         {% with field='icon', current=p.icon %}{% include 'partials/_icon_picker.html' %}{% endwith %}
+        <div style="font-size:11.5px;color:var(--secondary);margin-top:2px;">Reserva por cada ingreso que cuenta</div>
+        <div class="grid-2">
+          <label style="font-size:11px;color:#3FA65C;font-weight:700;display:flex;flex-direction:column;gap:3px;">Ahorro %
+            <input type="number" name="savings_rate" value="{{ p.savings_rate }}" min="0" max="100" step="1" class="input mono">
+          </label>
+          <label style="font-size:11px;color:#D9932E;font-weight:700;display:flex;flex-direction:column;gap:3px;">Impuestos %
+            <input type="number" name="tax_rate" value="{{ p.tax_rate }}" min="0" max="100" step="1" class="input mono">
+          </label>
+        </div>
         <button type="submit" class="btn">Guardar cambios</button>
       </form>
       {% if profiles|length > 1 %}

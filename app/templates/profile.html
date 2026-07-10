@@ -88,6 +88,34 @@
       <div class="empty-note">Aún no hay gastos en este perfil.</div>
       {% endif %}
     </div>
+
+    {% if profile.savings %}
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-size:14px;font-weight:700;">Reserva de ahorro e impuestos</div>
+        <a href="/savings" style="font-size:11.5px;color:var(--accent);font-weight:700;">Gestionar →</a>
+      </div>
+      {% if profile.savings.has_income %}
+      <div style="font-size:11.5px;color:var(--secondary);margin-bottom:10px;">Ingreso que cuenta este mes: <span class="mono" style="color:var(--ink);font-weight:700;">{{ profile.savings.income }}</span></div>
+      <div class="grid-2" style="margin-bottom:12px;">
+        <div style="background:color-mix(in srgb,#D9932E 12%,transparent);border-radius:12px;padding:10px 12px;">
+          <div style="font-size:11px;color:#D9932E;font-weight:700;">Impuestos ({{ profile.savings.tax_rate }}%)</div>
+          <div class="mono" style="font-size:18px;font-weight:800;color:#D9932E;">{{ profile.savings.tax }}</div>
+        </div>
+        <div style="background:color-mix(in srgb,#3FA65C 12%,transparent);border-radius:12px;padding:10px 12px;">
+          <div style="font-size:11px;color:#3FA65C;font-weight:700;">Ahorro ({{ profile.savings.savings_rate }}%)</div>
+          <div class="mono" style="font-size:18px;font-weight:800;color:#3FA65C;">{{ profile.savings.savings }}</div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;">
+        <span style="color:var(--secondary);">Reservado {{ profile.savings.reserved }} de {{ profile.savings.total }}</span>
+        <span style="font-weight:700;color:{{ '#E2574C' if profile.savings.has_pending else '#3FA65C' }};">{{ profile.savings.pending }} {{ 'pendiente' if profile.savings.has_pending else 'al día' }}</span>
+      </div>
+      {% else %}
+      <div class="empty-note" style="margin:0;">Sin ingresos que cuenten para el ahorro este mes.</div>
+      {% endif %}
+    </div>
+    {% endif %}
   </div>
 </div>
 
