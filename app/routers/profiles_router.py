@@ -197,6 +197,8 @@ def profile_page(
             "color": A("#3FA65C" if t.type == "income" else "#E2574C"),
             "signed": t.amount if t.type == "income" else -t.amount,
             "has_receipt": bool(t.attachment_name), "place_name": t.place_name or "",
+            "subcategory": t.subcategory or "", "store": t.store or "", "quantity": t.quantity or "",
+            "account_name": (t.account.name if t.account else ""),
             "cat_icon": (cat.icon if cat else ""), "cat_color": A(cat_raw), "cat_raw_color": cat_raw,
             "initial": (t.category[0].upper() if t.category else "?"),
         })
