@@ -64,7 +64,7 @@ def build_tx_rows(transactions, A, pmap, show_profile=True, cat_index=None):
     rows = []
     for t in transactions:
         signed = t.amount if t.type == "income" else -t.amount
-        cat = cat_index.get((t.profile, t.category))
+        cat = cat_index.get((t.type, t.category)) or cat_index.get(t.category)
         cat_raw_color = cat.color if cat else hash_color(t.category or "?")
         row = {
             "id": t.id, "category": t.category, "note": t.note, "date": t.date,

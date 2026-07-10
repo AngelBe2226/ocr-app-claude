@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from app.auth import get_current_user
 from app.database import get_db
 from app.finance import amortize, fmt_eur, payoff_date_label, ring_dash
-from app.models import Bill, Loan, User
+from app.models import Account, Bill, Loan, User
 from app.templates_env import templates
 from app.view_context import base_context
 
@@ -73,20 +73,28 @@ def debts_page(request: Request, db: Session = Depends(get_db), user: User = Dep
         {"label": "Libre de deudas (est.)", "value": debt_free_date, "color": A("#E2574C" if any_never else "#3FA65C")},
     ]
 
+    accounts = db.query(Account).filter(Account.user_id == user.id).order_by(Account.id).all()
     completed_count = len(completed_loans) + len(paid_bills)
     return templates.TemplateResponse(request, "debts.html", {
         **ctx, "kpis": kpis, "loans": active_loans, "bills": pending_bills,
         "completed_loans": completed_loans, "paid_bills": paid_bills, "completed_count": completed_count,
+        "accounts": [{"id": a.id, "name": a.name} for a in accounts],
     })
 
 
 @router.post("/loans")
 def add_loan(
     name: str = Form(...), principal: float = Form(...), balance: float = Form(...),
-    rate: float = Form(...), payment: float = Form(...),
+    rate: float = Form(...), payment: float = Form(...), deposit_account_id: str = Form(""),
     db: Session = Depends(get_db), user: User = Depends(get_current_user),
 ):
     db.add(Loan(user_id=user.id, name=name, principal=principal, balance=balance, rate=rate, payment=payment))
+    # El importe del préstamo se ingresa como capital disponible en la cuenta elegida.
+    # (El patrimonio neto lo compensa con la deuda del préstamo.)
+    if deposit_account_id.strip().isdigit():
+        acc = db.query(Account).filter(Account.id == int(deposit_account_id), Account.user_id == user.id).first()
+        if acc and balance and balance > 0:
+            acc.balance = round(acc.balance + balance, 2)
     db.commit()
     return RedirectResponse("/debts", status_code=303)
 

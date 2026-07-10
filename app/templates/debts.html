@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
-<div style="margin-bottom:18px;"><div class="page-title">Deudas y Facturas</div><div class="page-subtitle">Préstamos, proyección de pago y facturas recurrentes</div></div>
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:18px;">
+  <div><div class="page-title">Deudas y Facturas</div><div class="page-subtitle">Préstamos, proyección de pago y facturas recurrentes</div></div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;">
+    <button type="button" class="btn" style="white-space:nowrap;" onclick="togglePanel('new-debt-panel')">＋ Nueva Deuda</button>
+    <button type="button" class="btn-outline" style="white-space:nowrap;" onclick="togglePanel('new-debt-panel')">＋ Nueva Factura</button>
+  </div>
+</div>
 
 <div class="grid-auto" style="margin-bottom:22px;">
   {% for k in kpis %}
@@ -106,8 +112,8 @@
 </div>
 {% endif %}
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-  <div class="card">
+<div id="new-debt-panel" style="display:none;max-width:460px;">
+  <div class="card" style="margin-bottom:16px;">
     <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Añadir préstamo</div>
     <form method="post" action="/loans" class="form-col">
       <input type="text" name="name" placeholder="Nombre" class="input" required>
@@ -117,6 +123,11 @@
         <input type="number" step="0.01" name="rate" placeholder="Interés anual (%)" class="input mono" required>
         <input type="number" step="0.01" name="payment" placeholder="Cuota mensual (€)" class="input mono" required>
       </div>
+      <div style="font-size:11.5px;color:var(--secondary);">Ingresar el importe como capital disponible en:</div>
+      <select name="deposit_account_id" class="input">
+        {% for a in accounts %}<option value="{{ a.id }}">Ingresar en {{ a.name }}</option>{% endfor %}
+        <option value="">No ingresar (registrar deuda ya existente)</option>
+      </select>
       <button type="submit" class="btn">Añadir préstamo</button>
     </form>
   </div>

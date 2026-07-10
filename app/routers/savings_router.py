@@ -13,6 +13,7 @@ from app.database import get_db
 from app.finance import fmt_eur, in_period, parse_anchor, resolve_period, savings_breakdown, PERIOD_OPTIONS
 from app.models import Account, Category, SavingsReserve, Transaction, Transfer, User
 from app.profiles import list_profiles, profiles_map
+from app.seed import get_or_create_global_savings
 from app.templates_env import templates
 from app.view_context import base_context
 
@@ -64,8 +65,11 @@ def savings_page(request: Request, period: str = "month", anchor: str = "",
             "has_reserve": res_total > 0.005,
         })
 
-    savings_accounts = [a for a in db.query(Account).filter(Account.user_id == user.id).all()]
-    dest_accounts = [a for a in savings_accounts if a.type == "savings"] or savings_accounts
+    # Fondo único donde se acumulan todas las reservas + posibles cuentas origen.
+    gs = get_or_create_global_savings(db, user.id)
+    db.commit()
+    all_accounts = db.query(Account).filter(Account.user_id == user.id).all()
+    source_accounts = [a for a in all_accounts if a.id != gs.id]
 
     # Consejo financiero simple: tasa de ahorro efectiva del periodo.
     tot_income = breakdown["income"]
@@ -79,14 +83,16 @@ def savings_page(request: Request, period: str = "month", anchor: str = "",
         "tax_total_label": breakdown["tax_label"], "savings_total_label": breakdown["savings_label"],
         "income_total_label": breakdown["income_label"],
         "excluded_names": breakdown["excluded_names"],
-        "dest_accounts": dest_accounts, "eff_rate": eff_rate,
+        "source_accounts": source_accounts, "eff_rate": eff_rate,
+        "fund_name": gs.name, "fund_balance_label": fmt_eur(gs.balance),
         "accent_hex": ctx["accent_hex"],
     })
 
 
 def _reserve_profile(db: Session, user: User, slug: str, per: dict,
-                     to_account_id: int | None, categories, txs_p) -> float:
-    """Aparta el pendiente (objetivo - ya reservado) del perfil en el periodo. Devuelve el importe reservado."""
+                     fund_id: int, categories, txs_p) -> float:
+    """Aparta el pendiente (objetivo - ya reservado) del perfil en el periodo, hacia el
+    fondo de ahorro global. Devuelve el importe reservado."""
     profiles = [p for p in list_profiles(db, user.id) if p.slug == slug]
     if not profiles:
         return 0.0
@@ -100,44 +106,47 @@ def _reserve_profile(db: Session, user: User, slug: str, per: dict,
     added = 0.0
     if pend_tax > 0.005:
         db.add(SavingsReserve(user_id=user.id, profile=slug, period_key=per["key"],
-                              kind="tax", amount=round(pend_tax, 2), account_id=to_account_id))
+                              kind="tax", amount=round(pend_tax, 2), account_id=fund_id))
         added += pend_tax
     if pend_sav > 0.005:
         db.add(SavingsReserve(user_id=user.id, profile=slug, period_key=per["key"],
-                              kind="savings", amount=round(pend_sav, 2), account_id=to_account_id))
+                              kind="savings", amount=round(pend_sav, 2), account_id=fund_id))
         added += pend_sav
     return added
 
 
 @router.post("/savings/reserve")
 def reserve(profile: str = Form(...), period: str = Form("month"), anchor: str = Form(""),
-            to_account_id: str = Form(""), from_account_id: str = Form(""),
+            from_account_id: str = Form(""),
             db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     per = resolve_period(period, parse_anchor(anchor))
     categories = db.query(Category).filter(Category.user_id == user.id).all()
     txs = db.query(Transaction).filter(Transaction.user_id == user.id).all()
     txs_p = in_period(txs, per["start"], per["end"])
-    to_id = int(to_account_id) if to_account_id.strip().isdigit() else None
+
+    # Destino SIEMPRE el fondo de ahorro global (un único fondo para todos los perfiles).
+    fund = get_or_create_global_savings(db, user.id)
 
     pmap = profiles_map(db, user.id)
     targets = [profile] if profile != "__all__" else list(pmap.keys())
     total_added = 0.0
     for slug in targets:
         if slug in pmap:
-            total_added += _reserve_profile(db, user, slug, per, to_id, categories, txs_p)
+            total_added += _reserve_profile(db, user, slug, per, fund.id, categories, txs_p)
 
-    # Movimiento real opcional: si hay cuenta origen y destino, registra una transferencia.
-    from_id = int(from_account_id) if from_account_id.strip().isdigit() else None
-    if from_id and to_id and from_id != to_id and total_added > 0.005:
-        db.add(Transfer(user_id=user.id, from_account_id=from_id, to_account_id=to_id,
-                        amount=round(total_added, 2), date=date.today(),
-                        note=f"Reserva ahorro/impuestos {per['label']}"))
-        src = db.get(Account, from_id)
-        dst = db.get(Account, to_id)
-        if src:
-            src.balance -= round(total_added, 2)
-        if dst:
-            dst.balance += round(total_added, 2)
+    if total_added > 0.005:
+        amt = round(total_added, 2)
+        # El fondo global crece con lo reservado.
+        fund.balance = round(fund.balance + amt, 2)
+        # Si se eligió cuenta origen, se mueve el dinero de ahí (transferencia real).
+        from_id = int(from_account_id) if from_account_id.strip().isdigit() else None
+        if from_id and from_id != fund.id:
+            src = db.get(Account, from_id)
+            if src and src.user_id == user.id:
+                src.balance = round(src.balance - amt, 2)
+                db.add(Transfer(user_id=user.id, from_account_id=from_id, to_account_id=fund.id,
+                                amount=amt, date=date.today(),
+                                note=f"Reserva ahorro/impuestos {per['label']}"))
 
     db.commit()
     return RedirectResponse(f"/savings?period={per['period']}&anchor={per['anchor']}", status_code=303)

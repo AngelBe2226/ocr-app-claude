@@ -15,7 +15,8 @@ from app.routers import (
     settings_router, transactions_router,
 )
 from app.seed import (
-    ensure_categories, ensure_category_icons, ensure_profiles, ensure_savings_defaults, seed_if_empty,
+    ensure_categories, ensure_category_icons, ensure_global_savings_account, ensure_profiles,
+    ensure_savings_defaults, migrate_categories_to_global, seed_if_empty,
 )
 
 
@@ -31,9 +32,11 @@ async def lifespan(app: FastAPI):
     with SessionLocal() as db:
         seed_if_empty(db)
         ensure_profiles(db)
+        migrate_categories_to_global(db)   # convierte categorías viejas por-perfil a globales
         ensure_categories(db)
         ensure_category_icons(db)
         ensure_savings_defaults(db)
+        ensure_global_savings_account(db)
     yield
     # Apagado: nada que limpiar por ahora.
 

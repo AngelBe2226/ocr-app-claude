@@ -1,16 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="profile-hero" style="background:{{ profile.color }};margin-bottom:20px;">
-  <details class="hero-rename">
-    <summary style="list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;">
-      <span style="font-size:24px;font-weight:800;">{{ profile.name }}</span>
-      <span title="Editar nombre" style="font-size:14px;opacity:.8;border:1px solid rgba(255,255,255,0.5);border-radius:8px;width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;">✎</span>
-    </summary>
-    <form method="post" action="/profiles/{{ profile.id }}/rename" style="display:flex;gap:6px;margin-top:10px;max-width:340px;">
-      <input type="text" name="name" value="{{ profile.name }}" class="input" style="flex:1;min-width:0;" required aria-label="Nombre del perfil">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <span id="pname-text" style="font-size:24px;font-weight:800;">{{ profile.name }}</span>
+    <button type="button" id="pname-edit" title="Editar nombre" onclick="startEditName()"
+            style="cursor:pointer;font-size:14px;color:#fff;background:transparent;opacity:.85;border:1px solid rgba(255,255,255,0.5);border-radius:8px;width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;">✎</button>
+    <form id="pname-form" method="post" action="/profiles/{{ profile.id }}/rename" style="display:none;align-items:center;gap:8px;flex:1;">
+      <input type="text" name="name" value="{{ profile.name }}" id="pname-input" required aria-label="Nombre del perfil"
+             style="font-size:24px;font-weight:800;background:transparent;border:none;border-bottom:2px solid rgba(255,255,255,0.7);color:#fff;outline:none;min-width:0;flex:1;max-width:360px;padding:0 0 2px;">
       <button type="submit" class="btn-sm" style="background:#fff;color:{{ profile.color }};font-weight:700;">Guardar</button>
+      <button type="button" class="btn-sm" onclick="cancelEditName()" style="background:rgba(255,255,255,0.2);color:#fff;">Cancelar</button>
     </form>
-  </details>
+  </div>
+  <script>
+  function startEditName(){document.getElementById('pname-text').style.display='none';document.getElementById('pname-edit').style.display='none';var f=document.getElementById('pname-form');f.style.display='flex';var i=document.getElementById('pname-input');i.focus();i.select();}
+  function cancelEditName(){document.getElementById('pname-form').style.display='none';document.getElementById('pname-text').style.display='';document.getElementById('pname-edit').style.display='';}
+  </script>
   <div style="font-size:12.5px;color:rgba(255,255,255,0.85);margin-top:4px;">Perfil de ingresos</div>
   <div style="display:flex;gap:22px;margin-top:16px;">
     <div><div style="font-size:11px;color:rgba(255,255,255,0.75);">Ingresos</div><div class="mono" style="font-size:16px;font-weight:700;">{{ profile.income }}</div></div>
@@ -20,34 +25,10 @@
 </div>
 
 <div style="display:grid;grid-template-columns:1fr 1.3fr;gap:16px;align-items:start;margin-bottom:20px;">
-  <div class="card" style="min-width:0;">
-    <div style="font-size:14px;font-weight:700;margin-bottom:12px;">Añadir movimiento</div>
-    <form method="get" action="/{{ profile.id }}" id="type-switch-form">
-      <input type="hidden" name="form_type" id="form_type_hidden" value="{{ profile.form_type }}">
-    </form>
-    <div style="display:flex;gap:8px;margin-bottom:12px;">
-      <button type="button" onclick="document.getElementById('form_type_hidden').value='income';document.getElementById('type-switch-form').submit();"
-        style="flex:1;padding:9px;border-radius:11px;border:1px solid var(--borderInput);cursor:pointer;font-size:12.5px;font-weight:700;background:{{ '#3FA65C' if profile.form_type == 'income' else 'var(--card)' }};color:{{ '#fff' if profile.form_type == 'income' else 'var(--ink)' }};">Ingreso</button>
-      <button type="button" onclick="document.getElementById('form_type_hidden').value='expense';document.getElementById('type-switch-form').submit();"
-        style="flex:1;padding:9px;border-radius:11px;border:1px solid var(--borderInput);cursor:pointer;font-size:12.5px;font-weight:700;background:{{ '#E2574C' if profile.form_type == 'expense' else 'var(--card)' }};color:{{ '#fff' if profile.form_type == 'expense' else 'var(--ink)' }};">Gasto</button>
-    </div>
-    <form method="post" action="/{{ profile.id }}/transactions" enctype="multipart/form-data" class="form-col">
-      <input type="hidden" name="type" value="{{ profile.form_type }}">
-      <select name="category" class="input">
-        {% for c in profile.categories %}<option value="{{ c }}">{{ c }}</option>{% endfor %}
-      </select>
-      <select name="account_id" class="input">
-        {% for ac in accounts %}<option value="{{ ac.id }}">{{ ac.name }}</option>{% endfor %}
-      </select>
-      <input type="number" step="0.01" name="amount" placeholder="Importe (€)" class="input mono" required>
-      <input type="date" name="date" value="{{ today_iso }}" class="input mono" required>
-      <input type="text" name="note" placeholder="Nota (opcional)" class="input">
-      <label style="display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:10px;border:1px dashed var(--borderInput);font-size:12px;color:var(--secondary);cursor:pointer;">
-        📎 Adjuntar recibo
-        <input type="file" name="attachment" style="display:none;">
-      </label>
-      <button type="submit" class="btn" style="margin-top:2px;">Añadir</button>
-    </form>
+  <div class="card" style="min-width:0;display:flex;flex-direction:column;justify-content:center;">
+    <div style="font-size:14px;font-weight:700;margin-bottom:6px;">Añadir movimiento</div>
+    <div style="font-size:12px;color:var(--secondary);margin-bottom:14px;">Registra un ingreso o gasto en {{ profile.name }} con categorías, subcategoría, tienda y cantidad.</div>
+    <button type="button" class="btn" style="width:100%;font-size:14px;padding:12px;" onclick="openAddModal('{{ profile.id }}')">＋ Añadir movimiento</button>
   </div>
 
   <div style="display:flex;flex-direction:column;gap:16px;min-width:0;">

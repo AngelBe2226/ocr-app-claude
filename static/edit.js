@@ -1,4 +1,5 @@
-// Modal para editar una transacción existente. Reutiliza addOptions/esc/loadAddOptions de add.js.
+// Modal para editar una transacción existente. Reutiliza addOptions/esc/loadAddOptions de add.js
+// y el menú cascada de cascade.js para elegir categoría → subcategoría.
 async function openEditModal(id) {
   document.getElementById('edit-modal').style.display = 'flex';
   if (!addOptions) await loadAddOptions();
@@ -11,24 +12,9 @@ async function openEditModal(id) {
   form.setAttribute('action', `/transactions/${id}/edit`);
   form.querySelector('.js-etype').value = t.type;
   form.querySelector('.js-eprofile').value = t.profile;
-  refreshEditCategories();
-  const catSel = form.querySelector('.js-ecategory');
-  catSel.value = t.category;
-  // Si la categoría actual no está en la lista (p.ej. "Sin categoría"), la añadimos.
-  if (catSel.value !== t.category) {
-    const o = document.createElement('option');
-    o.value = t.category; o.textContent = t.category;
-    catSel.appendChild(o); catSel.value = t.category;
-  }
-  refreshEditSubcategories();
-  const subSel = form.querySelector('.js-esubcategory');
-  if (subSel && t.subcategory) {
-    if (![...subSel.options].some(o => o.value === t.subcategory)) {
-      const o = document.createElement('option');
-      o.value = t.subcategory; o.textContent = t.subcategory; subSel.appendChild(o);
-    }
-    subSel.value = t.subcategory;
-  }
+  // Categoría/subcategoría vía menú cascada (depende del tipo, ya fijado arriba).
+  const cascade = document.getElementById('edit-cascade');
+  if (cascade && typeof cascadeSet === 'function') cascadeSet(cascade, t.category, t.subcategory);
   form.querySelector('.js-estore').value = t.store || '';
   const eqty = form.querySelector('.js-equantity');
   if (eqty) eqty.value = t.quantity || '-';
@@ -38,41 +24,14 @@ async function openEditModal(id) {
   form.querySelector('.js-enote').value = t.note;
 }
 
-function refreshEditSubcategories() {
-  const form = document.getElementById('form-edit');
-  if (!addOptions) return;
-  const kind = form.querySelector('.js-etype').value;
-  const profile = form.querySelector('.js-eprofile').value;
-  const catName = form.querySelector('.js-ecategory').value;
-  const subSel = form.querySelector('.js-esubcategory');
-  if (!subSel) return;
-  const cat = addOptions.categories.find(c => c.profile === profile && c.kind === kind && c.name === catName);
-  const subs = (cat && cat.subs) || [];
-  subSel.innerHTML = '<option value="">Subcategoría (opcional)</option>' +
-    subs.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
-}
-
 function closeEditModal() {
   document.getElementById('edit-modal').style.display = 'none';
 }
 
-function refreshEditCategories() {
-  const form = document.getElementById('form-edit');
-  if (!addOptions) return;
-  const kind = form.querySelector('.js-etype').value;
-  const profile = form.querySelector('.js-eprofile').value;
-  const cats = addOptions.categories.filter(c => c.profile === profile && c.kind === kind);
-  form.querySelector('.js-ecategory').innerHTML = cats.length
-    ? cats.map(c => `<option value="${esc(c.name)}">${esc(c.name)}</option>`).join('')
-    : '<option value="">(sin categorías)</option>';
-}
-
+// Al cambiar el tipo (gasto/ingreso), la lista de categorías del cascada cambia.
 document.addEventListener('change', e => {
-  if (!e.target.classList) return;
-  if (e.target.classList.contains('js-etype') || e.target.classList.contains('js-eprofile')) {
-    refreshEditCategories();
-    refreshEditSubcategories();
-  } else if (e.target.classList.contains('js-ecategory')) {
-    refreshEditSubcategories();
+  if (e.target.classList && e.target.classList.contains('js-etype')) {
+    const cascade = document.getElementById('edit-cascade');
+    if (cascade && typeof renderCascade === 'function') renderCascade(cascade, false);
   }
 });

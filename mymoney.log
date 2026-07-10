@@ -481,3 +481,258 @@ INFO:     127.0.0.1:61371 - "GET /accounts HTTP/1.1" 200 OK
 INFO:     127.0.0.1:61372 - "GET /melia HTTP/1.1" 200 OK
 INFO:     127.0.0.1:61438 - "POST /login HTTP/1.1" 303 See Other
 INFO:     127.0.0.1:61439 - "GET /add/options HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61515 - "GET / HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61550 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61550 - "GET /static/style.css?v=1783705346 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61551 - "GET /static/custom-icons.css?v=1783705346 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61552 - "GET /static/add.js?v=1783705346 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61553 - "GET /static/tx.js?v=1783705346 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61554 - "GET /static/edit.js?v=1783705346 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61555 - "GET /static/iconpick.js?v=1783705346 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61557 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61557 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61557 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61557 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61557 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61557 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61552 - "GET /freelance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61557 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61557 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61557 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61557 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61557 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61557 - "GET /login HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [57590]
+INFO:     Started server process [59954]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [59954]
+INFO:     Started server process [60055]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [60055]
+INFO:     Started server process [61472]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:62273 - "POST /login HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:62274 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62275 - "GET /categories?kind=expense HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62276 - "GET /categories?kind=income HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62277 - "GET /budgets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62278 - "GET /reports/analysis HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62279 - "GET /melia HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62283 - "GET /api/health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62450 - "POST /login HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:62451 - "GET /categories?kind=expense HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62452 - "GET /categories?kind=income HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62453 - "GET /add/options HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62464 - "GET /api/health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62466 - "GET /api/blocks HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62468 - "GET /api/blocks/09 HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62470 - "GET /api/progress HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62472 - "GET /api/health HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:62532 - "GET /freelance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62532 - "GET /static/style.css?v=1783709902 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62533 - "GET /static/custom-icons.css?v=1783709902 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62534 - "GET /static/add.js?v=1783709902 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62535 - "GET /static/tx.js?v=1783709902 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62536 - "GET /static/edit.js?v=1783709902 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62537 - "GET /static/iconpick.js?v=1783709902 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62539 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:62539 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62539 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:62539 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62539 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:62539 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63113 - "GET /personal HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63113 - "GET /static/style.css?v=1783709902 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:63114 - "GET /static/add.js?v=1783709902 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:63115 - "GET /static/edit.js?v=1783709902 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:63120 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63120 - "GET /realestate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63266 - "GET /realestate?form_type=expense HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63325 - "GET /freelance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63343 - "GET /personal HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63343 - "GET /profiles HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63377 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63376 - "GET /static/add.js?v=1783709902 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:63377 - "GET /static/edit.js?v=1783709902 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:63440 - "GET /connect HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63440 - "GET /static/style.css?v=1783709902 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:63440 - "GET /categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63457 - "GET /budgets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63456 - "GET /savings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63464 - "GET /goals HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63467 - "GET /savings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63473 - "GET /goals HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63472 - "GET /debts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63522 - "GET /add/options HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63547 - "GET /reports HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63547 - "GET /reports/net-worth HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63547 - "GET /reports HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63547 - "GET /reports/category HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63547 - "GET /transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63546 - "GET /search HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63546 - "GET /settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63546 - "POST /settings/accent HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:63546 - "GET /settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63546 - "POST /settings/accent HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:63546 - "GET /settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63546 - "POST /settings/accent HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:63546 - "GET /settings HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [61472]
+INFO:     Started server process [64286]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:63793 - "POST /login HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:63794 - "GET /profiles HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63795 - "GET /goals HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63796 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63797 - "GET /budgets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63798 - "GET /debts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63799 - "GET /melia HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63800 - "GET /melia HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63801 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63802 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63803 - "GET /profiles HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63804 - "GET /goals HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63805 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63806 - "GET /budgets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63807 - "GET /debts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63808 - "GET /melia HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63809 - "GET /categories?kind=expense HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63848 - "POST /login HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:63849 - "GET /profiles HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63850 - "GET /melia HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63851 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63852 - "GET /static/style.css HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [64286]
+INFO:     Started server process [67032]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:65406 - "POST /login HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:65407 - "GET /static/cascade.js HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65408 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65409 - "GET /savings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65410 - "GET /debts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65411 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65412 - "GET /savings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65413 - "GET /debts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65414 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65415 - "GET /melia HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65416 - "GET /categories?kind=expense HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65419 - "POST /login HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:65420 - "GET /add/options HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65421 - "POST /add/expense HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:65427 - "GET / HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:65478 - "GET /settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65478 - "GET /static/style.css?v=1783722602 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65480 - "GET /static/add.js?v=1783722602 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65479 - "GET /static/custom-icons.css?v=1783722602 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65481 - "GET /static/cascade.js?v=1783722602 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65483 - "GET /static/edit.js?v=1783722602 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65482 - "GET /static/tx.js?v=1783722602 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65483 - "GET /static/iconpick.js?v=1783722602 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65480 - "GET /melia HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65486 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:65487 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:65488 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:65486 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65488 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65487 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65492 - "GET /add/options HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65492 - "GET /debts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65496 - "GET /reports HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65496 - "GET /reports/net-worth HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65496 - "GET /melia HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65496 - "GET /realestate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65496 - "GET /freelance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65496 - "GET /profiles HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65496 - "GET /personal HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65496 - "GET /realestate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65496 - "GET /freelance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65496 - "GET /personal HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65517 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65517 - "GET /static/style.css?v=1783722602 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:65518 - "GET /static/edit.js?v=1783722602 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:65519 - "GET /static/add.js?v=1783722602 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:65520 - "GET /static/cascade.js?v=1783722602 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:65524 - "GET /connect HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65524 - "POST /connect/start HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:65524 - "GET /connect/consent/1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65534 - "POST /connect/authorize/1 HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:65534 - "GET /connect?connected=1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49153 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49153 - "GET /melia HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49153 - "GET /realestate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49153 - "GET /freelance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49153 - "GET /personal HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49163 - "GET /profiles HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49162 - "GET /static/style.css?v=1783722602 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:49163 - "GET /static/add.js?v=1783722602 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:49164 - "GET /static/cascade.js?v=1783722602 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:49165 - "GET /static/edit.js?v=1783722602 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:49163 - "GET /personal HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49165 - "GET /profiles HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49165 - "GET /personal HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49165 - "GET /profiles HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49185 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49184 - "GET /static/style.css?v=1783722602 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:49185 - "GET /static/add.js?v=1783722602 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:49186 - "GET /static/cascade.js?v=1783722602 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:49187 - "GET /static/edit.js?v=1783722602 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:49185 - "GET /connect HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49187 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49190 - "POST /accounts/5/edit HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:49190 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49192 - "POST /accounts/4/edit HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:49192 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49194 - "POST /accounts/2/edit HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:49194 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49197 - "POST /accounts/8/edit HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:49197 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49199 - "POST /accounts/1/edit HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:49199 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49199 - "GET /connect HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49199 - "GET /categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49204 - "GET /categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49204 - "GET /budgets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49204 - "GET /savings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49204 - "GET /goals HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49203 - "GET /debts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49207 - "POST /loans/1/edit HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:49207 - "GET /debts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49210 - "POST /loans/2/edit HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:49210 - "GET /debts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49210 - "GET /static/edit.js?v=1783722602 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:49211 - "GET /static/add.js?v=1783722602 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:49213 - "POST /loans/3/edit HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:49213 - "GET /debts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49213 - "GET /static/style.css?v=1783722602 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:49214 - "GET /static/cascade.js?v=1783722602 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:49214 - "GET /reports HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49214 - "GET /transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49214 - "GET /freelance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49214 - "GET /personal HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49217 - "POST /personal/transactions/bulk-delete HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:49217 - "GET /personal HTTP/1.1" 200 OK

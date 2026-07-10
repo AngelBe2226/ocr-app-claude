@@ -3,7 +3,7 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
-from app.categories import UNCATEGORIZED_NAME, ensure_uncategorized, list_categories
+from app.categories import GLOBAL, UNCATEGORIZED_NAME, ensure_uncategorized, list_categories
 from app.seed import icon_for_category
 from app.database import get_db
 from app.finance import hash_color
@@ -24,45 +24,37 @@ def categories_page(request: Request, kind: str = "expense",
     A = ctx["A"]
 
     cats = list_categories(db, user.id, kind=kind)
-    # Cuenta de transacciones por categoría (perfil + nombre) para avisar al borrar.
-    tx_counts: dict[tuple[str, str], int] = {}
+    # Cuenta de transacciones por nombre de categoría (globales) para avisar al borrar.
+    tx_counts: dict[str, int] = {}
     for t in db.query(Transaction).filter(Transaction.user_id == user.id).all():
-        key = (t.profile, t.category)
-        tx_counts[key] = tx_counts.get(key, 0) + 1
+        tx_counts[t.category] = tx_counts.get(t.category, 0) + 1
 
-    profiles = list_profiles(db, user.id)
-    groups = []
-    for prof in profiles:
-        rows = []
-        for c in [c for c in cats if c.profile == prof.slug]:
-            rows.append({
-                "id": c.id, "name": c.name, "raw_icon": c.icon,
-                "initial": (c.name[0].upper() if c.name else "?"),
-                "color": A(c.color), "raw_color": c.color, "is_system": c.is_system,
-                "counts_for_savings": c.counts_for_savings,
-                "tx_count": tx_counts.get((prof.slug, c.name), 0),
-                "subcategories": [{"id": s.id, "name": s.name, "icon": s.icon} for s in c.subcategories],
-            })
-        if rows:
-            groups.append({"profile": prof.slug, "name": prof.name, "color": A(prof.color), "categories": rows})
+    cards = []
+    for c in cats:
+        cards.append({
+            "id": c.id, "name": c.name, "raw_icon": c.icon,
+            "initial": (c.name[0].upper() if c.name else "?"),
+            "color": A(c.color), "raw_color": c.color, "is_system": c.is_system,
+            "counts_for_savings": c.counts_for_savings,
+            "tx_count": tx_counts.get(c.name, 0),
+            "subcategories": [{"id": s.id, "name": s.name, "icon": s.icon} for s in c.subcategories],
+        })
 
     return templates.TemplateResponse(request, "categories.html", {
-        **ctx, "kind": kind, "groups": groups,
-        "profiles": [{"id": p.slug, "name": p.name} for p in profiles],
+        **ctx, "kind": kind, "cards": cards,
     })
 
 
 @router.post("/categories")
-def add_category(kind: str = Form(...), profile: str = Form(...), name: str = Form(...),
-                 icon: str = Form(""), db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+def add_category(kind: str = Form(...), name: str = Form(...), icon: str = Form(""),
+                 db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     name = name.strip()
-    if name and profile in profiles_map(db, user.id) and kind in ("income", "expense"):
+    if name and kind in ("income", "expense"):
         exists = (db.query(Category)
-                  .filter(Category.user_id == user.id, Category.profile == profile,
-                          Category.kind == kind, Category.name == name).first())
+                  .filter(Category.user_id == user.id, Category.kind == kind, Category.name == name).first())
         if not exists:
             chosen_icon = icon.strip() or icon_for_category(name)
-            db.add(Category(user_id=user.id, profile=profile, kind=kind, name=name,
+            db.add(Category(user_id=user.id, profile=GLOBAL, kind=kind, name=name,
                             icon=chosen_icon, color=hash_color(name)))
             db.commit()
     return RedirectResponse(f"/categories?kind={kind}", status_code=303)
@@ -76,10 +68,10 @@ def rename_category(category_id: int, name: str = Form(...), color: str = Form(.
         new_name = name.strip()
         if new_name and new_name != c.name:
             old_name = c.name
-            # Propaga el cambio de nombre al histórico y a los presupuestos del mismo perfil.
-            db.query(Transaction).filter(Transaction.user_id == user.id, Transaction.profile == c.profile,
+            # Categorías globales: propaga el cambio de nombre a TODO el histórico y presupuestos.
+            db.query(Transaction).filter(Transaction.user_id == user.id,
                                          Transaction.category == old_name).update({"category": new_name}, synchronize_session=False)
-            db.query(Budget).filter(Budget.user_id == user.id, Budget.profile == c.profile,
+            db.query(Budget).filter(Budget.user_id == user.id,
                                     Budget.category == old_name).update({"category": new_name}, synchronize_session=False)
             c.name = new_name
         c.color = color or c.color
@@ -104,11 +96,11 @@ def delete_category(category_id: int, db: Session = Depends(get_db), user: User 
     kind = c.kind if c else "expense"
     if c and not c.is_system:
         # Reasigna las transacciones existentes a "Sin categoría" en vez de borrarlas.
-        uncategorized = ensure_uncategorized(db, user.id, c.profile, c.kind)
-        db.query(Transaction).filter(Transaction.user_id == user.id, Transaction.profile == c.profile,
+        uncategorized = ensure_uncategorized(db, user.id, c.kind)
+        db.query(Transaction).filter(Transaction.user_id == user.id,
                                      Transaction.category == c.name).update({"category": uncategorized.name}, synchronize_session=False)
         # Los presupuestos ligados a esta categoría se eliminan (la asignación deja de tener sentido).
-        db.query(Budget).filter(Budget.user_id == user.id, Budget.profile == c.profile,
+        db.query(Budget).filter(Budget.user_id == user.id,
                                 Budget.category == c.name).delete(synchronize_session=False)
         db.delete(c)
         db.commit()

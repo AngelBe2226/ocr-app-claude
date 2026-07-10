@@ -12,8 +12,14 @@
     <!-- Gasto -->
     <form id="form-expense" class="add-form form-col" method="post" action="/add/expense" enctype="multipart/form-data">
       <select name="profile" class="input js-profile" data-kind="expense" required></select>
-      <select name="category" class="input js-category" required></select>
-      <select name="subcategory" class="input js-subcategory"><option value="">Subcategoría (opcional)</option></select>
+      <div class="cascade" data-kind="expense">
+        <input type="hidden" name="category" data-role="category">
+        <input type="hidden" name="subcategory" data-role="subcategory">
+        <button type="button" class="input cascade-trigger" onclick="toggleCascade(this)">
+          <span class="cascade-label" style="color:var(--muted);">Selecciona categoría</span><span class="cascade-caret">▾</span>
+        </button>
+        <div class="cascade-panel" style="display:none;"></div>
+      </div>
       <input type="text" name="store" class="input js-store" placeholder="🏪 Tienda / comercio (opcional)" list="store-list">
       <select name="account_id" class="input js-account" required></select>
       <input type="number" step="0.01" min="0" name="amount" placeholder="Importe (€)" class="input mono" required>
@@ -40,8 +46,14 @@
     <!-- Ingreso -->
     <form id="form-income" class="add-form form-col" method="post" action="/add/income" style="display:none;">
       <select name="profile" class="input js-profile" data-kind="income" required></select>
-      <select name="category" class="input js-category" required></select>
-      <select name="subcategory" class="input js-subcategory"><option value="">Subcategoría (opcional)</option></select>
+      <div class="cascade" data-kind="income">
+        <input type="hidden" name="category" data-role="category">
+        <input type="hidden" name="subcategory" data-role="subcategory">
+        <button type="button" class="input cascade-trigger" onclick="toggleCascade(this)">
+          <span class="cascade-label" style="color:var(--muted);">Selecciona categoría</span><span class="cascade-caret">▾</span>
+        </button>
+        <div class="cascade-panel" style="display:none;"></div>
+      </div>
       <input type="text" name="store" class="input js-store" placeholder="🏪 Tienda / origen (opcional)" list="store-list">
       <select name="account_id" class="input js-account" required></select>
       <input type="number" step="0.01" min="0" name="amount" placeholder="Importe (€)" class="input mono" required>

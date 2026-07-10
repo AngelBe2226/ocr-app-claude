@@ -71,7 +71,21 @@
       "Bash(curl -s -b /tmp/mm.txt http://127.0.0.1:8000/add/options)",
       "Bash(npm -v)",
       "Bash(echo \"npm: $\\(npm -v 2>/dev/null || echo NONE\\)\")",
-      "Read(//Users/angel/Documents/GitHub/**)"
+      "Read(//Users/angel/Documents/GitHub/**)",
+      "Bash(curl -s -X PUT http://localhost:8000/api/progress/b01-s1q1 -H 'Content-Type: application/json' -d '{\"value\":\"0\"}')",
+      "Bash(curl -s http://localhost:8000/api/progress)",
+      "Bash(curl -s -X POST http://localhost:8000/api/progress/reset?prefix=b01-)",
+      "Bash(curl -s -X POST 'http://localhost:8000/api/progress/reset?prefix=b01-')",
+      "Bash(npm install *)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}\\\\n\" http://127.0.0.1:8000/login)",
+      "Bash(curl -s -D - -o /dev/null http://127.0.0.1:8000/login)",
+      "Bash(curl -s -D - -o /dev/null http://127.0.0.1:8000/)",
+      "mcp__claude-in-chrome__list_connected_browsers",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' http://localhost:8000/api/health)",
+      "Bash(echo \"backend :8000 -> $\\(curl -s -o /dev/null -w '%{http_code}' http://localhost:8000/api/health\\)\")",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' http://localhost:5173/)",
+      "Bash(echo \"vite    :5173 -> $\\(curl -s -o /dev/null -w '%{http_code}' http://localhost:5173/\\)\")",
+      "Bash(perl -0pi -e 's/--port 8000/--port 8001/g; s/localhost:8000/localhost:8001/g' README.md)"
     ]
   }
 }

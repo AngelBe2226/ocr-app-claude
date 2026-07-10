@@ -125,8 +125,8 @@ def profile_page(
     accounts = db.query(Account).filter(Account.user_id == user.id).order_by(Account.id).all()
 
     form_type = request.query_params.get("form_type", "income")
-    categories = category_names(db, user.id, profile=profile_id, kind=form_type)
-    bulk_categories = category_names(db, user.id, profile=profile_id)
+    categories = category_names(db, user.id, kind=form_type)
+    bulk_categories = category_names(db, user.id)
 
     expense_by_cat: dict[str, float] = {}
     for t in list_tx:
@@ -189,7 +189,7 @@ def profile_page(
     cat_idx = category_index(db, user.id)
     history_rows = []
     for t in filtered:
-        cat = cat_idx.get((t.profile, t.category))
+        cat = cat_idx.get((t.type, t.category)) or cat_idx.get(t.category)
         cat_raw = cat.color if cat else hash_color(t.category or "?")
         history_rows.append({
             "id": t.id, "category": t.category, "note": t.note, "date": t.date,

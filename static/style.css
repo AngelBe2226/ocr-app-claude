@@ -138,14 +138,23 @@ tr.row td { border-top: 1px solid var(--border); }
 
 /* Disclosure de edición (chevron nativo oculto, control propio) */
 details.edit { margin-top: 10px; border-top: 1px solid var(--border); padding-top: 10px; }
+/* Botón 'Editar' más grande (parece un botón). Al abrirse pasa a rojo = 'Cancelar'. */
 details.edit > summary {
-  cursor: pointer; font-size: 11.5px; font-weight: 700; color: var(--secondary);
-  list-style: none; display: inline-flex; align-items: center; gap: 5px;
+  cursor: pointer; font-size: 12.5px; font-weight: 700; color: var(--ink);
+  list-style: none; display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 10px; background: var(--trackBg);
+  transition: background .14s ease, color .14s ease, outline-color .14s ease;
+  outline: 2px solid transparent; outline-offset: 1px;
 }
+details.edit > summary:hover { outline-color: var(--accent); }
 details.edit > summary::-webkit-details-marker { display: none; }
-details.edit > summary::before { content: '✎'; font-size: 11px; }
-details.edit[open] > summary { margin-bottom: 12px; }
-details.edit[open] > summary::before { content: '×'; font-size: 14px; }
+details.edit > summary::before { content: '✎'; font-size: 12px; }
+details.edit[open] > summary {
+  margin-bottom: 12px;
+  background: color-mix(in srgb, #E2574C 16%, transparent); color: #E2574C;
+}
+details.edit[open] > summary:hover { outline-color: #E2574C; }
+details.edit[open] > summary::before { content: '✕'; font-size: 13px; }
 
 /* Chevron genérico para secciones colapsables */
 .chevron { display: inline-block; transition: transform .15s; font-size: 11px; color: var(--secondary); }
@@ -251,6 +260,26 @@ details.cat-drill > summary:hover { opacity: 0.86; }
 .hero-rename > summary::-webkit-details-marker { display: none; }
 .hero-rename > summary::marker { content: ''; }
 .hero-rename[open] > summary > span:last-child { background: rgba(255,255,255,0.18); }
+
+/* Menú cascada in-app para elegir categoría → subcategoría (no usa el <select> nativo) */
+.cascade { position: relative; }
+.cascade-trigger { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; text-align: left; cursor: pointer; background: var(--card); }
+.cascade-caret { color: var(--secondary); font-size: 11px; }
+.cascade-panel {
+  position: absolute; left: 0; right: 0; top: calc(100% + 4px); z-index: 60; max-height: 260px; overflow-y: auto;
+  background: var(--card); border: 1px solid var(--borderInput); border-radius: 12px; padding: 6px;
+  box-shadow: var(--shadow), 0 8px 24px rgba(0,0,0,0.12); animation: popIn .16s cubic-bezier(.2,.8,.3,1);
+}
+.cascade-cat-row { border-radius: 9px; }
+.cascade-cat-row:hover { background: var(--trackBg); }
+.cascade-cat { flex: 1; text-align: left; border: none; background: none; cursor: pointer; padding: 9px 10px; font-size: 13px; font-weight: 600; color: var(--ink); }
+.cascade-cat-head { display: flex; align-items: center; }
+.cascade-exp { border: none; background: none; cursor: pointer; padding: 9px 12px; font-size: 15px; color: var(--secondary); transition: transform .15s ease; }
+.cascade-exp.open { transform: rotate(90deg); }
+.cascade-subs { display: none; padding: 2px 6px 8px 14px; flex-wrap: wrap; gap: 6px; }
+.cascade-subs.open { display: flex; }
+.cascade-sub { border: 1px solid var(--borderInput); background: var(--trackBg); border-radius: 16px; padding: 5px 11px; font-size: 12px; cursor: pointer; color: var(--secondaryAlt); }
+.cascade-sub:hover { border-color: var(--accent); color: var(--accent); }
 
 /* Chip 'cuenta para ahorro' en categorías de ingreso */
 .savings-flag {

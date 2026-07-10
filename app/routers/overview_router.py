@@ -53,7 +53,7 @@ def overview(request: Request, db: Session = Depends(get_db), user: User = Depen
     recent = sorted(transactions, key=lambda t: t.date, reverse=True)[:7]
     recent_rows = []
     for t in recent:
-        cat = cat_idx.get((t.profile, t.category))
+        cat = cat_idx.get((t.type, t.category)) or cat_idx.get(t.category)
         col = cat.color if cat else hash_color(t.category or "?")
         recent_rows.append({
             "category": t.category, "date_label": t.date,

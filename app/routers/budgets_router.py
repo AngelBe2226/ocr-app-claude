@@ -5,7 +5,7 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
 from app.auth import get_current_user
-from app.categories import list_categories
+from app.categories import category_index, list_categories
 from app.database import get_db
 from app.finance import fmt_eur, period_bounds, spent_in_period
 from app.models import Budget, Category, SpendingLimit, Transaction, User
@@ -19,7 +19,8 @@ PERIOD_LABEL = {"monthly": "mensual", "annual": "anual"}
 
 
 def _category_lookup(db: Session, user_id: int) -> dict:
-    return {(c.profile, c.name): c for c in list_categories(db, user_id)}
+    # Categorías globales: se resuelven por (tipo, nombre) o por nombre.
+    return category_index(db, user_id)
 
 
 def _budget_card(b: Budget, transactions, cat_lookup, A, today: date, pmap: dict) -> dict:
@@ -28,7 +29,7 @@ def _budget_card(b: Budget, transactions, cat_lookup, A, today: date, pmap: dict
     remaining = b.allocated - spent
     pct = min(1.0, spent / b.allocated) if b.allocated else 0
     daily = remaining / max(1, pb["days_remaining"]) if remaining > 0 else 0
-    cat = cat_lookup.get((b.profile, b.category))
+    cat = cat_lookup.get(("expense", b.category)) or cat_lookup.get(b.category)
     color = A(cat.color) if cat else A("#12898F")
     return {
         "id": b.id, "profile": b.profile, "profile_name": pname(pmap, b.profile),
@@ -68,9 +69,10 @@ def budgets_page(request: Request, period: str = "monthly",
                                        period_bounds(today, b.period)["end"]) for b in budgets)
 
     # Opciones "Perfil — Categoría" de gasto para el formulario de alta.
+    # Categorías globales; el presupuesto sigue siendo por perfil.
     cat_options = []
     for prof in list_profiles(db, user.id):
-        for c in list_categories(db, user.id, profile=prof.slug, kind="expense"):
+        for c in list_categories(db, user.id, kind="expense"):
             cat_options.append({"value": f"{prof.slug}|{c.name}", "label": f"{prof.name} — {c.name}"})
 
     limits = _limits_context(db, user.id, transactions, today, A)

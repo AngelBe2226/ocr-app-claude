@@ -7,7 +7,9 @@ from sqlalchemy.orm import Session
 
 from app.constants import PROFILE_IDS, PROFILES
 from app.finance import hash_color, last_n_months
-from app.models import Account, Bill, Budget, Category, Goal, Loan, Profile, Settings, Transaction, User
+from app.models import (
+    Account, Bill, Budget, Category, Goal, Loan, Profile, Settings, Subcategory, Transaction, User,
+)
 
 DEFAULT_EMAIL = "angelgbct@gmail.com"
 DEFAULT_PASSWORD = "finanzas123"
@@ -38,6 +40,27 @@ def ensure_profiles(db: Session) -> None:
             sr, tr = _rates_for(pid)
             db.add(Profile(user_id=user.id, slug=pid, name=conf["name"], color=conf["color"],
                            position=pos, savings_rate=sr, tax_rate=tr))
+    db.commit()
+
+
+GLOBAL_SAVINGS_NAME = "Ahorro Global"
+
+
+def get_or_create_global_savings(db: Session, user_id: int) -> Account:
+    """Cuenta única donde se acumulan las reservas de ahorro de todos los perfiles."""
+    acc = (db.query(Account)
+           .filter(Account.user_id == user_id, Account.name == GLOBAL_SAVINGS_NAME).first())
+    if not acc:
+        acc = Account(user_id=user_id, name=GLOBAL_SAVINGS_NAME, type="savings",
+                      currency="EUR", balance=0, color="#3FA65C", icon="piggy-bank")
+        db.add(acc)
+        db.flush()
+    return acc
+
+
+def ensure_global_savings_account(db: Session) -> None:
+    for u in db.query(User).all():
+        get_or_create_global_savings(db, u.id)
     db.commit()
 
 
@@ -98,19 +121,94 @@ def ensure_category_icons(db: Session) -> None:
         db.commit()
 
 
+# ── Taxonomía real de categorías (GLOBAL, compartida por todos los perfiles) ──
+# Cada entrada: (categoría, icono, [subcategorías]).
+EXPENSE_TAXONOMY = [
+    ("Finance", "chart", ["Deudas", "FOREX", "STR Rheinmetall", "STR S&P500", "STR NVIDIA", "Vantage", "FundedNext", "Comisiones"]),
+    ("Health", "heart", ["Health", "Yoga", "Hospital", "Medicine", "Tea", "Water", "Gym", "Digestivas", "Protein"]),
+    ("Education", "graduation", ["Schooling", "Textbooks", "School supplies", "Academy", "Impresión", "Book", "Autoescuela"]),
+    ("Leisure", "gamepad", ["Bebidas", "Galletas", "Chocolate", "Dulces", "Confitura", "Café", "Casino", "Entretenimiento", "Tabaco", "Outing", "Gaming", "Energy Drink"]),
+    ("Business", "briefcase", ["Taller"]),
+    ("Transport", "bus", ["Bus", "Subway", "Taxi", "Car", "Autoescuela", "Flight"]),
+    ("Culture", "palette", ["Books", "Movie", "Music", "Apps"]),
+    ("Household", "home", ["Appliances", "Furniture", "Kitchen", "Toiletries", "Chandlery", "Bolsa", "Lavandería", "Limpieza"]),
+    ("Apparel", "shirt", ["Clothing", "Fashion", "Shoes", "Laundry", "Bags", "Fixing"]),
+    ("Beauty", "star", ["Cosmetics", "Makeup", "Accessories", "Beauty", "Bath", "Corte de Pelo"]),
+    ("Suscription", "bolt", ["iCloud", "Apple Music", "App buying", "Etsy", "Figma", "Lovable", "GoDaddy", "Claude"]),
+    ("Tattoo", "wrench", ["Piel Sintética"]),
+    ("Services", "home", ["Renta", "Electricidad", "Teléfono"]),
+    ("Social Life", "users", ["Friend", "Fellowship", "Alumni", "Dues", "Tips", "Help", "Recarga", "Outing", "Remesa", "Combo comida"]),
+    ("Utilities", "wrench", ["Lavandería", "Limpieza", "Fregado", "Herramientas", "Bolsa", "Electricidad"]),
+    ("Food", "utensils", ["Lunch", "Dinner", "Eating out", "Beverages", "Especias", "Eggs", "Embutidos", "Tomate", "Pan", "Vianda", "Cereales", "Frijoles/Lentejas", "Azúcar/sal", "Pimiento", "Frutas", "Yogurt", "Vegetales", "Frutos secos", "Aceite/Vinagre", "Zumo", "Leche", "Spaghetti", "Arroz", "Harina", "Salsas", "Champiñones", "Miel", "Procesados", "Queso", "Aceitunas", "Home", "Snacks"]),
+    ("Gift", "gift", []),
+    ("Other", "circle", []),
+    ("Procedures", "briefcase", []),
+    ("Tech", "laptop", []),
+    ("Office", "briefcase", []),
+]
+INCOME_TAXONOMY = [
+    ("Freelancer", "laptop", []),
+    ("Salary", "wallet", []),
+    ("Petty cash", "cash", []),
+    ("Bonus", "gift", []),
+    ("Other", "circle", []),
+    ("Savings", "piggy-bank", []),
+    ("Family", "users", []),
+    ("Descuentos", "tag", ["Lidl", "SPAR"]),
+    ("Reembolso", "receipt", []),
+    ("Bingx", "chart", []),
+    ("Venta", "shopping-bag", []),
+    ("Bolsa", "chart", []),
+]
+
+
+def _seed_taxonomy(db: Session, user_id: int) -> None:
+    """Crea la taxonomía global completa (gastos + ingresos) para un usuario."""
+    from app.categories import GLOBAL, UNCATEGORIZED_NAME
+    for kind, tax in (("expense", EXPENSE_TAXONOMY), ("income", INCOME_TAXONOMY)):
+        for pos, (name, icon, subs) in enumerate(tax):
+            cat = Category(user_id=user_id, profile=GLOBAL, kind=kind, name=name,
+                           icon=icon, color=hash_color(name))
+            db.add(cat)
+            db.flush()
+            for s in subs:
+                db.add(Subcategory(category_id=cat.id, name=s, icon=""))
+    for kind in ("expense", "income"):
+        db.add(Category(user_id=user_id, profile=GLOBAL, kind=kind,
+                        name=UNCATEGORIZED_NAME, color="#A39C90", is_system=True))
+
+
 def ensure_categories(db: Session) -> None:
-    """Migración idempotente: crea las categorías en BD a partir de las constantes
-    para cualquier usuario que aún no las tenga. Los nombres coinciden con los que
-    ya usan las transacciones/presupuestos, así que el histórico sigue coherente."""
+    """Siembra la taxonomía global para usuarios que aún no tengan categorías."""
     for user in db.query(User).all():
         if db.query(Category).filter(Category.user_id == user.id).first():
             continue
-        for pid, conf in PROFILES.items():
-            for kind, key in (("income", "income_categories"), ("expense", "expense_categories")):
-                for name in conf[key]:
-                    db.add(Category(user_id=user.id, profile=pid, kind=kind,
-                                    name=name, color=hash_color(name), icon=icon_for_category(name)))
+        _seed_taxonomy(db, user.id)
     db.commit()
+
+
+def migrate_categories_to_global(db: Session) -> None:
+    """Convierte el modelo antiguo (categorías por perfil) al nuevo (globales):
+    si un usuario tiene categorías pero ninguna global, borra las viejas y siembra
+    la taxonomía real. Sus transacciones conservan el nombre de categoría (se resuelve
+    icono/color por nombre; si no existe, degrada con color por hash)."""
+    from app.categories import GLOBAL
+    changed = False
+    for user in db.query(User).all():
+        has_any = db.query(Category).filter(Category.user_id == user.id).first()
+        has_global = (db.query(Category)
+                      .filter(Category.user_id == user.id, Category.profile == GLOBAL).first())
+        if has_any and not has_global:
+            # Borra subcategorías y categorías viejas del usuario.
+            old = db.query(Category).filter(Category.user_id == user.id).all()
+            for c in old:
+                db.query(Subcategory).filter(Subcategory.category_id == c.id).delete(synchronize_session=False)
+            db.query(Category).filter(Category.user_id == user.id).delete(synchronize_session=False)
+            db.flush()
+            _seed_taxonomy(db, user.id)
+            changed = True
+    if changed:
+        db.commit()
 
 
 def days_in_month(y: int, m: int) -> int:

@@ -1,9 +1,30 @@
 // Modal global "Añadir movimiento": gasto / ingreso / transferencia.
 let addOptions = null;
 
-function openAddModal() {
+// Muestra/oculta un panel (formularios de alta que sólo aparecen al pulsar su botón).
+function togglePanel(id) {
+  const p = document.getElementById(id);
+  if (!p) return;
+  const opening = getComputedStyle(p).display === 'none';
+  p.style.display = opening ? 'block' : 'none';
+  if (opening) {
+    const f = p.querySelector('input:not([type=hidden]),select,textarea');
+    if (f) f.focus();
+    p.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+async function openAddModal(profileSlug) {
   document.getElementById('add-modal').style.display = 'flex';
-  if (!addOptions) loadAddOptions();
+  if (!addOptions) await loadAddOptions();
+  if (profileSlug) {
+    document.querySelectorAll('#add-modal .js-profile').forEach(sel => {
+      if ([...sel.options].some(o => o.value === profileSlug)) {
+        sel.value = profileSlug;
+        refreshCategories(sel.closest('form'));
+      }
+    });
+  }
 }
 function closeAddModal() {
   document.getElementById('add-modal').style.display = 'none';
@@ -46,12 +67,8 @@ async function loadAddOptions() {
     sel.innerHTML = profHtml;
     sel.addEventListener('change', () => refreshCategories(sel.closest('form')));
   });
-  ['expense', 'income'].forEach(t => {
-    const form = document.getElementById('form-' + t);
-    const catSel = form && form.querySelector('.js-category');
-    if (catSel) catSel.addEventListener('change', () => refreshSubcategories(form));
-    refreshCategories(form);
-  });
+  // Categorías/subcategorías se eligen con el menú cascada in-app (cascade.js).
+  if (typeof cascadeInit === 'function') cascadeInit(document.getElementById('add-modal'));
 }
 
 function refreshCategories(form) {
@@ -60,7 +77,8 @@ function refreshCategories(form) {
   const catSel = form.querySelector('.js-category');
   if (!profSel || !catSel) return;
   const kind = profSel.dataset.kind;
-  const cats = addOptions.categories.filter(c => c.profile === profSel.value && c.kind === kind);
+  // Categorías globales: se filtran solo por tipo (gasto/ingreso), no por perfil.
+  const cats = addOptions.categories.filter(c => c.kind === kind);
   catSel.innerHTML = cats.length
     ? cats.map(c => `<option value="${esc(c.name)}">${esc(c.name)}</option>`).join('')
     : '<option value="">(sin categorías)</option>';
@@ -74,7 +92,7 @@ function refreshSubcategories(form) {
   const subSel = form.querySelector('.js-subcategory');
   if (!subSel || !profSel || !catSel) return;
   const kind = profSel.dataset.kind;
-  const cat = addOptions.categories.find(c => c.profile === profSel.value && c.kind === kind && c.name === catSel.value);
+  const cat = addOptions.categories.find(c => c.kind === kind && c.name === catSel.value);
   const subs = (cat && cat.subs) || [];
   subSel.innerHTML = '<option value="">Subcategoría (opcional)</option>' +
     subs.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');

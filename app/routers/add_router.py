@@ -33,7 +33,7 @@ def add_options(db: Session = Depends(get_db), user: User = Depends(get_current_
     return JSONResponse({
         "profiles": [{"id": p.slug, "name": p.name} for p in list_profiles(db, user.id)],
         "accounts": [{"id": a.id, "name": a.name} for a in accounts],
-        "categories": [{"profile": c.profile, "kind": c.kind, "name": c.name,
+        "categories": [{"kind": c.kind, "name": c.name,
                         "subs": [s.name for s in c.subcategories]} for c in cats],
         "stores": stores, "notes": notes,
     })
