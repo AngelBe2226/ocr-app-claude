@@ -85,7 +85,22 @@
       "Bash(echo \"backend :8000 -> $\\(curl -s -o /dev/null -w '%{http_code}' http://localhost:8000/api/health\\)\")",
       "Bash(curl -s -o /dev/null -w '%{http_code}' http://localhost:5173/)",
       "Bash(echo \"vite    :5173 -> $\\(curl -s -o /dev/null -w '%{http_code}' http://localhost:5173/\\)\")",
-      "Bash(perl -0pi -e 's/--port 8000/--port 8001/g; s/localhost:8000/localhost:8001/g' README.md)"
+      "Bash(perl -0pi -e 's/--port 8000/--port 8001/g; s/localhost:8000/localhost:8001/g' README.md)",
+      "Bash(curl -s http://localhost:8001/api/health)",
+      "Bash(echo \"backend 8001 health: $\\(curl -s http://localhost:8001/api/health 2>/dev/null || echo DOWN\\)\")",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' http://localhost:8001/api/blocks)",
+      "Bash(echo \"backend 8001 /api/blocks: $\\(curl -s -o /dev/null -w '%{http_code}' http://localhost:8001/api/blocks 2>/dev/null\\)\")",
+      "Bash(echo \"vite 5173 root: $\\(curl -s -o /dev/null -w '%{http_code}' http://localhost:5173/ 2>/dev/null || echo DOWN\\)\")",
+      "Bash(npm run *)",
+      "Bash(pkill -f \"english-index/frontend\")",
+      "Bash(pkill -f \"port 8001\")",
+      "Bash(curl -s http://localhost:8001/api/progress)",
+      "Bash(docker --version)",
+      "Bash(docker info *)",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' http://localhost:8001/api/health)",
+      "Bash(echo \"server alive: $\\(curl -s -o /dev/null -w '%{http_code}' http://localhost:8001/api/health\\)\")",
+      "Bash(git add *)",
+      "Bash(git -c user.name=AngelBe2226 commit -q -m ' *)"
     ]
   }
 }

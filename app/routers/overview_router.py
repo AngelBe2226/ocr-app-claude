@@ -60,7 +60,7 @@ def overview(request: Request, db: Session = Depends(get_db), user: User = Depen
             "amount_label": ("+ " if t.type == "income" else "- ") + fmt_eur(t.amount),
             "color": A("#3FA65C" if t.type == "income" else "#E2574C"),
             "profile_name": pname(pmap, t.profile), "initial": t.category[0].upper() if t.category else "?",
-            "cat_icon": (cat.icon if cat else ""),
+            "cat_icon": (cat.icon if cat else ""), "account_name": (t.account.name if t.account else ""),
             "icon_bg": "rgba(255,255,255,0.08)" if ctx["is_dark"] else col + "22", "icon_color": A(col),
         })
 

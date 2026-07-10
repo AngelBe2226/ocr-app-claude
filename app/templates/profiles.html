@@ -26,7 +26,11 @@
       <div style="flex:1;min-width:0;">
         <div style="font-size:14px;font-weight:700;">{{ p.name }}</div>
         <div class="mono" style="font-size:11.5px;color:var(--secondary);margin-top:2px;">Neto: {{ p.net }}</div>
-        <div style="font-size:10.5px;color:var(--secondary);margin-top:3px;">Reserva {{ p.reserve_rate }}% · <span style="color:#3FA65C;">ahorro {{ p.savings_rate }}%</span> · <span style="color:#D9932E;">impuestos {{ p.tax_rate }}%</span></div>
+        <div style="margin-top:6px;display:flex;flex-direction:column;gap:2px;font-size:11px;color:var(--secondary);">
+          <div>Reserva <span class="mono" style="font-weight:700;color:var(--ink);">{{ p.reserve_rate }}%</span></div>
+          <div style="color:#3FA65C;">Ahorro <span class="mono" style="font-weight:700;">{{ p.savings_rate }}%</span></div>
+          <div style="color:#D9932E;">Impuestos <span class="mono" style="font-weight:700;">{{ p.tax_rate }}%</span></div>
+        </div>
       </div>
     </a>
     <details class="edit">

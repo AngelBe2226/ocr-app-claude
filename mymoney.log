@@ -736,3 +736,39 @@ INFO:     127.0.0.1:49214 - "GET /freelance HTTP/1.1" 200 OK
 INFO:     127.0.0.1:49214 - "GET /personal HTTP/1.1" 200 OK
 INFO:     127.0.0.1:49217 - "POST /personal/transactions/bulk-delete HTTP/1.1" 303 See Other
 INFO:     127.0.0.1:49217 - "GET /personal HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49340 - "GET /personal HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49340 - "GET /static/style.css?v=1783722602 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:49341 - "GET /static/cascade.js?v=1783722602 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:49342 - "GET /static/add.js?v=1783722602 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:49343 - "GET /static/edit.js?v=1783722602 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:49393 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49394 - "GET / HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [67032]
+INFO:     Started server process [67927]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:49435 - "POST /login HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:49436 - "GET /add/options HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49437 - "POST /add/expense HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:49438 - "GET /transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49439 - "GET /melia HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49440 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49478 - "POST /login HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:49479 - "GET /profiles HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49480 - "GET / HTTP/1.1" 303 See Other
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [67927]
+INFO:     Started server process [68686]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:49638 - "POST /login HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:49639 - "GET /melia HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49640 - "POST /profiles/melia/rename HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:49641 - "POST /profiles/melia/rename HTTP/1.1" 303 See Other
