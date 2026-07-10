@@ -79,3 +79,8 @@ INFO:     127.0.0.1:58001 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
 INFO:     127.0.0.1:58001 - "GET /login HTTP/1.1" 200 OK
 INFO:     127.0.0.1:58001 - "GET /favicon.ico HTTP/1.1" 303 See Other
 INFO:     127.0.0.1:58001 - "GET /login HTTP/1.1" 200 OK
+INFO:     192.168.1.132:59452 - "GET / HTTP/1.1" 303 See Other
+INFO:     192.168.1.132:59452 - "GET /login HTTP/1.1" 200 OK
+INFO:     192.168.1.132:59452 - "GET /static/style.css?v=1783692010 HTTP/1.1" 200 OK
+INFO:     192.168.1.132:59452 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     192.168.1.132:59452 - "GET /login HTTP/1.1" 200 OK
