@@ -39,7 +39,7 @@
       <form method="post" action="/budgets/{{ b.id }}/edit" style="display:flex;gap:6px;flex-wrap:wrap;">
         <input type="number" step="0.01" name="allocated" value="{{ b.allocated }}" class="input-sm mono" style="flex:1;min-width:0;" required>
         <button type="submit" class="btn-sm btn-track">Guardar</button>
-        <button type="submit" formaction="/budgets/{{ b.id }}/delete" class="btn-sm btn-danger">✕</button>
+        <button type="submit" formaction="/budgets/{{ b.id }}/delete" class="btn-sm btn-danger" onclick="return confirm('¿Seguro que deseas eliminar este presupuesto?')">✕</button>
       </form>
     </details>
   </div>

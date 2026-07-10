@@ -21,7 +21,7 @@
         <text x="36" y="41" font-size="11.5" font-family="Space Mono, monospace" font-weight="700" text-anchor="middle" fill="var(--ink)">{{ l.pct_label }}</text>
       </svg>
       <div style="flex:1;min-width:0;"><div style="font-size:15px;font-weight:700;">{{ l.name }}</div><div style="font-size:11.5px;color:var(--secondary);">Pagado</div></div>
-      <form method="post" action="/loans/{{ l.id }}/delete"><button type="submit" style="border:none;background:none;padding:0;cursor:pointer;font-size:11.5px;color:var(--muted);">Eliminar</button></form>
+      <form method="post" action="/loans/{{ l.id }}/delete" onsubmit="return confirm('¿Seguro que deseas eliminar la deuda «{{ l.name }}»?')"><button type="submit" style="border:none;background:none;padding:0;cursor:pointer;font-size:11.5px;color:var(--muted);">Eliminar</button></form>
     </div>
     {% if l.flagged %}
     <div style="background:rgba(226,87,76,0.12);color:#E2574C;font-size:11.5px;padding:8px 10px;border-radius:10px;margin-bottom:12px;font-weight:600;">⚠ La cuota no cubre el interés generado</div>
@@ -92,7 +92,7 @@
       {% for l in completed_loans %}
       <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--border);">
         <span style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;"><span style="color:#3FA65C;">✓</span> {{ l.name }}</span>
-        <span style="display:flex;align-items:center;gap:12px;"><span style="font-size:11.5px;color:#3FA65C;">Préstamo saldado</span><form method="post" action="/loans/{{ l.id }}/delete"><button type="submit" style="border:none;background:none;padding:0;cursor:pointer;font-size:11.5px;color:var(--muted);">Eliminar</button></form></span>
+        <span style="display:flex;align-items:center;gap:12px;"><span style="font-size:11.5px;color:#3FA65C;">Préstamo saldado</span><form method="post" action="/loans/{{ l.id }}/delete" onsubmit="return confirm('¿Seguro que deseas eliminar la deuda «{{ l.name }}»?')"><button type="submit" style="border:none;background:none;padding:0;cursor:pointer;font-size:11.5px;color:var(--muted);">Eliminar</button></form></span>
       </div>
       {% endfor %}
       {% for bl in paid_bills %}

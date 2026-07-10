@@ -6,7 +6,17 @@
 <title>MyMoney</title>
 <link rel="stylesheet" href="/static/style.css?v={{ static_version }}">
 <link rel="stylesheet" href="/static/custom-icons.css?v={{ static_version }}">
-<script src="https://unpkg.com/htmx.org@1.9.12"></script>
+{# Fuentes NO bloqueantes: preconnect + carga diferida con swap. El primer pintado usa
+   la fuente del sistema (instantáneo) y Hubot Sans/Space Mono entran al descargar. #}
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/hubot-sans/index.css" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" media="print" onload="this.media='all'">
+<noscript>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/hubot-sans/index.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap">
+</noscript>
 <style>
 :root {
   --bg: {{ T.bg }}; --card: {{ T.card }}; --ink: {{ T.ink }}; --secondary: {{ T.secondary }}; --secondaryAlt: {{ T.secondaryAlt }};

@@ -30,6 +30,8 @@ async function openEditModal(id) {
     subSel.value = t.subcategory;
   }
   form.querySelector('.js-estore').value = t.store || '';
+  const eqty = form.querySelector('.js-equantity');
+  if (eqty) eqty.value = t.quantity || '-';
   form.querySelector('.js-eaccount').value = t.account_id;
   form.querySelector('.js-eamount').value = t.amount;
   form.querySelector('.js-edate').value = t.date;

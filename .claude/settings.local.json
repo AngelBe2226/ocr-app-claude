@@ -63,7 +63,15 @@
       "Bash(/usr/libexec/ApplicationFirewall/socketfilterfw --getglobalstate)",
       "Bash(defaults read *)",
       "Bash(cd /Users/angel/.claude/projects/-Users-angel-Documents-GitHub-ocr-app-claude/memory/)",
-      "Bash(cat MEMORY.md)"
+      "Bash(cat MEMORY.md)",
+      "Read(//Users/angel/Library/Mobile Documents/com~apple~CloudDocs/CLAUDE/English App/indice_ingles_export/**)",
+      "Read(//Users/angel/Library/Mobile Documents/com~apple~CloudDocs/CLAUDE/English App/**)",
+      "Bash(wc -l \"/Users/angel/Library/Mobile Documents/com~apple~CloudDocs/CLAUDE/English App/indice_ingles.html\" \"/Users/angel/Library/Mobile Documents/com~apple~CloudDocs/CLAUDE/English App/indice_ingles_export/design-tokens.css\" 2>/dev/null)",
+      "Bash(curl -s -c /tmp/mm.txt -b /tmp/mm.txt -o /dev/null -X POST http://127.0.0.1:8000/login --data-urlencode email=angelgbct@gmail.com --data-urlencode password=finanzas123)",
+      "Bash(curl -s -b /tmp/mm.txt http://127.0.0.1:8000/add/options)",
+      "Bash(npm -v)",
+      "Bash(echo \"npm: $\\(npm -v 2>/dev/null || echo NONE\\)\")",
+      "Read(//Users/angel/Documents/GitHub/**)"
     ]
   }
 }

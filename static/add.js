@@ -30,9 +30,11 @@ async function loadAddOptions() {
   const accHtml = addOptions.accounts.map(a => `<option value="${a.id}">${esc(a.name)}</option>`).join('');
   document.querySelectorAll('#add-modal .js-account').forEach(sel => { sel.innerHTML = accHtml; });
 
-  // Autocompletado de tiendas ya usadas.
+  // Autocompletado de tiendas y notas ya usadas.
   const storeList = document.getElementById('store-list');
   if (storeList) storeList.innerHTML = (addOptions.stores || []).map(s => `<option value="${esc(s)}">`).join('');
+  const noteList = document.getElementById('note-list');
+  if (noteList) noteList.innerHTML = (addOptions.notes || []).map(s => `<option value="${esc(s)}">`).join('');
   // En transferencia, la cuenta destino por defecto es distinta de la origen.
   const tForm = document.getElementById('form-transfer');
   if (tForm && addOptions.accounts.length > 1) {

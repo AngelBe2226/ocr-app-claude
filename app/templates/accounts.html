@@ -20,7 +20,7 @@
         <span class="icon-circle" style="width:34px;height:34px;border-radius:50%;background:{{ a.tint }};font-size:13px;font-weight:800;color:{{ a.color }};">{% if a.icon %}{{ icon(a.icon, 17) }}{% else %}{{ a.initial }}{% endif %}</span>
         <span style="font-size:13.5px;font-weight:700;">{{ a.name }}</span>
       </span>
-      <form method="post" action="/accounts/{{ a.id }}/delete"><button type="submit" style="border:none;background:none;padding:0;cursor:pointer;font-size:11.5px;color:var(--muted);">Eliminar</button></form>
+      <form method="post" action="/accounts/{{ a.id }}/delete" onsubmit="return confirm('¿Seguro que deseas eliminar la cuenta «{{ a.name }}»?')"><button type="submit" style="border:none;background:none;padding:0;cursor:pointer;font-size:11.5px;color:var(--muted);">Eliminar</button></form>
     </div>
     <div class="mono" style="font-size:20px;font-weight:700;">{{ a.balance_label }}</div>
     {% if a.show_eur %}<div style="font-size:11.5px;color:var(--secondary);margin-top:2px;">≈ {{ a.eur_label }}</div>{% endif %}

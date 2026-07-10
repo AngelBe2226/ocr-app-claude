@@ -45,6 +45,7 @@ class Transaction(Base):
     place_name: Mapped[str] = mapped_column(String, default="")
     subcategory: Mapped[str] = mapped_column(String, default="")  # subcategoría opcional
     store: Mapped[str] = mapped_column(String, default="")        # tienda/comercio (SPAR, etc.)
+    quantity: Mapped[str] = mapped_column(String, default="-")    # cantidad contable: '-', '1x'…'10x'
 
     account: Mapped["Account"] = relationship()
 

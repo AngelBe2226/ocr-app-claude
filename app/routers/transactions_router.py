@@ -29,7 +29,7 @@ def transaction_json(tx_id: int, db: Session = Depends(get_db), user: User = Dep
         raise HTTPException(status_code=404)
     return JSONResponse({
         "id": t.id, "profile": t.profile, "type": t.type, "category": t.category,
-        "subcategory": t.subcategory or "", "store": t.store or "",
+        "subcategory": t.subcategory or "", "store": t.store or "", "quantity": t.quantity or "-",
         "account_id": t.account_id, "amount": t.amount, "date": t.date.isoformat(), "note": t.note or "",
     })
 
@@ -39,7 +39,7 @@ def edit_transaction(
     tx_id: int, request: Request,
     type: str = Form(...), profile: str = Form(...), category: str = Form(...),
     account_id: int = Form(...), amount: float = Form(...), date: str = Form(...), note: str = Form(""),
-    subcategory: str = Form(""), store: str = Form(""),
+    subcategory: str = Form(""), store: str = Form(""), quantity: str = Form("-"),
     db: Session = Depends(get_db), user: User = Depends(get_current_user),
 ):
     t = db.query(Transaction).filter(Transaction.id == tx_id, Transaction.user_id == user.id).first()
@@ -49,6 +49,7 @@ def edit_transaction(
         t.category = category
         t.subcategory = (subcategory or "").strip()
         t.store = (store or "").strip()
+        t.quantity = (quantity or "-").strip() or "-"
         t.account_id = account_id
         t.amount = round(amount, 2)
         t.date = datetime.strptime(date, "%Y-%m-%d").date()
@@ -70,7 +71,8 @@ def build_tx_rows(transactions, A, pmap, show_profile=True, cat_index=None):
             "amount_label": ("+ " if t.type == "income" else "- ") + fmt_eur(t.amount),
             "color": A("#3FA65C" if t.type == "income" else "#E2574C"),
             "signed": signed, "has_receipt": bool(t.attachment_name), "place_name": t.place_name or "",
-            "subcategory": t.subcategory or "", "store": t.store or "",
+            "subcategory": t.subcategory or "", "store": t.store or "", "quantity": getattr(t, "quantity", "") or "",
+            "account_name": (t.account.name if t.account else ""),
             "cat_icon": (cat.icon if cat else ""), "cat_color": A(cat_raw_color), "cat_raw_color": cat_raw_color,
             "initial": (t.category[0].upper() if t.category else "?"),
         }

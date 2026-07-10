@@ -84,3 +84,400 @@ INFO:     192.168.1.132:59452 - "GET /login HTTP/1.1" 200 OK
 INFO:     192.168.1.132:59452 - "GET /static/style.css?v=1783692010 HTTP/1.1" 200 OK
 INFO:     192.168.1.132:59452 - "GET /favicon.ico HTTP/1.1" 303 See Other
 INFO:     192.168.1.132:59452 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59916 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59915 - "GET /static/style.css?v=1783692010 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:59916 - "GET /static/add.js?v=1783692010 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:59918 - "GET /static/edit.js?v=1783692010 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:59917 - "GET /static/tx.js?v=1783692010 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:59920 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59920 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59920 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59920 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59920 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59920 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59925 - "GET /savings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59928 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59928 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59928 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59928 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59928 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59928 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59924 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59932 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59932 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59932 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59932 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59932 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59932 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59936 - "GET /budgets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59938 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59938 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59938 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59938 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59938 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59938 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59936 - "GET /goals HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59938 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59938 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59938 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59938 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59938 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59938 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59936 - "GET /melia HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59938 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59938 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59939 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59941 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59940 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59939 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59941 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59940 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59938 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59938 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59938 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59938 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59936 - "GET /realestate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59938 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59938 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59938 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59938 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59938 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:59938 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60156 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60158 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60158 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60158 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60158 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60158 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60158 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60319 - "GET /melia HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60321 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60321 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60321 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60321 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60321 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60321 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60319 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60321 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60321 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60321 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60321 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60321 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60321 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60319 - "GET /melia HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60321 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60321 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60321 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60321 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60321 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60321 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60459 - "POST /melia/transactions/bulk-delete HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60459 - "GET /melia HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60461 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60461 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60461 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60461 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60461 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60461 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60495 - "GET /realestate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60497 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60497 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60497 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60497 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60497 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60497 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60494 - "POST /realestate/transactions/bulk-delete HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60494 - "GET /realestate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60500 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60500 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60500 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60500 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60500 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60500 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60494 - "GET /freelance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60500 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60500 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60500 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60500 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60500 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60500 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60505 - "POST /freelance/transactions/bulk-delete HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60505 - "GET /freelance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60507 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60507 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60507 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60507 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60507 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60507 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60505 - "GET /personal HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60507 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60507 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60507 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60507 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60507 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60507 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60509 - "POST /personal/transactions/bulk-delete HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60509 - "GET /personal HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60511 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60511 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60511 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60511 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60511 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60511 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60515 - "GET /add/options HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60605 - "GET /categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60608 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60608 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60608 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60608 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60608 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60608 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60765 - "GET /personal HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60767 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60767 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60767 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60767 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60767 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60767 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60765 - "GET /freelance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60767 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60767 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60767 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60767 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60767 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60767 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60765 - "GET /realestate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60767 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60767 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60767 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60767 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60767 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60767 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60841 - "GET /categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60843 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60843 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60843 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60843 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60843 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60843 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60949 - "GET /budgets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60951 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60951 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60951 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60951 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60951 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60951 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60949 - "GET /budgets?period=annual HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60951 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60951 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60951 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60951 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60951 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60951 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60949 - "GET /budgets?period=monthly HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60951 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60951 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60951 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60951 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60951 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60951 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60949 - "GET /savings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60951 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60951 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60951 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60951 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60951 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60951 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60983 - "GET /debts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60985 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60985 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60985 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60985 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60985 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60985 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60983 - "GET /budgets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60985 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60985 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60985 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60985 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60985 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60985 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60983 - "GET /goals HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60985 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60985 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60985 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60985 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60985 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:60985 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61147 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61149 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61149 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61149 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61149 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61149 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61149 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61147 - "GET /connect HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61149 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61149 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61149 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61149 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61149 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61149 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61147 - "GET /categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61149 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61149 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61149 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61149 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61149 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61149 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61147 - "GET /budgets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61149 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61149 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61149 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61149 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61149 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61149 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61146 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61151 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61151 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61151 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61151 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61151 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61151 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61146 - "GET /melia HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61151 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61151 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61151 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61151 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61151 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61151 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61155 - "GET /profiles HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61157 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61157 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61157 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61157 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61157 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61157 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61154 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61159 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61159 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61159 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61159 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61159 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61159 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61154 - "GET /connect HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61159 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61159 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61159 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61159 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61159 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61159 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61154 - "GET /categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61159 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61159 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61159 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61159 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61159 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61159 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61154 - "GET /connect HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61159 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61159 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61159 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61159 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61159 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61159 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61163 - "GET /categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61165 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61165 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61165 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61165 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61165 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61165 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61163 - "GET /categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61165 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61165 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61165 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61165 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61165 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61165 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61163 - "GET /budgets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61165 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61165 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61165 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61165 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61165 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61165 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61163 - "GET /savings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61165 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61165 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61165 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61165 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61165 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61165 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61162 - "GET /goals HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61167 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61167 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61167 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61167 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61167 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61167 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61162 - "GET /debts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61167 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61167 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61167 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61167 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61167 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61167 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61171 - "GET /reports HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61173 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61173 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61173 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61173 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61173 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61173 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61171 - "GET /transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61173 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61173 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61173 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61173 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61173 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61173 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61171 - "GET /search HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61173 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61173 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61173 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61173 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61173 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61173 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61205 - "GET /add/options HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61209 - "GET /settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61211 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61211 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61211 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61211 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61211 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61211 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61255 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61257 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61257 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61257 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61257 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61257 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61257 - "GET /login HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [52686]
+INFO:     Started server process [57590]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:61366 - "POST /login HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61367 - "GET /transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61368 - "GET /transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61369 - "GET /transactions HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61370 - "GET /budgets HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61371 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61372 - "GET /melia HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61438 - "POST /login HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:61439 - "GET /add/options HTTP/1.1" 200 OK

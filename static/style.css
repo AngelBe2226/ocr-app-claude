@@ -1,7 +1,7 @@
-@import url('https://cdn.jsdelivr.net/npm/@fontsource-variable/hubot-sans/index.css');
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
-
-:root { --font-ui: 'Hubot Sans Variable', 'Hubot Sans', 'Nunito', system-ui, -apple-system, sans-serif; }
+/* Las fuentes se cargan de forma NO bloqueante desde base.html (<link> con swap),
+   así el primer pintado es instantáneo con la fuente del sistema y Hubot Sans entra
+   al terminar de descargar. Evita el lag del @import en serie. */
+:root { --font-ui: 'Hubot Sans Variable', 'Hubot Sans', system-ui, -apple-system, 'Nunito', sans-serif; }
 * { box-sizing: border-box; }
 body {
   margin: 0; font-family: var(--font-ui); background: var(--bg); color: var(--ink);
@@ -246,6 +246,12 @@ details.cat-drill .chevron { display: inline-block; transition: transform .2s cu
 details.cat-drill[open] .chevron { transform: rotate(90deg); }
 details.cat-drill > summary:hover { opacity: 0.86; }
 
+/* Editar nombre del perfil desde la cabecera */
+.hero-rename > summary { list-style: none; }
+.hero-rename > summary::-webkit-details-marker { display: none; }
+.hero-rename > summary::marker { content: ''; }
+.hero-rename[open] > summary > span:last-child { background: rgba(255,255,255,0.18); }
+
 /* Chip 'cuenta para ahorro' en categorías de ingreso */
 .savings-flag {
   border: none; cursor: pointer; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px;
@@ -314,17 +320,16 @@ input:focus, select:focus, textarea:focus {
 .more-sheet-backdrop { animation: fadeIn .18s ease; }
 .more-sheet { animation: sheetUp .28s cubic-bezier(.2,.8,.3,1); }
 
-/* Carga de página estilo Apple: entrada escalonada de los bloques del contenido.
+/* Carga de página estilo Apple: entrada escalonada, rápida (sin lag perceptible).
    Usamos 'backwards' (no 'both') para que, al terminar, opacidad/transform vuelvan
    a su valor declarado y el modo enfoque pueda atenuar los bloques. */
-.page > * { animation: rise .5s cubic-bezier(.2,.7,.3,1) backwards; }
-.page > *:nth-child(1) { animation-delay: .02s; }
-.page > *:nth-child(2) { animation-delay: .07s; }
-.page > *:nth-child(3) { animation-delay: .12s; }
-.page > *:nth-child(4) { animation-delay: .17s; }
-.page > *:nth-child(5) { animation-delay: .22s; }
-.page > *:nth-child(6) { animation-delay: .27s; }
-.page > *:nth-child(n+7) { animation-delay: .3s; }
+.page > * { animation: rise .3s cubic-bezier(.2,.7,.3,1) backwards; }
+.page > *:nth-child(1) { animation-delay: 0s; }
+.page > *:nth-child(2) { animation-delay: .03s; }
+.page > *:nth-child(3) { animation-delay: .06s; }
+.page > *:nth-child(4) { animation-delay: .09s; }
+.page > *:nth-child(5) { animation-delay: .12s; }
+.page > *:nth-child(n+6) { animation-delay: .14s; }
 
 /* Draw-in de líneas de gráfica */
 .chart-draw { stroke-dasharray: 1400; stroke-dashoffset: 1400; animation: drawLine 1.1s cubic-bezier(.3,.7,.3,1) .15s forwards; }

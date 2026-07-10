@@ -78,6 +78,17 @@ def edit_profile(slug: str, name: str = Form(...), color: str = Form(...), icon:
     return RedirectResponse("/profiles", status_code=303)
 
 
+@router.post("/profiles/{slug}/rename")
+def rename_profile(slug: str, name: str = Form(...),
+                   db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    """Renombra SOLO el nombre del perfil (botón de la cabecera del perfil)."""
+    p = db.query(Profile).filter(Profile.slug == slug, Profile.user_id == user.id).first()
+    if p and name.strip():
+        p.name = name.strip()
+        db.commit()
+    return RedirectResponse(f"/{slug}", status_code=303)
+
+
 @router.post("/profiles/{slug}/delete")
 def delete_profile(slug: str, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
     profiles = list_profiles(db, user.id)

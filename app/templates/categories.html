@@ -49,7 +49,7 @@
               <button type="submit" class="btn-sm btn-track">OK</button>
             </form>
           </details>
-          <form method="post" action="/subcategories/{{ s.id }}/delete"><button type="submit" style="border:none;background:none;padding:0;cursor:pointer;font-size:11px;color:var(--muted);">✕</button></form>
+          <form method="post" action="/subcategories/{{ s.id }}/delete" onsubmit="return confirm('¿Eliminar la subcategoría «{{ s.name }}»?')"><button type="submit" style="border:none;background:none;padding:0;cursor:pointer;font-size:11px;color:var(--muted);">✕</button></form>
         </span>
       </div>
       {% endfor %}

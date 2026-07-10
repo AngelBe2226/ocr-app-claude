@@ -33,7 +33,7 @@
     <span>{{ inv.email }}</span>
     <span style="display:flex;align-items:center;gap:10px;">
       <span style="color:var(--secondary);font-size:11.5px;">Pendiente</span>
-      <form method="post" action="/settings/family/remove/{{ inv.id }}"><button type="submit" style="border:none;background:none;padding:0;cursor:pointer;color:var(--muted);">Eliminar</button></form>
+      <form method="post" action="/settings/family/remove/{{ inv.id }}" onsubmit="return confirm('¿Quitar esta invitación?')"><button type="submit" style="border:none;background:none;padding:0;cursor:pointer;color:var(--muted);">Eliminar</button></form>
     </span>
   </div>
   {% endfor %}

@@ -14,7 +14,7 @@
     <button type="submit" formaction="{{ bulk_prefix }}/bulk-category" class="btn-sm btn-track">Categoría</button>
     <select name="account_id" class="input-sm"><option value="">Cuenta…</option>{% for a in accounts %}<option value="{{ a.id }}">{{ a.name }}</option>{% endfor %}</select>
     <button type="submit" formaction="{{ bulk_prefix }}/bulk-account" class="btn-sm btn-track">Mover</button>
-    <button type="submit" formaction="{{ bulk_prefix }}/bulk-delete" class="btn-sm btn-danger">Eliminar</button>
+    <button type="submit" formaction="{{ bulk_prefix }}/bulk-delete" class="btn-sm btn-danger" onclick="return confirm('¿Eliminar los movimientos seleccionados? Esta acción no se puede deshacer.')">Eliminar</button>
     <button type="button" onclick="cancelBulk(this)" class="btn-sm btn-track" style="margin-left:auto;">Cancelar</button>
   </div>
 
@@ -39,7 +39,10 @@
                 <span>{{ t.category }}{% if t.subcategory %}<span style="display:block;font-size:10.5px;color:var(--secondary);line-height:1.1;">{{ t.subcategory }}</span>{% endif %}</span>
               </span>
             </td>
-            <td style="font-size:12px;color:var(--secondary);">{% if t.store %}<span style="color:var(--secondaryAlt);font-weight:600;">🏪 {{ t.store }}</span>{% if t.note %} · {% endif %}{% endif %}{{ t.note }}{% if t.place_name %} · 📍 {{ t.place_name }}{% endif %}{% if t.has_receipt %} · <a href="/receipt/{{ t.id }}" target="_blank" class="receipt-link">📎</a>{% endif %}</td>
+            <td style="font-size:12px;color:var(--secondary);">
+              <div style="color:var(--secondaryAlt);">{% if t.quantity and t.quantity != '-' %}<span style="font-weight:700;color:var(--ink);">{{ t.quantity }}</span> {% endif %}{% if t.store %}<span style="font-weight:600;">🏪 {{ t.store }}</span>{% if t.note %} · {% endif %}{% endif %}{{ t.note }}{% if t.place_name %} · 📍 {{ t.place_name }}{% endif %}{% if t.has_receipt %} · <a href="/receipt/{{ t.id }}" target="_blank" class="receipt-link">📎</a>{% endif %}</div>
+              {% if t.account_name %}<div style="font-size:10.5px;color:var(--muted);margin-top:1px;">{{ t.account_name }}</div>{% endif %}
+            </td>
             <td style="text-align:right;font-family:'Space Mono',monospace;font-size:13px;color:{{ t.color }};white-space:nowrap;">{{ t.amount_label }}</td>
             <td style="text-align:right;width:24px;padding-left:8px;"><button type="button" onclick="openEditModal({{ t.id }})" title="Editar" style="border:none;background:none;cursor:pointer;font-size:12px;color:var(--muted);padding:2px;">✎</button></td>
           </tr>

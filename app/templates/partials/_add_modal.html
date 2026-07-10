@@ -18,7 +18,14 @@
       <select name="account_id" class="input js-account" required></select>
       <input type="number" step="0.01" min="0" name="amount" placeholder="Importe (€)" class="input mono" required>
       <input type="date" name="date" class="input mono js-today" required>
-      <input type="text" name="note" placeholder="Nota (opcional)" class="input">
+      <div style="display:flex;gap:8px;">
+        <select name="quantity" class="input" style="max-width:82px;" title="Cantidad (para productos contables)">
+          <option value="-">–</option>
+          <option>1x</option><option>2x</option><option>3x</option><option>4x</option><option>5x</option>
+          <option>6x</option><option>7x</option><option>8x</option><option>9x</option><option>10x</option>
+        </select>
+        <input type="text" name="note" placeholder="Nota (p.ej. Compra SPAR)" class="input" style="flex:1;" list="note-list" autocomplete="off">
+      </div>
       <div class="loc-row">
         <button type="button" class="btn-sm btn-track" onclick="captureLocation(this)">📍 Añadir ubicación</button>
         <span class="loc-status"></span>
@@ -39,7 +46,7 @@
       <select name="account_id" class="input js-account" required></select>
       <input type="number" step="0.01" min="0" name="amount" placeholder="Importe (€)" class="input mono" required>
       <input type="date" name="date" class="input mono js-today" required>
-      <input type="text" name="note" placeholder="Nota (opcional)" class="input">
+      <input type="text" name="note" placeholder="Nota (opcional)" class="input" list="note-list" autocomplete="off">
       <button type="submit" class="btn">Guardar ingreso</button>
     </form>
 
@@ -54,5 +61,6 @@
       <button type="submit" class="btn">Transferir</button>
     </form>
     <datalist id="store-list"></datalist>
+    <datalist id="note-list"></datalist>
   </div>
 </div>

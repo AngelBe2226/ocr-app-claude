@@ -13,6 +13,7 @@ NEW_COLUMNS = {
         "place_name": "VARCHAR DEFAULT ''",
         "subcategory": "VARCHAR DEFAULT ''",
         "store": "VARCHAR DEFAULT ''",
+        "quantity": "VARCHAR DEFAULT '-'",
     },
     "budgets": {
         "period": "VARCHAR DEFAULT 'monthly'",

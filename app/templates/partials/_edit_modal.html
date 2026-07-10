@@ -18,7 +18,14 @@
       <select name="account_id" class="input js-eaccount"></select>
       <input type="number" step="0.01" min="0" name="amount" placeholder="Importe (€)" class="input mono js-eamount" required>
       <input type="date" name="date" class="input mono js-edate" required>
-      <input type="text" name="note" placeholder="Nota (opcional)" class="input js-enote">
+      <div style="display:flex;gap:8px;">
+        <select name="quantity" class="input js-equantity" style="max-width:82px;" title="Cantidad">
+          <option value="-">–</option>
+          <option>1x</option><option>2x</option><option>3x</option><option>4x</option><option>5x</option>
+          <option>6x</option><option>7x</option><option>8x</option><option>9x</option><option>10x</option>
+        </select>
+        <input type="text" name="note" placeholder="Nota" class="input js-enote" style="flex:1;" list="note-list" autocomplete="off">
+      </div>
       <button type="submit" class="btn">Guardar cambios</button>
     </form>
   </div>
