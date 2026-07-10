@@ -11,10 +11,12 @@ from app.database import Base, SessionLocal, engine
 from app.migrations import ensure_schema
 from app.routers import (
     accounts_router, add_router, auth_router, budgets_router, categories_router, connect_router,
-    debts_router, goals_router, overview_router, profiles_router, reports_router, settings_router,
-    transactions_router,
+    debts_router, goals_router, overview_router, profiles_router, reports_router, savings_router,
+    settings_router, transactions_router,
 )
-from app.seed import ensure_categories, ensure_category_icons, ensure_profiles, seed_if_empty
+from app.seed import (
+    ensure_categories, ensure_category_icons, ensure_profiles, ensure_savings_defaults, seed_if_empty,
+)
 
 
 @asynccontextmanager
@@ -28,6 +30,7 @@ async def lifespan(app: FastAPI):
         ensure_profiles(db)
         ensure_categories(db)
         ensure_category_icons(db)
+        ensure_savings_defaults(db)
     yield
     # Apagado: nada que limpiar por ahora.
 
@@ -50,6 +53,7 @@ app.include_router(overview_router.router)
 app.include_router(accounts_router.router)
 app.include_router(categories_router.router)
 app.include_router(budgets_router.router)
+app.include_router(savings_router.router)
 app.include_router(goals_router.router)
 app.include_router(debts_router.router)
 app.include_router(reports_router.router)

@@ -20,10 +20,34 @@ async function openEditModal(id) {
     o.value = t.category; o.textContent = t.category;
     catSel.appendChild(o); catSel.value = t.category;
   }
+  refreshEditSubcategories();
+  const subSel = form.querySelector('.js-esubcategory');
+  if (subSel && t.subcategory) {
+    if (![...subSel.options].some(o => o.value === t.subcategory)) {
+      const o = document.createElement('option');
+      o.value = t.subcategory; o.textContent = t.subcategory; subSel.appendChild(o);
+    }
+    subSel.value = t.subcategory;
+  }
+  form.querySelector('.js-estore').value = t.store || '';
   form.querySelector('.js-eaccount').value = t.account_id;
   form.querySelector('.js-eamount').value = t.amount;
   form.querySelector('.js-edate').value = t.date;
   form.querySelector('.js-enote').value = t.note;
+}
+
+function refreshEditSubcategories() {
+  const form = document.getElementById('form-edit');
+  if (!addOptions) return;
+  const kind = form.querySelector('.js-etype').value;
+  const profile = form.querySelector('.js-eprofile').value;
+  const catName = form.querySelector('.js-ecategory').value;
+  const subSel = form.querySelector('.js-esubcategory');
+  if (!subSel) return;
+  const cat = addOptions.categories.find(c => c.profile === profile && c.kind === kind && c.name === catName);
+  const subs = (cat && cat.subs) || [];
+  subSel.innerHTML = '<option value="">Subcategoría (opcional)</option>' +
+    subs.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
 }
 
 function closeEditModal() {
@@ -42,7 +66,11 @@ function refreshEditCategories() {
 }
 
 document.addEventListener('change', e => {
-  if (e.target.classList && (e.target.classList.contains('js-etype') || e.target.classList.contains('js-eprofile'))) {
+  if (!e.target.classList) return;
+  if (e.target.classList.contains('js-etype') || e.target.classList.contains('js-eprofile')) {
     refreshEditCategories();
+    refreshEditSubcategories();
+  } else if (e.target.classList.contains('js-ecategory')) {
+    refreshEditSubcategories();
   }
 });

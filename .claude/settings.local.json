@@ -46,7 +46,11 @@
       "Bash(python3 -c \"import fastapi, sqlalchemy, jinja2, passlib, reportlab; print\\('deps OK \\(fastapi, sqlalchemy, jinja2, passlib, reportlab\\)'\\)\")",
       "Bash(chmod +x /Users/angel/Documents/GitHub/ocr-app-claude/run.sh)",
       "Bash(python3 -c \"import ast; ast.parse\\(open\\('app/routers/profiles_router.py'\\).read\\(\\)\\); print\\('profiles_router OK'\\)\")",
-      "Bash(python3 -c \"import app.main; print\\('app.main imports OK'\\)\")"
+      "Bash(python3 -c \"import app.main; print\\('app.main imports OK'\\)\")",
+      "Bash(python3 -c \"from app.icons import ICON_NAMES; print\\(sorted\\(ICON_NAMES\\)\\)\")",
+      "Bash(python3 -c \"import app.main; print\\('app imports OK'\\)\")",
+      "Bash(python3 -c \"import app.main; print\\('imports OK'\\)\")",
+      "Bash(cd /Users/angel/Documents/GitHub/ocr-app-claude *)"
     ]
   }
 }

@@ -39,6 +39,7 @@ def categories_page(request: Request, kind: str = "expense",
                 "id": c.id, "name": c.name, "raw_icon": c.icon,
                 "initial": (c.name[0].upper() if c.name else "?"),
                 "color": A(c.color), "raw_color": c.color, "is_system": c.is_system,
+                "counts_for_savings": c.counts_for_savings,
                 "tx_count": tx_counts.get((prof.slug, c.name), 0),
                 "subcategories": [{"id": s.id, "name": s.name, "icon": s.icon} for s in c.subcategories],
             })
@@ -85,6 +86,16 @@ def rename_category(category_id: int, name: str = Form(...), color: str = Form(.
         c.icon = icon.strip()
         db.commit()
     return RedirectResponse(f"/categories?kind={c.kind if c else 'expense'}", status_code=303)
+
+
+@router.post("/categories/{category_id}/toggle-savings")
+def toggle_savings(category_id: int, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    """Alterna si una categoría de ingreso cuenta para el ahorro (reventa/préstamos = no cuenta)."""
+    c = db.query(Category).filter(Category.id == category_id, Category.user_id == user.id).first()
+    if c and c.kind == "income":
+        c.counts_for_savings = not c.counts_for_savings
+        db.commit()
+    return RedirectResponse(f"/categories?kind={c.kind if c else 'income'}", status_code=303)
 
 
 @router.post("/categories/{category_id}/delete")

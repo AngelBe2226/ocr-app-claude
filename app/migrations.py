@@ -11,6 +11,8 @@ NEW_COLUMNS = {
         "latitude": "FLOAT",
         "longitude": "FLOAT",
         "place_name": "VARCHAR DEFAULT ''",
+        "subcategory": "VARCHAR DEFAULT ''",
+        "store": "VARCHAR DEFAULT ''",
     },
     "budgets": {
         "period": "VARCHAR DEFAULT 'monthly'",
@@ -20,6 +22,11 @@ NEW_COLUMNS = {
     },
     "profiles": {
         "icon": "VARCHAR DEFAULT ''",
+        "savings_rate": "FLOAT DEFAULT 40",
+        "tax_rate": "FLOAT DEFAULT 0",
+    },
+    "categories": {
+        "counts_for_savings": "BOOLEAN DEFAULT 1",
     },
 }
 

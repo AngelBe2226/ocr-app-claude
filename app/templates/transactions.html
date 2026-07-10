@@ -1,21 +1,51 @@
 {% extends "base.html" %}
 {% block content %}
 <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
-  <div><div class="page-title">Todos los Movimientos</div><div class="page-subtitle">Historial completo a través de todos los perfiles</div></div>
+  <div><div class="page-title">Todos los Movimientos</div><div class="page-subtitle">Historial completo — filtra por periodo, categoría, subcategoría y tienda</div></div>
   <div style="display:flex;gap:8px;">
     <a href="/transactions/export.csv?{{ request.query_params }}" class="btn-sm btn-track" style="white-space:nowrap;">Exportar CSV</a>
     <a href="/transactions/export.pdf?{{ request.query_params }}" class="btn-sm" style="white-space:nowrap;background:var(--solidBtnBg);color:var(--solidBtnColor);">Exportar PDF</a>
   </div>
 </div>
 
+{% include 'partials/_period_nav.html' %}
+
+<div class="card" style="margin-bottom:14px;padding:13px 18px;">
+  <div style="display:flex;align-items:stretch;justify-content:space-around;text-align:center;gap:10px;">
+    <div style="flex:1;"><div style="font-size:11.5px;color:var(--secondary);">Ingresos</div><div class="mono" style="font-size:18px;font-weight:800;color:#3FA65C;">{{ sum_income }}</div></div>
+    <div style="width:1px;background:var(--border);"></div>
+    <div style="flex:1;"><div style="font-size:11.5px;color:var(--secondary);">Gastos</div><div class="mono" style="font-size:18px;font-weight:800;color:#E2574C;">{{ sum_expense }}</div></div>
+    <div style="width:1px;background:var(--border);"></div>
+    <div style="flex:1;"><div style="font-size:11.5px;color:var(--secondary);">Total</div><div class="mono" style="font-size:18px;font-weight:800;color:{{ '#3FA65C' if net_positive else '#E2574C' }};">{{ sum_net }}</div></div>
+  </div>
+</div>
+
 <form method="get" action="/transactions" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;">
-  <input type="text" name="search" placeholder="Buscar por nota, categoría, importe o cuenta..." value="{{ filters.search }}" class="input" style="flex:1;min-width:180px;" onchange="this.form.submit()">
-  <select name="profile" class="input" style="max-width:200px;" onchange="this.form.submit()">
+  <input type="hidden" name="period" value="{{ per.period }}">
+  <input type="hidden" name="anchor" value="{{ per.anchor }}">
+  <input type="text" name="search" placeholder="Buscar nota, categoría, tienda, importe…" value="{{ filters.search }}" class="input" style="flex:1;min-width:170px;" onchange="this.form.submit()">
+  <select name="profile" class="input" style="max-width:180px;" onchange="this.form.submit()">
     {% for o in profile_filter_options %}<option value="{{ o.id }}" {{ 'selected' if o.id == filters.profile else '' }}>{{ o.name }}</option>{% endfor %}
   </select>
-  <select name="type" class="input" style="max-width:160px;" onchange="this.form.submit()">
+  <select name="type" class="input" style="max-width:140px;" onchange="this.form.submit()">
     {% for o in type_filter_options %}<option value="{{ o.id }}" {{ 'selected' if o.id == filters.type else '' }}>{{ o.name }}</option>{% endfor %}
   </select>
+  <select name="category" class="input" style="max-width:180px;" onchange="this.form.submit()">
+    <option value="all">Toda categoría</option>
+    {% for c in all_categories %}<option value="{{ c }}" {{ 'selected' if c == filters.category else '' }}>{{ c }}</option>{% endfor %}
+  </select>
+  {% if subcats %}
+  <select name="subcategory" class="input" style="max-width:170px;" onchange="this.form.submit()">
+    <option value="all">Toda subcategoría</option>
+    {% for s in subcats %}<option value="{{ s }}" {{ 'selected' if s == filters.subcategory else '' }}>{{ s }}</option>{% endfor %}
+  </select>
+  {% endif %}
+  {% if stores %}
+  <select name="store" class="input" style="max-width:170px;" onchange="this.form.submit()">
+    <option value="all">Toda tienda</option>
+    {% for s in stores %}<option value="{{ s }}" {{ 'selected' if s == filters.store else '' }}>🏪 {{ s }}</option>{% endfor %}
+  </select>
+  {% endif %}
 </form>
 
 <div class="card">

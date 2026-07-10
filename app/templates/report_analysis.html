@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="margin-bottom:10px;"><a href="/reports" style="font-size:13px;color:var(--secondary);">← Informes</a></div>
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+  <div><div class="page-title">Análisis</div><div class="page-subtitle">Filtra por periodo, categoría, subcategoría y tienda — con proyección y consejos</div></div>
+  <div style="display:flex;gap:8px;">
+    <a href="/reports/export.csv?{{ filt_qs }}" class="btn-sm btn-track" style="white-space:nowrap;">Exportar CSV</a>
+    <a href="/reports/analysis/export.pdf?{{ filt_qs }}" class="btn-sm" style="white-space:nowrap;background:var(--solidBtnBg);color:var(--solidBtnColor);">Exportar PDF</a>
+  </div>
+</div>
+
+{% include 'partials/_period_nav.html' %}
+
+<!-- Foco: gastos / ingresos -->
+<div style="display:inline-flex;background:var(--trackBg);border-radius:11px;padding:3px;margin-bottom:14px;">
+  <a href="/reports/analysis?focus=expense&period={{ per.period }}&anchor={{ per.anchor }}" class="tab-pill {{ 'active' if focus == 'expense' else '' }}">Gastos</a>
+  <a href="/reports/analysis?focus=income&period={{ per.period }}&anchor={{ per.anchor }}" class="tab-pill {{ 'active' if focus == 'income' else '' }}">Ingresos</a>
+</div>
+
+<!-- Filtros -->
+<form method="get" action="/reports/analysis" style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">
+  <input type="hidden" name="period" value="{{ per.period }}">
+  <input type="hidden" name="anchor" value="{{ per.anchor }}">
+  <input type="hidden" name="focus" value="{{ focus }}">
+  <input type="text" name="search" placeholder="Buscar…" value="{{ filters.search }}" class="input" style="flex:1;min-width:150px;" onchange="this.form.submit()">
+  <select name="profile" class="input" style="max-width:180px;" onchange="this.form.submit()">
+    {% for o in profile_filter_options %}<option value="{{ o.id }}" {{ 'selected' if o.id == filters.profile else '' }}>{{ o.name }}</option>{% endfor %}
+  </select>
+  <select name="category" class="input" style="max-width:180px;" onchange="this.form.submit()">
+    <option value="all">Toda categoría</option>
+    {% for c in all_categories %}<option value="{{ c }}" {{ 'selected' if c == filters.category else '' }}>{{ c }}</option>{% endfor %}
+  </select>
+  {% if subcats %}
+  <select name="subcategory" class="input" style="max-width:160px;" onchange="this.form.submit()">
+    <option value="all">Toda subcategoría</option>
+    {% for s in subcats %}<option value="{{ s }}" {{ 'selected' if s == filters.subcategory else '' }}>{{ s }}</option>{% endfor %}
+  </select>
+  {% endif %}
+  {% if stores %}
+  <select name="store" class="input" style="max-width:160px;" onchange="this.form.submit()">
+    <option value="all">Toda tienda</option>
+    {% for s in stores %}<option value="{{ s }}" {{ 'selected' if s == filters.store else '' }}>🏪 {{ s }}</option>{% endfor %}
+  </select>
+  {% endif %}
+</form>
+
+<!-- Resumen del periodo -->
+<div class="grid-auto" style="margin-bottom:18px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));">
+  {% for k in kpis %}
+  <div class="card card-pad-18">
+    <div style="font-size:12px;color:var(--secondary);margin-bottom:6px;">{{ k.label }}</div>
+    <div class="mono" style="font-size:20px;font-weight:800;color:{{ k.color }};">{{ k.value }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+{% if has_data %}
+<div style="display:grid;grid-template-columns:1.1fr 1fr;gap:16px;align-items:start;margin-bottom:16px;">
+  <!-- Donut + categorías con drill-down a subcategorías -->
+  <div class="card" style="min-width:0;">
+    <div class="section-title">{{ 'Gastos' if focus == 'expense' else 'Ingresos' }} por categoría · {{ focus_total_label }}</div>
+    <div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;margin-bottom:8px;">
+      <svg viewBox="0 0 180 180" width="140" height="140" style="flex-shrink:0;">
+        <circle cx="90" cy="90" r="60" fill="none" stroke="var(--trackBg)" stroke-width="24"></circle>
+        {% for s in segs %}
+        <circle cx="90" cy="90" r="60" fill="none" stroke="{{ s.color }}" stroke-width="24" stroke-dasharray="{{ s.dash }}" stroke-dashoffset="{{ s.offset }}" transform="rotate(-90 90 90)"></circle>
+        {% endfor %}
+      </svg>
+      <div style="flex:1;min-width:180px;font-size:11.5px;color:var(--secondary);">
+        Toca una categoría para ver sus subcategorías. El desglose respeta todos los filtros activos.
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;">
+      {% for r in cat_rows %}
+      {% if r.has_subs %}
+      <details class="cat-drill">
+        <summary>
+          <span style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+            <span style="display:flex;align-items:center;gap:8px;min-width:0;"><span class="chevron">▶</span><span style="width:9px;height:9px;border-radius:50%;background:{{ r.color }};flex-shrink:0;"></span><span style="font-weight:600;font-size:13px;">{{ r.name }}</span></span>
+            <span class="mono" style="color:var(--secondary);font-size:12px;white-space:nowrap;">{{ r.amount }} · {{ r.pct }}%</span>
+          </span>
+          <div class="track-bar thin" style="margin-top:6px;"><div class="track-fill" style="width:{{ r.pct_width }};background:{{ r.color }};"></div></div>
+        </summary>
+        <div style="padding:8px 0 4px 26px;display:flex;flex-direction:column;gap:6px;">
+          {% for s in r.subs %}
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;">
+            <span style="color:var(--secondaryAlt);">{{ s.name }}</span>
+            <span class="mono" style="color:var(--secondary);">{{ s.amount }} · {{ s.pct }}%</span>
+          </div>
+          {% endfor %}
+        </div>
+      </details>
+      {% else %}
+      <div style="padding:9px 0;border-top:1px solid var(--border);">
+        <span style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <span style="display:flex;align-items:center;gap:8px;min-width:0;padding-left:16px;"><span style="width:9px;height:9px;border-radius:50%;background:{{ r.color }};flex-shrink:0;"></span><span style="font-weight:600;font-size:13px;">{{ r.name }}</span></span>
+          <span class="mono" style="color:var(--secondary);font-size:12px;white-space:nowrap;">{{ r.amount }} · {{ r.pct }}%</span>
+        </span>
+        <div class="track-bar thin" style="margin-top:6px;"><div class="track-fill" style="width:{{ r.pct_width }};background:{{ r.color }};"></div></div>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Tiendas + proyección -->
+  <div style="display:flex;flex-direction:column;gap:16px;min-width:0;">
+    <div class="card">
+      <div class="section-title">Por tienda / comercio</div>
+      {% if store_rows %}
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        {% for r in store_rows %}
+        <div>
+          <div style="display:flex;align-items:center;justify-content:space-between;font-size:12.5px;margin-bottom:4px;">
+            <span style="display:flex;align-items:center;gap:7px;">🏪 {{ r.name }}</span>
+            <span class="mono" style="color:var(--secondary);">{{ r.amount }} · {{ r.pct }}%</span>
+          </div>
+          <div class="track-bar thin"><div class="track-fill" style="width:{{ r.pct_width }};background:{{ r.color }};"></div></div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-note" style="margin:0;">Aún no registras la tienda en tus movimientos. Añádela al crear o editar un gasto.</div>
+      {% endif %}
+    </div>
+
+    <div class="card">
+      <div class="section-title">Proyección de {{ 'gasto' if focus == 'expense' else 'ingreso' }}</div>
+      {% if is_current %}
+      <div class="mono" style="font-size:28px;font-weight:800;color:{{ '#E2574C' if focus == 'expense' else '#3FA65C' }};">{{ projected_label }}</div>
+      <div style="font-size:12px;color:var(--secondary);margin-top:4px;">
+        A tu ritmo de {{ run_rate_label }}/día · {{ days_elapsed }} de {{ days_total }} días transcurridos.
+      </div>
+      {% else %}
+      <div class="mono" style="font-size:28px;font-weight:800;">{{ focus_total_label }}</div>
+      <div style="font-size:12px;color:var(--secondary);margin-top:4px;">Periodo cerrado — total real (sin proyección).</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Conocimiento financiero -->
+{% if tips %}
+<div class="section-title">Análisis y consejos</div>
+<div class="grid-auto" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));">
+  {% for t in tips %}
+  <div class="card card-pad-18">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+      <span style="font-size:18px;">{{ t.icon }}</span>
+      <span style="font-size:13.5px;font-weight:700;">{{ t.title }}</span>
+    </div>
+    <div style="font-size:12.5px;color:var(--secondary);line-height:1.5;">{{ t.body }}</div>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+{% else %}
+<div class="empty-note">No hay {{ 'gastos' if focus == 'expense' else 'ingresos' }} en este periodo con los filtros actuales. Cambia el periodo con ‹ › o ajusta los filtros.</div>
+{% endif %}
+{% endblock %}

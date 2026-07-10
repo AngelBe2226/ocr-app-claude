@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-<div style="margin-bottom:18px;"><div class="page-title">Reportes</div><div class="page-subtitle">Analiza tu dinero desde distintos ángulos</div></div>
+<div style="margin-bottom:18px;"><div class="page-title">Informes</div><div class="page-subtitle">Analiza tu dinero desde distintos ángulos</div></div>
+
+<a href="/reports/analysis" class="card" style="display:flex;align-items:center;gap:16px;margin-bottom:16px;background:linear-gradient(135deg, var(--accent), var(--accentSoft));border:none;">
+  <span style="width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,0.22);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;">📊</span>
+  <div style="flex:1;min-width:0;">
+    <div style="font-size:16px;font-weight:800;color:#fff;">Análisis interactivo</div>
+    <div style="font-size:12.5px;color:rgba(255,255,255,0.9);margin-top:2px;">Periodo (día/semana/mes/año), categoría → subcategoría, tiendas, proyección y consejos</div>
+  </div>
+  <span style="font-size:22px;color:#fff;">→</span>
+</a>
 
 <div class="grid-auto" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr));">
   {% for c in cards %}

@@ -1,0 +1,15 @@
+{# Navegador de periodo estilo Money Manager. Requiere: per (resolve_period),
+   period_options [(key,label)], nav_base (ruta), nav_extra (query extra, opcional). #}
+<div class="period-nav">
+  <div class="period-pills">
+    {% for key, label in period_options %}
+    <a href="{{ nav_base }}?period={{ key }}&anchor={{ per.anchor }}{{ nav_extra }}"
+       class="tab-pill {{ 'active' if per.period == key else '' }}">{{ label }}</a>
+    {% endfor %}
+  </div>
+  <div class="period-stepper">
+    <a href="{{ nav_base }}?period={{ per.period }}&anchor={{ per.prev }}{{ nav_extra }}" class="period-arrow" aria-label="Anterior">‹</a>
+    <span class="period-label">{{ per.label }}</span>
+    <a href="{{ nav_base }}?period={{ per.period }}&anchor={{ per.next }}{{ nav_extra }}" class="period-arrow" aria-label="Siguiente">›</a>
+  </div>
+</div>

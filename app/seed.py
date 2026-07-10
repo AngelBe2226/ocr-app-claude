@@ -13,6 +13,19 @@ DEFAULT_EMAIL = "angelgbct@gmail.com"
 DEFAULT_PASSWORD = "finanzas123"
 
 
+# Tasas de ahorro/impuestos por defecto por perfil (savings_rate, tax_rate) en %.
+# Meliá (ingreso fijo, impuestos ya retenidos): 30% ahorro. Real Estate: 25% impuestos
+# anuales (IRPF/SS) + 15% ahorro = 40%. El resto: 40% ahorro.
+SAVINGS_DEFAULTS = {
+    "melia": (30.0, 0.0),
+    "realestate": (15.0, 25.0),
+}
+
+
+def _rates_for(slug: str) -> tuple[float, float]:
+    return SAVINGS_DEFAULTS.get(slug, (40.0, 0.0))
+
+
 def ensure_profiles(db: Session) -> None:
     """Migración idempotente: crea los 4 perfiles por defecto en BD (a partir de las
     constantes) para cualquier usuario que aún no los tenga. Los slugs coinciden con
@@ -22,8 +35,23 @@ def ensure_profiles(db: Session) -> None:
             continue
         for pos, pid in enumerate(PROFILE_IDS):
             conf = PROFILES[pid]
-            db.add(Profile(user_id=user.id, slug=pid, name=conf["name"], color=conf["color"], position=pos))
+            sr, tr = _rates_for(pid)
+            db.add(Profile(user_id=user.id, slug=pid, name=conf["name"], color=conf["color"],
+                           position=pos, savings_rate=sr, tax_rate=tr))
     db.commit()
+
+
+def ensure_savings_defaults(db: Session) -> None:
+    """Backfill: aplica las tasas de ahorro/impuestos sugeridas a perfiles que siguen
+    con los valores por defecto de columna (40/0), sin pisar ajustes ya personalizados."""
+    changed = False
+    for p in db.query(Profile).all():
+        sr, tr = _rates_for(p.slug)
+        if (sr, tr) != (40.0, 0.0) and abs((p.savings_rate or 0) - 40.0) < 1e-9 and abs((p.tax_rate or 0)) < 1e-9:
+            p.savings_rate, p.tax_rate = sr, tr
+            changed = True
+    if changed:
+        db.commit()
 
 
 DEFAULT_CATEGORY_ICONS = {

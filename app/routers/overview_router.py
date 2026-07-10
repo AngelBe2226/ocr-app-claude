@@ -7,9 +7,12 @@ from sqlalchemy.orm import Session
 from app.auth import get_current_user
 from app.categories import category_index
 from app.database import get_db
-from app.finance import fmt_eur, hash_color, net_worth_eur, period_bounds, ring_dash
-from app.models import Account, Budget, Goal, Loan, SpendingLimit, Transaction, User
-from app.profiles import pname, profiles_map
+from app.finance import (
+    fmt_eur, hash_color, net_worth_eur, parse_anchor, period_bounds, resolve_period,
+    ring_dash, savings_breakdown,
+)
+from app.models import Account, Budget, Category, Goal, Loan, SavingsReserve, SpendingLimit, Transaction, User
+from app.profiles import list_profiles, pname, profiles_map
 from app.templates_env import templates
 from app.view_context import base_context
 
@@ -91,6 +94,22 @@ def overview(request: Request, db: Session = Depends(get_db), user: User = Depen
             "spent_month": fmt_eur(spent_month),
         }
 
+    # Ahorro y reservas del mes en curso: objetivo (impuestos+ahorro) vs ya reservado.
+    per = resolve_period("month")
+    categories = db.query(Category).filter(Category.user_id == user.id).all()
+    txs_month = [t for t in transactions if per["start"] <= t.date <= per["end"]]
+    sav_bd = savings_breakdown(list_profiles(db, user.id), categories, txs_month, per["start"], per["end"])
+    reserved_month = sum(r.amount for r in db.query(SavingsReserve).filter(
+        SavingsReserve.user_id == user.id, SavingsReserve.period_key == per["key"]).all())
+    sav_pending = max(0.0, sav_bd["total"] - reserved_month)
+    savings = None
+    if sav_bd["total"] > 0.005:
+        savings = {
+            "target": fmt_eur(sav_bd["total"]), "reserved": fmt_eur(reserved_month),
+            "pending": fmt_eur(sav_pending), "has_pending": sav_pending > 0.005,
+            "pct": round(min(1.0, reserved_month / sav_bd["total"]) * 100) if sav_bd["total"] else 0,
+        }
+
     tips = [
         {"title": "Consejo del día", "body": f"Este mes tus gastos en {recent_rows[0]['category'] if recent_rows else 'ocio'} van por buen camino. Sigue así."},
         {"title": "Redondeo de ahorro", "body": f"Si redondeas cada gasto al euro, podrías ahorrar ~{fmt_eur(random.randint(8, 22))} extra este mes."},
@@ -109,4 +128,5 @@ def overview(request: Request, db: Session = Depends(get_db), user: User = Depen
         "top_goals": top_goals,
     }
 
-    return templates.TemplateResponse(request, "overview.html", {**ctx, "overview": overview_ctx, "spend_limit": spend_limit})
+    return templates.TemplateResponse(request, "overview.html", {**ctx, "overview": overview_ctx,
+                                                                  "spend_limit": spend_limit, "savings": savings})

@@ -13,6 +13,8 @@
     <form id="form-expense" class="add-form form-col" method="post" action="/add/expense" enctype="multipart/form-data">
       <select name="profile" class="input js-profile" data-kind="expense" required></select>
       <select name="category" class="input js-category" required></select>
+      <select name="subcategory" class="input js-subcategory"><option value="">Subcategoría (opcional)</option></select>
+      <input type="text" name="store" class="input js-store" placeholder="🏪 Tienda / comercio (opcional)" list="store-list">
       <select name="account_id" class="input js-account" required></select>
       <input type="number" step="0.01" min="0" name="amount" placeholder="Importe (€)" class="input mono" required>
       <input type="date" name="date" class="input mono js-today" required>
@@ -32,6 +34,8 @@
     <form id="form-income" class="add-form form-col" method="post" action="/add/income" style="display:none;">
       <select name="profile" class="input js-profile" data-kind="income" required></select>
       <select name="category" class="input js-category" required></select>
+      <select name="subcategory" class="input js-subcategory"><option value="">Subcategoría (opcional)</option></select>
+      <input type="text" name="store" class="input js-store" placeholder="🏪 Tienda / origen (opcional)" list="store-list">
       <select name="account_id" class="input js-account" required></select>
       <input type="number" step="0.01" min="0" name="amount" placeholder="Importe (€)" class="input mono" required>
       <input type="date" name="date" class="input mono js-today" required>
@@ -49,5 +53,6 @@
       <input type="text" name="note" placeholder="Nota (opcional)" class="input">
       <button type="submit" class="btn">Transferir</button>
     </form>
+    <datalist id="store-list"></datalist>
   </div>
 </div>

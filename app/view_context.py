@@ -15,12 +15,12 @@ MESES_LONG = [
     "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre",
 ]
 
-MANAGE_IDS = ("profiles", "accounts", "connect", "categories", "budgets", "goals",
+MANAGE_IDS = ("profiles", "accounts", "connect", "categories", "budgets", "savings", "goals",
               "debts", "reports", "transactions", "search", "settings")
 
 NAV_ICONS = {
     "overview": "grid", "profiles": "users", "accounts": "wallet", "connect": "bank",
-    "categories": "tag", "budgets": "piggy-bank", "goals": "target", "debts": "receipt",
+    "categories": "tag", "budgets": "piggy-bank", "savings": "cash", "goals": "target", "debts": "receipt",
     "reports": "chart", "transactions": "list", "search": "search", "settings": "gear",
     "more": "more",
 }

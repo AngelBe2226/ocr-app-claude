@@ -162,7 +162,8 @@ def budget_rows(profile_id: str, budgets, transactions, cur_key: str, months3_ke
 
 
 def filter_transactions(transactions, search: str = "", profile: str = "all", type_: str = "all",
-                        account_id: str = "all", date_from: str = "", date_to: str = "") -> list:
+                        account_id: str = "all", date_from: str = "", date_to: str = "",
+                        category: str = "all", subcategory: str = "all", store: str = "all") -> list:
     out = list(transactions)
     if profile and profile != "all":
         out = [t for t in out if t.profile == profile]
@@ -170,6 +171,12 @@ def filter_transactions(transactions, search: str = "", profile: str = "all", ty
         out = [t for t in out if t.type == type_]
     if account_id and account_id != "all":
         out = [t for t in out if str(t.account_id) == str(account_id)]
+    if category and category != "all":
+        out = [t for t in out if t.category == category]
+    if subcategory and subcategory != "all":
+        out = [t for t in out if (t.subcategory or "") == subcategory]
+    if store and store != "all":
+        out = [t for t in out if (t.store or "") == store]
     if date_from:
         out = [t for t in out if t.date.isoformat() >= date_from]
     if date_to:
@@ -178,7 +185,8 @@ def filter_transactions(transactions, search: str = "", profile: str = "all", ty
         q = search.lower()
         def matches(t):
             acc = (t.account.name if t.account else "")
-            haystack = " ".join([(t.note or ""), (t.category or ""), acc, f"{t.amount:.2f}", str(t.amount)]).lower()
+            haystack = " ".join([(t.note or ""), (t.category or ""), (t.subcategory or ""), (t.store or ""),
+                                 acc, f"{t.amount:.2f}", str(t.amount)]).lower()
             return q in haystack
         out = [t for t in out if matches(t)]
     out.sort(key=lambda t: (t.date.isoformat(), t.id), reverse=True)
@@ -249,6 +257,111 @@ def period_bounds(today: date, period: str) -> dict:
         label = f"{MESES[today.month - 1]} {today.year}"
     return {"start": start, "end": end, "days_total": days_total,
             "days_remaining": max(0, days_remaining), "label": label}
+
+
+def _shift_month(d: date, delta: int) -> date:
+    y = d.year + (d.month - 1 + delta) // 12
+    m = (d.month - 1 + delta) % 12 + 1
+    import calendar as _cal
+    return date(y, m, min(d.day, _cal.monthrange(y, m)[1]))
+
+
+def parse_anchor(anchor_iso: str | None) -> date:
+    try:
+        return date.fromisoformat(anchor_iso) if anchor_iso else date.today()
+    except (ValueError, TypeError):
+        return date.today()
+
+
+def resolve_period(period: str, anchor: date | None = None) -> dict:
+    """Rango de tiempo navegable estilo Money Manager: day / week / month / year.
+    Devuelve inicio, fin, etiqueta es-ES, y anclas prev/next para navegar con ‹ ›."""
+    import calendar as _cal
+    anchor = anchor or date.today()
+    if period == "all":
+        start, end = date(1970, 1, 1), date(2100, 12, 31)
+        a = anchor.isoformat()
+        return {"period": "all", "start": start, "end": end, "label": "Todo el histórico",
+                "key": "all", "anchor": a, "prev": a, "next": a, "is_all": True,
+                "days_total": (end - start).days + 1, "days_elapsed": 1}
+    if period == "day":
+        start = end = anchor
+        label = fmt_date_es(anchor)
+        prev, nxt = anchor - timedelta(days=1), anchor + timedelta(days=1)
+        key = anchor.isoformat()
+    elif period == "week":
+        start = anchor - timedelta(days=anchor.weekday())  # lunes
+        end = start + timedelta(days=6)
+        if start.month == end.month:
+            label = f"{start.day}–{end.day} {MESES[end.month - 1]} {end.year}"
+        else:
+            label = f"{start.day} {MESES[start.month - 1][:3]} – {end.day} {MESES[end.month - 1][:3]} {end.year}"
+        prev, nxt = start - timedelta(days=7), start + timedelta(days=7)
+        key = f"{start.year}-W{start.isocalendar().week:02d}"
+    elif period == "year":
+        start, end = date(anchor.year, 1, 1), date(anchor.year, 12, 31)
+        label = str(anchor.year)
+        prev, nxt = date(anchor.year - 1, 1, 1), date(anchor.year + 1, 1, 1)
+        key = str(anchor.year)
+    else:  # month (por defecto)
+        period = "month"
+        last = _cal.monthrange(anchor.year, anchor.month)[1]
+        start, end = date(anchor.year, anchor.month, 1), date(anchor.year, anchor.month, last)
+        label = f"{MESES[anchor.month - 1]} {anchor.year}"
+        prev, nxt = _shift_month(start, -1), _shift_month(start, 1)
+        key = f"{anchor.year}-{anchor.month:02d}"
+    return {
+        "period": period, "start": start, "end": end, "label": label, "key": key,
+        "anchor": anchor.isoformat(), "prev": prev.isoformat(), "next": nxt.isoformat(),
+        "days_total": (end - start).days + 1,
+        "days_elapsed": max(1, min((date.today() - start).days + 1, (end - start).days + 1)),
+    }
+
+
+PERIOD_OPTIONS = [("day", "Día"), ("week", "Semana"), ("month", "Mes"), ("year", "Año")]
+
+
+def in_period(transactions, start: date, end: date) -> list:
+    return [t for t in transactions if start <= t.date <= end]
+
+
+def savings_breakdown(profiles, categories, transactions, start: date, end: date) -> dict:
+    """Por cada perfil, calcula el ingreso que SÍ cuenta para el ahorro (excluye las
+    categorías de ingreso marcadas como no-computables: reventa, préstamos) y aplica
+    tax_rate (impuestos IRPF/SS) y savings_rate (ahorro) del perfil."""
+    excluded = {(c.profile, c.name) for c in categories
+                if c.kind == "income" and not c.counts_for_savings}
+    rows = []
+    tot_income = tot_tax = tot_savings = 0.0
+    for p in profiles:
+        qualifying = sum(
+            t.amount for t in transactions
+            if t.profile == p.slug and t.type == "income" and start <= t.date <= end
+            and (p.slug, t.category) not in excluded
+        )
+        tax = qualifying * (p.tax_rate or 0) / 100.0
+        sav = qualifying * (p.savings_rate or 0) / 100.0
+        if qualifying <= 0 and (p.savings_rate or 0) == 0 and (p.tax_rate or 0) == 0:
+            continue
+        rows.append({
+            "slug": p.slug, "name": p.name, "color": p.color,
+            "income": qualifying, "income_label": fmt_eur(qualifying),
+            "tax_rate": p.tax_rate or 0, "savings_rate": p.savings_rate or 0,
+            "tax": tax, "tax_label": fmt_eur(tax),
+            "savings": sav, "savings_label": fmt_eur(sav),
+            "total": tax + sav, "total_label": fmt_eur(tax + sav),
+        })
+        tot_income += qualifying
+        tot_tax += tax
+        tot_savings += sav
+    return {
+        "rows": rows,
+        "income": tot_income, "income_label": fmt_eur(tot_income),
+        "tax": tot_tax, "tax_label": fmt_eur(tot_tax),
+        "savings": tot_savings, "savings_label": fmt_eur(tot_savings),
+        "total": tot_tax + tot_savings, "total_label": fmt_eur(tot_tax + tot_savings),
+        "excluded_names": sorted({c.name for c in categories if c.kind == "income" and not c.counts_for_savings}),
+    }
 
 
 def spent_in_period(transactions, profile: str, category: str, start: date, end: date) -> float:

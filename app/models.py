@@ -43,6 +43,8 @@ class Transaction(Base):
     latitude: Mapped[float | None] = mapped_column(Float, nullable=True)
     longitude: Mapped[float | None] = mapped_column(Float, nullable=True)
     place_name: Mapped[str] = mapped_column(String, default="")
+    subcategory: Mapped[str] = mapped_column(String, default="")  # subcategoría opcional
+    store: Mapped[str] = mapped_column(String, default="")        # tienda/comercio (SPAR, etc.)
 
     account: Mapped["Account"] = relationship()
 
@@ -119,6 +121,9 @@ class Profile(Base):
     color: Mapped[str] = mapped_column(String, default="#12898F")
     icon: Mapped[str] = mapped_column(String, default="")
     position: Mapped[int] = mapped_column(Integer, default=0)
+    # Motor de ahorro: % del ingreso que cuenta reservado para ahorro y para impuestos (IRPF/SS).
+    savings_rate: Mapped[float] = mapped_column(Float, default=40.0)
+    tax_rate: Mapped[float] = mapped_column(Float, default=0.0)
 
 
 class Category(Base):
@@ -131,6 +136,8 @@ class Category(Base):
     icon: Mapped[str] = mapped_column(String, default="")  # emoji opcional; si vacío se usa la inicial
     color: Mapped[str] = mapped_column(String, default="#12898F")
     is_system: Mapped[bool] = mapped_column(Boolean, default=False)  # "Sin categoría": no editable/borrable
+    # Ingresos que NO cuentan para el ahorro (reventa, préstamos de familia/amigos/banco).
+    counts_for_savings: Mapped[bool] = mapped_column(Boolean, default=True)
 
     subcategories: Mapped[list["Subcategory"]] = relationship(
         back_populates="category", cascade="all, delete-orphan"
@@ -145,6 +152,20 @@ class Subcategory(Base):
     icon: Mapped[str] = mapped_column(String, default="")
 
     category: Mapped["Category"] = relationship(back_populates="subcategories")
+
+
+class SavingsReserve(Base):
+    """Reserva de ahorro/impuestos apartada por el usuario (botón 'Reservar').
+    Registra cuánto se ha apartado de un perfil en un periodo, separando impuestos y ahorro."""
+    __tablename__ = "savings_reserves"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    profile: Mapped[str | None] = mapped_column(String, nullable=True)  # slug de perfil; None = global
+    period_key: Mapped[str] = mapped_column(String)      # p.ej. "2026-07" (mes) o "2026" (año)
+    kind: Mapped[str] = mapped_column(String)            # 'tax' (impuestos) | 'savings' (ahorro)
+    amount: Mapped[float] = mapped_column(Float)
+    account_id: Mapped[int | None] = mapped_column(ForeignKey("accounts.id"), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
 
 class Settings(Base):

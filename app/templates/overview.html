@@ -36,6 +36,21 @@
 </div>
 {% endif %}
 
+{% if savings %}
+<a href="/savings" class="card" style="display:flex;align-items:center;gap:14px;margin-bottom:22px;">
+  <span style="width:42px;height:42px;border-radius:12px;background:color-mix(in srgb, #3FA65C 15%, transparent);color:#3FA65C;display:flex;align-items:center;justify-content:center;flex-shrink:0;">{{ icon('cash', 22) }}</span>
+  <div style="flex:1;min-width:0;">
+    <div style="font-size:13px;font-weight:700;">Ahorro y reservas · este mes</div>
+    <div style="font-size:11.5px;color:var(--secondary);margin-top:2px;">Objetivo {{ savings.target }} · reservado {{ savings.reserved }}</div>
+    <div class="track-bar thin" style="margin-top:7px;max-width:320px;"><div class="track-fill" style="width:{{ savings.pct }}%;background:#3FA65C;"></div></div>
+  </div>
+  <div style="text-align:right;white-space:nowrap;">
+    <div class="mono" style="font-size:18px;font-weight:800;color:{{ '#E2574C' if savings.has_pending else '#3FA65C' }};">{{ savings.pending }}</div>
+    <div style="font-size:10.5px;color:var(--secondary);">{{ 'por reservar' if savings.has_pending else 'al día' }}</div>
+  </div>
+</a>
+{% endif %}
+
 <div class="hero-gradient" style="margin-bottom:22px;">
   <span style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.25);flex-shrink:0;display:flex;align-items:center;justify-content:center;">
     <span style="width:14px;height:14px;border-radius:50%;border:2.5px solid #fff;"></span>

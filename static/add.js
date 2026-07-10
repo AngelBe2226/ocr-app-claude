@@ -29,6 +29,10 @@ async function loadAddOptions() {
 
   const accHtml = addOptions.accounts.map(a => `<option value="${a.id}">${esc(a.name)}</option>`).join('');
   document.querySelectorAll('#add-modal .js-account').forEach(sel => { sel.innerHTML = accHtml; });
+
+  // Autocompletado de tiendas ya usadas.
+  const storeList = document.getElementById('store-list');
+  if (storeList) storeList.innerHTML = (addOptions.stores || []).map(s => `<option value="${esc(s)}">`).join('');
   // En transferencia, la cuenta destino por defecto es distinta de la origen.
   const tForm = document.getElementById('form-transfer');
   if (tForm && addOptions.accounts.length > 1) {
@@ -40,7 +44,12 @@ async function loadAddOptions() {
     sel.innerHTML = profHtml;
     sel.addEventListener('change', () => refreshCategories(sel.closest('form')));
   });
-  ['expense', 'income'].forEach(t => refreshCategories(document.getElementById('form-' + t)));
+  ['expense', 'income'].forEach(t => {
+    const form = document.getElementById('form-' + t);
+    const catSel = form && form.querySelector('.js-category');
+    if (catSel) catSel.addEventListener('change', () => refreshSubcategories(form));
+    refreshCategories(form);
+  });
 }
 
 function refreshCategories(form) {
@@ -53,6 +62,21 @@ function refreshCategories(form) {
   catSel.innerHTML = cats.length
     ? cats.map(c => `<option value="${esc(c.name)}">${esc(c.name)}</option>`).join('')
     : '<option value="">(sin categorías)</option>';
+  refreshSubcategories(form);
+}
+
+function refreshSubcategories(form) {
+  if (!form || !addOptions) return;
+  const profSel = form.querySelector('.js-profile');
+  const catSel = form.querySelector('.js-category');
+  const subSel = form.querySelector('.js-subcategory');
+  if (!subSel || !profSel || !catSel) return;
+  const kind = profSel.dataset.kind;
+  const cat = addOptions.categories.find(c => c.profile === profSel.value && c.kind === kind && c.name === catSel.value);
+  const subs = (cat && cat.subs) || [];
+  subSel.innerHTML = '<option value="">Subcategoría (opcional)</option>' +
+    subs.map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join('');
+  subSel.style.display = subs.length ? '' : 'none';
 }
 
 function showFileName(input) {

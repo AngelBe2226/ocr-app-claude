@@ -26,6 +26,15 @@
       </div>
     </div>
 
+    {% if kind == 'income' and not c.is_system %}
+    <form method="post" action="/categories/{{ c.id }}/toggle-savings" style="margin-top:8px;">
+      <button type="submit" class="savings-flag {{ 'on' if c.counts_for_savings else 'off' }}"
+              title="Los ingresos que NO cuentan (reventa de productos, préstamos de familia/amigos/banco) se excluyen del cálculo de ahorro">
+        {% if c.counts_for_savings %}✓ Cuenta para ahorro{% else %}✕ No cuenta (reventa/préstamo){% endif %}
+      </button>
+    </form>
+    {% endif %}
+
     {% if c.subcategories %}
     <div style="margin-top:10px;display:flex;flex-direction:column;gap:4px;">
       {% for s in c.subcategories %}
