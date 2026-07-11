@@ -100,7 +100,14 @@
       "Bash(curl -s -o /dev/null -w '%{http_code}' http://localhost:8001/api/health)",
       "Bash(echo \"server alive: $\\(curl -s -o /dev/null -w '%{http_code}' http://localhost:8001/api/health\\)\")",
       "Bash(git add *)",
-      "Bash(git -c user.name=AngelBe2226 commit -q -m ' *)"
+      "Bash(git -c user.name=AngelBe2226 commit -q -m ' *)",
+      "Bash(lsof -nP -iTCP:8001 -sTCP:LISTEN)",
+      "Bash(curl -s -o /dev/null -w '%{http_code}' http://localhost:8001/)",
+      "Bash(echo \"health: $\\(curl -s -o /dev/null -w '%{http_code}' http://localhost:8001/api/health\\)  root: $\\(curl -s -o /dev/null -w '%{http_code}' http://localhost:8001/\\)\")",
+      "Bash(gh auth *)",
+      "Bash(gh repo *)",
+      "Bash(ssh -T -o StrictHostKeyChecking=accept-new -o ConnectTimeout=6 git@github.com)",
+      "Bash(git -C /Users/angel/Documents/GitHub/english-index remote -v)"
     ]
   }
 }
