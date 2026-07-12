@@ -802,3 +802,53 @@ INFO:     127.0.0.1:51366 - "GET /static/edit.js?v=1783724077 HTTP/1.1" 200 OK
 INFO:     127.0.0.1:51364 - "GET /static/cascade.js?v=1783724077 HTTP/1.1" 200 OK
 INFO:     127.0.0.1:51353 - "GET /static/iconpick.js?v=1783724077 HTTP/1.1" 200 OK
 INFO:     127.0.0.1:51577 - "GET /categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52209 - "POST /settings/theme HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:52209 - "GET /categories HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52209 - "GET /search HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52209 - "GET /settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52209 - "GET /melia HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52211 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:52212 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:52213 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:52211 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52212 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52213 - "GET /login HTTP/1.1" 200 OK
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [68686]
+INFO:     Started server process [80136]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     127.0.0.1:55317 - "POST /login HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:55318 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55320 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55323 - "GET /settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55326 - "GET /settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55338 - "GET / HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:56076 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56075 - "GET /static/style.css?v=1783808952 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56076 - "GET /static/custom-icons.css?v=1783808952 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56079 - "GET /static/add.js?v=1783808952 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56079 - "GET /static/iconpick.js?v=1783808952 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56080 - "GET /static/cascade.js?v=1783808952 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56081 - "GET /static/tx.js?v=1783808952 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56082 - "GET /static/edit.js?v=1783808952 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56084 - "POST /accounts/8/edit HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:56084 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56088 - "POST /accounts/3/edit HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:56088 - "GET /accounts HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56088 - "GET /connect HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56088 - "POST /connect/1/sync HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:56088 - "GET /connect HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56094 - "GET /melia HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56095 - "GET /apple-touch-icon-precomposed.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:56096 - "GET /apple-touch-icon.png HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:56097 - "GET /favicon.ico HTTP/1.1" 303 See Other
+INFO:     127.0.0.1:56095 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56096 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56097 - "GET /login HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56093 - "GET /add/options HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56093 - "GET /freelance HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56093 - "GET /realestate HTTP/1.1" 200 OK

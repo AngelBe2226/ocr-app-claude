@@ -107,7 +107,8 @@
       "Bash(gh auth *)",
       "Bash(gh repo *)",
       "Bash(ssh -T -o StrictHostKeyChecking=accept-new -o ConnectTimeout=6 git@github.com)",
-      "Bash(git -C /Users/angel/Documents/GitHub/english-index remote -v)"
+      "Bash(git -C /Users/angel/Documents/GitHub/english-index remote -v)",
+      "Bash(python3 -c \"import urllib.request,json; d=json.loads\\(urllib.request.urlopen\\('https://api.frankfurter.app/latest?from=EUR&to=USD,GBP',timeout=5\\).read\\(\\)\\); print\\('OK', d['date'], d['rates']\\)\")"
     ]
   }
 }

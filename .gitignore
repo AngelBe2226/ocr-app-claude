@@ -4,3 +4,6 @@ finance.db
 venv/
 .DS_Store
 uploads/
+
+# Caché de tipos de cambio (se regenera sola)
+fx_cache.json

@@ -4,8 +4,8 @@ from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
+from app import fx
 from app.auth import get_current_user
-from app.constants import FX_RATES
 from app.database import get_db
 from app.finance import fmt_eur, fmt_money, hash_color, net_worth_eur
 from app.models import Account, Loan, User
@@ -40,13 +40,14 @@ def accounts_page(request: Request, db: Session = Depends(get_db), user: User = 
     A = ctx["A"]
     accounts = db.query(Account).filter(Account.user_id == user.id).order_by(Account.id).all()
     loans = db.query(Loan).filter(Loan.user_id == user.id).all()
+    rates = fx.get_rates()  # tipos de cambio en vivo (con respaldo estático)
 
     # Agrupa las cuentas por tipo, cada grupo con su subtotal convertido a EUR.
     grouped: dict[str, dict] = {key: {"key": key, "label": label, "subtotal": 0.0, "accounts": []}
                                 for key, label in ACCOUNT_GROUPS}
     for a in accounts:
         group_key = a.type if a.type in grouped else "other"
-        eur = a.balance * FX_RATES.get(a.currency, 1)
+        eur = a.balance * rates.get(a.currency, 1)
         grouped[group_key]["subtotal"] += eur
         is_card = a.type == "card"
         grouped[group_key]["accounts"].append({
@@ -65,12 +66,14 @@ def accounts_page(request: Request, db: Session = Depends(get_db), user: User = 
     for g in groups:
         g["subtotal_label"] = fmt_eur(g["subtotal"])
 
-    net = net_worth_eur(accounts, loans)
-    assets = sum(max(0.0, a.balance * FX_RATES.get(a.currency, 1)) for a in accounts)
-    liabilities = sum(max(0.0, -(a.balance * FX_RATES.get(a.currency, 1))) for a in accounts) + sum(l.balance for l in loans)
+    net = net_worth_eur(accounts, loans, rates)
+    assets = sum(max(0.0, a.balance * rates.get(a.currency, 1)) for a in accounts)
+    liabilities = sum(max(0.0, -(a.balance * rates.get(a.currency, 1))) for a in accounts) + sum(l.balance for l in loans)
+    fxi = fx.info()
     summary = {
         "net_worth": fmt_eur(net), "net_positive": net >= 0,
         "assets": fmt_eur(assets), "liabilities": fmt_eur(liabilities),
+        "fx_live": fxi["live"], "fx_date": fxi["date"],
     }
 
     return templates.TemplateResponse(request, "accounts.html", {**ctx, "groups": groups, "summary": summary})

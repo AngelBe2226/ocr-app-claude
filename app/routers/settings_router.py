@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, Form, Request
 from fastapi.responses import RedirectResponse, Response
 from sqlalchemy.orm import Session
 
+from app import fx
 from app.auth import get_current_user, get_or_create_settings
 from app.constants import ACCENT_OPTIONS
 from app.database import get_db
@@ -26,11 +27,24 @@ def settings_page(request: Request, db: Session = Depends(get_db), user: User = 
     cur_key = date.today().strftime("%Y-%m")
     month_spend = sum(t.amount for t in transactions if t.type == "expense" and t.date.strftime("%Y-%m") == cur_key)
 
+    # Tipos de cambio: divisas del usuario + USD/GBP por defecto.
+    fxi = fx.info()
+    used = {a.currency for a in accounts if a.currency != "EUR"} | {"USD", "GBP"}
+    fx_rows = [{"cur": c, "eur_per": ("%.4f" % fxi["rates"].get(c, 1)).replace(".", ",")}
+               for c in sorted(used) if c in fxi["rates"]]
+
     return templates.TemplateResponse(request, "settings.html", {
         **ctx, "invites": invites,
         "net_worth": fmt_eur(net_worth_eur(accounts, loans)),
         "widget_month_spend": fmt_eur(month_spend),
+        "fx_rows": fx_rows, "fx_date": fxi["date"], "fx_live": fxi["live"], "fx_age": fxi["age_hours"],
     })
+
+
+@router.post("/settings/fx/refresh")
+def refresh_fx(request: Request, db: Session = Depends(get_db), user: User = Depends(get_current_user)):
+    fx.get_rates(force=True)
+    return RedirectResponse(request.headers.get("referer", "/settings"), status_code=303)
 
 
 @router.post("/settings/theme")

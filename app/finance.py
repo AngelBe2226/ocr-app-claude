@@ -91,8 +91,11 @@ def amortize(principal_balance: float, rate_pct: float, payment: float) -> dict:
     return {"payoff_month": payoff_month, "never_pays_off": never_pays_off, "total_interest": total_interest}
 
 
-def net_worth_eur(accounts, loans) -> float:
-    total = sum(a.balance * FX_RATES.get(a.currency, 1) for a in accounts)
+def net_worth_eur(accounts, loans, rates=None) -> float:
+    if rates is None:
+        from app.fx import get_rates
+        rates = get_rates()
+    total = sum(a.balance * rates.get(a.currency, 1) for a in accounts)
     total -= sum(l.balance for l in loans)
     return total
 
