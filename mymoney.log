@@ -852,3 +852,16 @@ INFO:     127.0.0.1:56097 - "GET /login HTTP/1.1" 200 OK
 INFO:     127.0.0.1:56093 - "GET /add/options HTTP/1.1" 200 OK
 INFO:     127.0.0.1:56093 - "GET /freelance HTTP/1.1" 200 OK
 INFO:     127.0.0.1:56093 - "GET /realestate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60130 - "GET /realestate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60130 - "GET /static/style.css?v=1783808952 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60132 - "GET /static/custom-icons.css?v=1783808952 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60134 - "GET /static/cascade.js?v=1783808952 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60135 - "GET /static/tx.js?v=1783808952 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60136 - "GET /static/edit.js?v=1783808952 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60133 - "GET /static/add.js?v=1783808952 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60132 - "GET /static/iconpick.js?v=1783808952 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60135 - "GET /favicon.ico HTTP/1.1" 404 Not Found
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [80136]
